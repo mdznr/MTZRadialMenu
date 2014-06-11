@@ -88,6 +88,9 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 /// A Boolean value that indicates whether the menu is displayed.
 @property (nonatomic, readwrite, getter=isMenuVisible) BOOL menuVisible;
 
+/// A Boolean value that indicates whether the menu is currently animating.
+@property (nonatomic, getter=isMenuAnimating) BOOL menuAnimating;
+
 @end
 
 
@@ -131,6 +134,7 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	// Data
 	self.actions = [[NSMutableDictionary alloc] initWithCapacity:3];
 	self.menuVisible = NO;
+	self.menuAnimating = NO;
 	
 	// Radial menu
 	self.radialMenu = [[UIView alloc] init];
@@ -228,7 +232,7 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	// Only recognizes the ended state.
 	if (sender.state != UIGestureRecognizerStateEnded) return;
 	
-	if ( self.menuVisible ) {
+	if ( self.menuVisible || self.menuAnimating ) {
 		[self dismissMenuAnimated:YES];
 	} else {
 		// TODO: Perform regular tap action.
@@ -300,8 +304,9 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 
 - (void)displayMenu
 {
-	if ( self.menuVisible ) return;
+	if ( self.menuVisible && !self.menuAnimating ) return;
 	
+	self.menuAnimating = YES;
 	[UIView animateWithDuration:0.52
 						  delay:0
 		 usingSpringWithDamping:0.7
@@ -312,14 +317,18 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 						 self.radialMenu.alpha = 1.0f;
 					 }
 					 completion:^(BOOL finished) {
-						 self.menuVisible = YES;
+						 if ( finished ) {
+							 self.menuVisible = YES;
+							 self.menuAnimating = NO;
+						 }
 					 }];
 }
 
 - (void)dismissMenuAnimated:(BOOL)animated
 {
-	if ( !self.menuVisible ) return;
+	if ( !self.menuVisible && !self.menuAnimating ) return;
 	
+	self.menuAnimating = YES;
 	[UIView animateWithDuration:animated ? 0.35 : 0
 						  delay:0
 		 usingSpringWithDamping:1
@@ -330,7 +339,10 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 						 self.radialMenu.alpha = 0.0f;
 					 }
 					 completion:^(BOOL finished) {
-						 self.menuVisible = NO;
+						 if ( finished ) {
+							 self.menuVisible = NO;
+							 self.menuAnimating = NO;
+						 }
 					 }];
 }
 
