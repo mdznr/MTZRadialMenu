@@ -9,6 +9,14 @@
 
 #import "MTZCircleView.h"
 
+#define RADIALMENU_OPEN_ANIMATION_DURATION 0.52
+#define RADIALMENU_OPEN_ANIMATION_DAMPING 0.7
+#define RADIALMENU_OPEN_ANIMATION_INITIAL_VELOCITY 0.35
+
+#define RADIALMENU_CLOSE_ANIMATION_DURATION 0.4
+#define RADIALMENU_CLOSE_ANIMATION_DAMPING 1
+#define RADIALMENU_CLOSE_ANIMATION_INITIAL_VELOCITY 0.4
+
 @interface MTZAction ()
 
 ///
@@ -307,21 +315,26 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	if ( self.menuVisible && !self.menuAnimating ) return;
 	
 	self.menuAnimating = YES;
-	[UIView animateWithDuration:0.52
+	
+	void (^animations)() = ^void() {
+		[self setRadialMenuRadius:105];
+		self.radialMenu.alpha = 1.0f;
+	};
+	
+	void (^completion)(BOOL) = ^void(BOOL finished) {
+		if ( finished ) {
+			self.menuVisible = YES;
+			self.menuAnimating = NO;
+		}
+	};
+	
+	[UIView animateWithDuration:RADIALMENU_OPEN_ANIMATION_DURATION
 						  delay:0
-		 usingSpringWithDamping:0.7
-		  initialSpringVelocity:0.35
+		 usingSpringWithDamping:RADIALMENU_OPEN_ANIMATION_DAMPING
+		  initialSpringVelocity:RADIALMENU_OPEN_ANIMATION_INITIAL_VELOCITY
 						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
-					 animations:^{
-						 [self setRadialMenuRadius:105];
-						 self.radialMenu.alpha = 1.0f;
-					 }
-					 completion:^(BOOL finished) {
-						 if ( finished ) {
-							 self.menuVisible = YES;
-							 self.menuAnimating = NO;
-						 }
-					 }];
+					 animations:animations
+					 completion:completion];
 }
 
 - (void)dismissMenuAnimated:(BOOL)animated
@@ -329,26 +342,34 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	if ( !self.menuVisible && !self.menuAnimating ) return;
 	
 	self.menuAnimating = YES;
-	[UIView animateWithDuration:animated ? 0.35 : 0
+	
+	void (^animations)() = ^void() {
+		[self setRadialMenuRadius:15];
+		self.radialMenu.alpha = 0.0f;
+	};
+	
+	void (^completion)(BOOL) = ^void(BOOL finished) {
+		if ( finished ) {
+			self.menuVisible = NO;
+			self.menuAnimating = NO;
+		}
+	};
+	
+	[UIView animateWithDuration:animated ? RADIALMENU_CLOSE_ANIMATION_DURATION : 0
 						  delay:0
-		 usingSpringWithDamping:1
-		  initialSpringVelocity:0.6
+		 usingSpringWithDamping:RADIALMENU_CLOSE_ANIMATION_DAMPING
+		  initialSpringVelocity:RADIALMENU_CLOSE_ANIMATION_INITIAL_VELOCITY
 						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
-					 animations:^{
-						 [self setRadialMenuRadius:1];
-						 self.radialMenu.alpha = 0.0f;
-					 }
-					 completion:^(BOOL finished) {
-						 if ( finished ) {
-							 self.menuVisible = NO;
-							 self.menuAnimating = NO;
-						 }
-					 }];
+					 animations:animations
+					 completion:completion];
 }
 
 - (void)setRadialMenuRadius:(CGFloat)radius
 {
-	self.radialMenu.frame = CGRectMake((self.bounds.size.width/2)-radius, (self.bounds.size.height/2)-radius, 2*radius, 2*radius);
+	self.radialMenu.frame = CGRectMake((self.bounds.size.width/2)-radius,
+									   (self.bounds.size.height/2)-radius,
+									   2*radius,
+									   2*radius);
 }
 
 @end
