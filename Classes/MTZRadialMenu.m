@@ -148,7 +148,8 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	self.radialMenu = [[UIView alloc] init];
 	[self addSubview:self.radialMenu];
 	self.radialMenu.clipsToBounds = YES;
-	[self setRadialMenuRadius:1];
+	self.radialMenu.alpha = 0.0f;
+	[self setRadialMenuRadius:15];
 	
 	UIImageView *radialMenuBackground = [[UIImageView alloc] initWithFrame:self.radialMenu.bounds];
 	radialMenuBackground.image = [UIImage imageNamed:@"MenuBackground"];
