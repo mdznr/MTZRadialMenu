@@ -20,6 +20,20 @@
 	[radialMenu setImage:[UIImage imageNamed:@"Circle"] forState:UIControlStateNormal];
 	[radialMenu setImage:[UIImage imageNamed:@"CircleHighlighted"] forState:UIControlStateSelected];
 	[self.view addSubview:radialMenu];
+	
+	MTZAction *action = [MTZAction actionWithImage:[UIImage imageNamed:@"Circle"]
+								  highlightedImage:[UIImage imageNamed:@"CircleHighlighted"]
+										   handler:^(MTZAction *action) {
+											   NSLog(@"My custom action was handled!");
+										   }];
+	[radialMenu setAction:action forLocation:MTZRadialMenuLocationTop];
+	
+	MTZAction *secondAction = [MTZAction actionWithImage:[UIImage imageNamed:@"Circle"]
+										highlightedImage:[UIImage imageNamed:@"CircleHighlighted"]
+												 handler:^(MTZAction *action) {
+													 NSLog(@"My second custom action was handled!");
+												 }];
+	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationLeft];
 }
 
 @end
