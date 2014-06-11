@@ -75,6 +75,10 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	}
 }
 
+CGFloat CGPointDistance(CGPoint a, CGPoint b)
+{
+	return sqrt(pow((a.x - b.x), 2) + pow((a.y - b.y), 2));
+}
 
 @interface MTZRadialMenu ()
 
@@ -138,10 +142,6 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 {
 	// The radial menu will extend beyond the bounds of the original button.
 	self.clipsToBounds = NO;
-	
-#ifdef DEBUG
-	self.backgroundColor = [UIColor redColor];
-#endif
 	
 	// Data
 	self.actions = [[NSMutableDictionary alloc] initWithCapacity:3];
@@ -261,9 +261,12 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 		case UIGestureRecognizerStateBegan:
 		case UIGestureRecognizerStateChanged: {
 			CGPoint point = [sender locationInView:self];
-			NSLog(@"%@", NSStringFromCGPoint(point));
+			CGPoint convertedPoint = [self.radialMenu convertPoint:point fromView:self];
+			CGFloat distance = [self distanceOfPointFromCenter:convertedPoint];
+			NSLog(@"%f", distance);
 		} break;
 		case UIGestureRecognizerStateEnded:
+			// Released touch, see if it is on an action.
 			break;
 		case UIGestureRecognizerStateCancelled:
 		default:
@@ -275,6 +278,15 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 {
 	CGPoint convertedPoint = [self.radialMenu convertPoint:point fromView:self];
 	return [self.radialMenu pointInside:convertedPoint withEvent:event];
+}
+
+/// Find the distance of a point from the center of the radial menu.
+/// @param point The point in terms of the radial menu's bounds.
+/// @return The distance of the point to the center of the radial menu.
+- (CGFloat)distanceOfPointFromCenter:(CGPoint)point
+{
+	CGPoint center = CGPointMake(self.radialMenu.bounds.size.width/2, self.radialMenu.bounds.size.height/2);
+	return CGPointDistance(point, center);
 }
 
 #pragma mark -
