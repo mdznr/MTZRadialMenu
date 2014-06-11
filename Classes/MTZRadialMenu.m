@@ -88,7 +88,7 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 @property (strong, nonatomic) UIView *radialMenu;
 
 /// The main button to activate the radial menu.
-@property (strong, nonatomic) UIImageView *button;
+@property (strong, nonatomic) UIButton *button;
 
 /// The action buttons.
 @property (strong,  nonatomic) UIButton *topButton, *leftButton, *rightButton, *bottomButton;
@@ -138,6 +138,10 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 {
 	// The radial menu will extend beyond the bounds of the original button.
 	self.clipsToBounds = NO;
+	
+#ifdef DEBUG
+	self.backgroundColor = [UIColor redColor];
+#endif
 	
 	// Data
 	self.actions = [[NSMutableDictionary alloc] initWithCapacity:3];
@@ -204,7 +208,7 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	bottomButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 	
 	// Main button
-	self.button = [[UIImageView alloc] initWithFrame:self.bounds];
+	self.button = [[UIButton alloc] initWithFrame:self.bounds];
 	[self addSubview:self.button];
 	self.button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
@@ -278,14 +282,22 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 
 - (void)setImage:(UIImage *)image forState:(UIControlState)state
 {
-	_button.image = image;
-//	[_button setImage:image forState:state];
+	[_button setImage:image forState:state];
 }
 
 - (UIImage *)imageForState:(UIControlState)state
 {
-	return _button.image;
-//	return [_button imageForState:state];
+	return [_button imageForState:state];
+}
+
+- (void)setImageEdgeInsets:(UIEdgeInsets)insets
+{
+	self.button.imageEdgeInsets = insets;
+}
+
+- (UIEdgeInsets)imageEdgeInsets
+{
+	return self.button.imageEdgeInsets;
 }
 
 #pragma mark -
