@@ -13,6 +13,7 @@
 		C909C7D319480AFC00080438 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C909C7D119480AFC00080438 /* Main.storyboard */; };
 		C909C7D519480AFC00080438 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C909C7D419480AFC00080438 /* Images.xcassets */; };
 		C909C7E119480AFC00080438 /* Example_AppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C7E019480AFC00080438 /* Example_AppTests.m */; };
+		C909C7EC19480CA600080438 /* MTZRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C7EB19480CA600080438 /* MTZRadialMenu.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,8 @@
 		C909C7DA19480AFC00080438 /* Example AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Example AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C909C7DF19480AFC00080438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C909C7E019480AFC00080438 /* Example_AppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example_AppTests.m; sourceTree = "<group>"; };
+		C909C7EA19480CA600080438 /* MTZRadialMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTZRadialMenu.h; path = ../../Classes/MTZRadialMenu.h; sourceTree = "<group>"; };
+		C909C7EB19480CA600080438 /* MTZRadialMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTZRadialMenu.m; path = ../../Classes/MTZRadialMenu.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +87,7 @@
 				C909C7CE19480AFC00080438 /* ViewController.h */,
 				C909C7CF19480AFC00080438 /* ViewController.m */,
 				C909C7D119480AFC00080438 /* Main.storyboard */,
+				C909C7ED19480CAA00080438 /* MTZRadialMenu */,
 				C909C7D419480AFC00080438 /* Images.xcassets */,
 				C909C7C719480AFC00080438 /* Supporting Files */,
 			);
@@ -114,6 +118,15 @@
 				C909C7DF19480AFC00080438 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C909C7ED19480CAA00080438 /* MTZRadialMenu */ = {
+			isa = PBXGroup;
+			children = (
+				C909C7EA19480CA600080438 /* MTZRadialMenu.h */,
+				C909C7EB19480CA600080438 /* MTZRadialMenu.m */,
+			);
+			name = MTZRadialMenu;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -218,6 +231,7 @@
 				C909C7D019480AFC00080438 /* ViewController.m in Sources */,
 				C909C7CD19480AFC00080438 /* AppDelegate.m in Sources */,
 				C909C7CA19480AFC00080438 /* main.m in Sources */,
+				C909C7EC19480CA600080438 /* MTZRadialMenu.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "MTZRadialMenu.h"
 
 @implementation ViewController
             
@@ -14,6 +15,11 @@
 {
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+	
+	MTZRadialMenu *radialMenu = [[MTZRadialMenu alloc] initWithFrame:CGRectMake(145, 145, 30, 30)];
+	[radialMenu setImage:[UIImage imageNamed:@"Circle"] forState:UIControlStateNormal];
+	[radialMenu setImage:[UIImage imageNamed:@"CircleHighlighted"] forState:UIControlStateSelected];
+	[self.view addSubview:radialMenu];
 }
 
 @end
