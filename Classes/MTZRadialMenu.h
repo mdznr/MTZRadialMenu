@@ -23,11 +23,11 @@ typedef enum MTZActionType: NSInteger {
 #pragma mark Creating an Action
 
 /// Create and return an action with the specified images and behavior.
-/// @param style The standard style of action. Use the appropriate standard style if the corresponding action is standard. For a list of possible values, see the constants in @c MTZActionStyle.
+/// @param type The standard type of action. Use the appropriate standard type if the corresponding action is standard. For a list of possible values, see the constants in @c MTZActionType.
 /// @param handler A block to execute when the user selects the action. This block hasn o return value and takes the selected action object as its only parameter.
 /// @return A new action object.
 /// @discussion Actions are enabled by default when you create them.
-+ (instancetype)actionOfType:(MTZActionType)style handler:(void (^)(MTZAction *action))handler;
++ (instancetype)actionOfType:(MTZActionType)type handler:(void (^)(MTZAction *action))handler;
 
 /// Create and return an action with the specified images and behavior.
 /// @param image The image to use for the radial menu item.
