@@ -88,7 +88,7 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 @property (strong, nonatomic) UIView *radialMenu;
 
 /// The main button to activate the radial menu.
-@property (strong, nonatomic) UIButton *button;
+@property (strong, nonatomic) UIImageView *button;
 
 /// The action buttons.
 @property (strong,  nonatomic) UIButton *topButton, *leftButton, *rightButton, *bottomButton;
@@ -204,39 +204,23 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	bottomButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 	
 	// Main button
-	self.button = [[UIButton alloc] initWithFrame:self.bounds];
+	self.button = [[UIImageView alloc] initWithFrame:self.bounds];
 	[self addSubview:self.button];
 	self.button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
 	// Gestures
-	UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
-	[self.button addGestureRecognizer:longPress];
 	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapButton:)];
-	[self.button addGestureRecognizer:tap];
+	[self addGestureRecognizer:tap];
+	UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
+	[self addGestureRecognizer:longPress];
+	UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPan:)];
+	[self addGestureRecognizer:pan];
 }
 
 #pragma mark -
-#pragma mark - Responding to Gestures and Touches
+#pragma mark - Responding to Gestures & Touches
 
-
-- (void)didLongPressButton:(UILongPressGestureRecognizer *)sender
-{
-	switch (sender.state) {
-		case UIGestureRecognizerStateBegan:
-			[self displayMenu];
-			break;
-		case UIGestureRecognizerStateChanged:
-			break;
-		case UIGestureRecognizerStateEnded:
-			break;
-		case UIGestureRecognizerStateCancelled:
-		default:
-			[self dismissMenuAnimated:YES];
-			break;
-	}
-}
-
-- (void)didTapButton:(UITapGestureRecognizer *)sender
+- (void)didTapButton:(UIGestureRecognizer *)sender
 {
 	// Only recognizes the ended state.
 	if (sender.state != UIGestureRecognizerStateEnded) return;
@@ -248,27 +232,60 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	}
 }
 
+- (void)didLongPressButton:(UIGestureRecognizer *)sender
+{
+	switch (sender.state) {
+		case UIGestureRecognizerStateBegan:
+			[self displayMenu];
+			break;
+		case UIGestureRecognizerStateChanged:
+			[self didPan:sender];
+			break;
+		case UIGestureRecognizerStateEnded:
+			[self didPan:sender];
+			break;
+		case UIGestureRecognizerStateCancelled:
+		default:
+			[self dismissMenuAnimated:YES];
+			break;
+	}
+}
+
+- (void)didPan:(UIGestureRecognizer *)sender
+{
+	switch (sender.state) {
+		case UIGestureRecognizerStateBegan:
+		case UIGestureRecognizerStateChanged: {
+			CGPoint point = [sender locationInView:self];
+			NSLog(@"%@", NSStringFromCGPoint(point));
+		} break;
+		case UIGestureRecognizerStateEnded:
+			break;
+		case UIGestureRecognizerStateCancelled:
+		default:
+			break;
+	}
+}
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+	CGPoint convertedPoint = [self.radialMenu convertPoint:point fromView:self];
+	return [self.radialMenu pointInside:convertedPoint withEvent:event];
+}
+
 #pragma mark -
 #pragma mark Configuring the Main Button Presentation
 
 - (void)setImage:(UIImage *)image forState:(UIControlState)state
 {
-	[_button setImage:image forState:state];
+	_button.image = image;
+//	[_button setImage:image forState:state];
 }
 
 - (UIImage *)imageForState:(UIControlState)state
 {
-	return [_button imageForState:state];
-}
-
-- (void)setImageEdgeInsets:(UIEdgeInsets)imageEdgeInsets
-{
-	_button.imageEdgeInsets = imageEdgeInsets;
-}
-
-- (UIEdgeInsets)imageEdgeInsets
-{
-	return _button.imageEdgeInsets;
+	return _button.image;
+//	return [_button imageForState:state];
 }
 
 #pragma mark -
