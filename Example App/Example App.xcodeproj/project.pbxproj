@@ -14,6 +14,7 @@
 		C909C7D519480AFC00080438 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C909C7D419480AFC00080438 /* Images.xcassets */; };
 		C909C7E119480AFC00080438 /* Example_AppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C7E019480AFC00080438 /* Example_AppTests.m */; };
 		C909C7EC19480CA600080438 /* MTZRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C7EB19480CA600080438 /* MTZRadialMenu.m */; };
+		C909C7F019483B9A00080438 /* MTZCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C7EF19483B9A00080438 /* MTZCircleView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +42,8 @@
 		C909C7E019480AFC00080438 /* Example_AppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example_AppTests.m; sourceTree = "<group>"; };
 		C909C7EA19480CA600080438 /* MTZRadialMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTZRadialMenu.h; path = ../../Classes/MTZRadialMenu.h; sourceTree = "<group>"; };
 		C909C7EB19480CA600080438 /* MTZRadialMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTZRadialMenu.m; path = ../../Classes/MTZRadialMenu.m; sourceTree = "<group>"; };
+		C909C7EE19483B9A00080438 /* MTZCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTZCircleView.h; path = ../../Classes/MTZCircleView/MTZCircleView.h; sourceTree = "<group>"; };
+		C909C7EF19483B9A00080438 /* MTZCircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTZCircleView.m; path = ../../Classes/MTZCircleView/MTZCircleView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +128,8 @@
 			children = (
 				C909C7EA19480CA600080438 /* MTZRadialMenu.h */,
 				C909C7EB19480CA600080438 /* MTZRadialMenu.m */,
+				C909C7EE19483B9A00080438 /* MTZCircleView.h */,
+				C909C7EF19483B9A00080438 /* MTZCircleView.m */,
 			);
 			name = MTZRadialMenu;
 			sourceTree = "<group>";
@@ -231,6 +236,7 @@
 				C909C7D019480AFC00080438 /* ViewController.m in Sources */,
 				C909C7CD19480AFC00080438 /* AppDelegate.m in Sources */,
 				C909C7CA19480AFC00080438 /* main.m in Sources */,
+				C909C7F019483B9A00080438 /* MTZCircleView.m in Sources */,
 				C909C7EC19480CA600080438 /* MTZRadialMenu.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

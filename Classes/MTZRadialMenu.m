@@ -7,6 +7,55 @@
 
 #import "MTZRadialMenu.h"
 
+#import "MTZCircleView.h"
+
+@interface MTZAction ()
+
+///
+@property (nonatomic, getter=isStandardType) BOOL standardType;
+
+///
+@property (nonatomic) MTZActionType type;
+
+///
+@property (nonatomic, copy) UIImage *image;
+
+///
+@property (nonatomic, copy) UIImage *highlightedImage;
+
+///
+@property (nonatomic, weak) void (^handler)(MTZAction *);
+
+@end
+
+@implementation MTZAction
+
+#pragma mark Creating an Action
+
++ (instancetype)actionOfType:(MTZActionType)type handler:(void (^)(MTZAction *action))handler
+{
+	MTZAction *action = [[MTZAction alloc] init];
+	action.standardType = YES;
+	action.type = type;
+	action.handler = handler;
+	return action;
+}
+
++ (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZAction *action))handler
+{
+	MTZAction *action = [[MTZAction alloc] init];
+	action.standardType = NO;
+	action.image = image;
+	action.highlightedImage = highlightedImage;
+	action.handler = handler;
+	return action;
+}
+
+#pragma mark -
+
+@end
+
+
 /// A simple description string for a given location.
 NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 {
@@ -66,6 +115,16 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	return self;
 }
 
++ (UIButton *)newActionButton
+{
+	UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+	
+	// Hidden by default.
+	button.hidden = YES;
+	
+	return button;
+}
+
 - (void)__MTZRadialMenuSetup
 {
 	// The radial menu will extend beyond the bounds of the original button.
@@ -78,20 +137,43 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	// Radial menu
 	self.radialMenu = [[UIView alloc] init];
 	[self addSubview:self.radialMenu];
-	self.radialMenu.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.31f];
 	self.radialMenu.clipsToBounds = YES;
 	[self setRadialMenuRadius:1];
+	UIImageView *radialMenuBackground = [[UIImageView alloc] initWithFrame:self.radialMenu.bounds];
+	radialMenuBackground.image = [UIImage imageNamed:@"MenuBackground"];
+	radialMenuBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	[self.radialMenu addSubview:radialMenuBackground];
 	
 	// Action buttons
-//	self.actionButtons = [[NSMutableDictionary alloc] initWithCapacity:3];
-//	UIButton *actionButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-//	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationTop)] = ;
-//	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationLeft)] = ;
-//	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationRight)] = ;
-//	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationBottom)] = ;
+	self.actionButtons = [[NSMutableDictionary alloc] initWithCapacity:4];
+	
+	// Top
+	UIButton *topButton = [MTZRadialMenu newActionButton];
+	[self.radialMenu addSubview:topButton];
+	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationTop)] = topButton;
+	// Left
+	UIButton *leftButton = [MTZRadialMenu newActionButton];
+	[self.radialMenu addSubview:leftButton];
+	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationLeft)] = leftButton;
+	// Right
+	UIButton *rightButton = [MTZRadialMenu newActionButton];
+	[self.radialMenu addSubview:rightButton];
+	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationRight)] = rightButton;
+	// Bottom
+	UIButton *bottomButton = [MTZRadialMenu newActionButton];
+	[self.radialMenu addSubview:bottomButton];
+	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationBottom)] = bottomButton;
+	
+	// Layout
+	NSDictionary *actionButtonViewsDictionary = NSDictionaryOfVariableBindings(topButton, leftButton, rightButton, bottomButton);
+	NSDictionary *metrics = @{@"padding": @(8)};
+	[self.radialMenu addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(padding)-[topButton]" options:NSLayoutFormatAlignAllCenterX metrics:metrics views:actionButtonViewsDictionary]];
+	[self.radialMenu addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(padding)-[leftButton]" options:NSLayoutFormatAlignAllCenterY metrics:metrics views:actionButtonViewsDictionary]];
+	[self.radialMenu addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[rightButton]-(padding)-|" options:NSLayoutFormatAlignAllCenterY metrics:metrics views:actionButtonViewsDictionary]];
+	[self.radialMenu addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[bottomButton]-(padding)-|" options:NSLayoutFormatAlignAllCenterX metrics:metrics views:actionButtonViewsDictionary]];
 	
 	// Main button
-	self.button = [[UIButton alloc] initWithFrame:self.frame];
+	self.button = [[UIButton alloc] initWithFrame:self.bounds];
 	[self addSubview:self.button];
 	self.button.translatesAutoresizingMaskIntoConstraints = NO;
 	
@@ -109,6 +191,7 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 
 #pragma mark -
 #pragma mark - Responding to Gestures and Touches
+
 
 - (void)didLongPressButton:(UILongPressGestureRecognizer *)sender
 {
@@ -170,10 +253,27 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 /// @param location The location on the radial menu to position this action.
 - (void)setAction:(MTZAction *)action forLocation:(MTZRadialMenuLocation)location
 {
-	self.actions[descriptionStringForLocation(location)] = action;
-	//
-	//
-	//
+	NSString *locationKey = descriptionStringForLocation(location);
+	UIButton *actionButton = self.actionButtons[locationKey];
+	
+	if ( !action ) {
+		[self.actions removeObjectForKey:locationKey];
+		actionButton.hidden = YES;
+	} else {
+		self.actions[locationKey] = action;
+		actionButton.hidden = NO;
+	}
+	
+	UIImage *image = nil;
+	UIImage *highlightedImage = nil;
+	if ( action.isStandardType ) {
+		// TODO: Look up standard graphic resources for type.
+	} else {
+		image = action.image;
+		highlightedImage = action.highlightedImage;
+	}
+	[actionButton setImage:image forState:UIControlStateNormal];
+	[actionButton setImage:highlightedImage forState:UIControlStateHighlighted];
 }
 
 /// Returns the actino for a particular location on the receiving radial menu.
@@ -189,13 +289,14 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 {
 	if ( self.menuVisible ) return;
 	
-	[UIView animateWithDuration:0.3
+	[UIView animateWithDuration:0.52
 						  delay:0
-		 usingSpringWithDamping:1
-		  initialSpringVelocity:0.15
+		 usingSpringWithDamping:0.7
+		  initialSpringVelocity:0.35
 						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
 					 animations:^{
 						 [self setRadialMenuRadius:105];
+						 self.radialMenu.alpha = 1.0f;
 					 }
 					 completion:^(BOOL finished) {
 						 self.menuVisible = YES;
@@ -206,13 +307,14 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 {
 	if ( !self.menuVisible ) return;
 	
-	[UIView animateWithDuration:animated ? 0.25 : 0
+	[UIView animateWithDuration:animated ? 0.35 : 0
 						  delay:0
 		 usingSpringWithDamping:1
-		  initialSpringVelocity:0.25
+		  initialSpringVelocity:0.6
 						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
 					 animations:^{
 						 [self setRadialMenuRadius:1];
+						 self.radialMenu.alpha = 0.0f;
 					 }
 					 completion:^(BOOL finished) {
 						 self.menuVisible = NO;
@@ -221,8 +323,7 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 
 - (void)setRadialMenuRadius:(CGFloat)radius
 {
-	self.radialMenu.frame = CGRectMake((self.frame.size.width/2)-radius, (self.frame.size.height/2)-radius, 2*radius, 2*radius);
-	self.radialMenu.layer.cornerRadius = radius;
+	self.radialMenu.frame = CGRectMake((self.bounds.size.width/2)-radius, (self.bounds.size.height/2)-radius, 2*radius, 2*radius);
 }
 
 @end
