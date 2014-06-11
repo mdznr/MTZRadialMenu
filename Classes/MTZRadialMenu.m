@@ -118,10 +118,8 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 + (UIButton *)newActionButton
 {
 	UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-	
-	// Hidden by default.
-	button.hidden = YES;
-	
+//	button.translatesAutoresizingMaskIntoConstraints = NO;
+	button.hidden = YES; // Hidden by default.
 	return button;
 }
 
@@ -139,6 +137,7 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	[self addSubview:self.radialMenu];
 	self.radialMenu.clipsToBounds = YES;
 	[self setRadialMenuRadius:1];
+	
 	UIImageView *radialMenuBackground = [[UIImageView alloc] initWithFrame:self.radialMenu.bounds];
 	radialMenuBackground.image = [UIImage imageNamed:@"MenuBackground"];
 	radialMenuBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -147,46 +146,60 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	// Action buttons
 	self.actionButtons = [[NSMutableDictionary alloc] initWithCapacity:4];
 	
-	// Top
+	// Top button
 	UIButton *topButton = [MTZRadialMenu newActionButton];
 	[self.radialMenu addSubview:topButton];
 	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationTop)] = topButton;
-	// Left
+	{
+		CGRect frame = topButton.frame;
+		frame.origin.y = 8;
+		topButton.frame = frame;
+	}
+	topButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+	
+	// Left button
 	UIButton *leftButton = [MTZRadialMenu newActionButton];
 	[self.radialMenu addSubview:leftButton];
 	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationLeft)] = leftButton;
-	// Right
+	{
+		CGRect frame = leftButton.frame;
+		frame.origin.x = 8;
+		leftButton.frame = frame;
+	}
+	leftButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+	
+	// Right button
 	UIButton *rightButton = [MTZRadialMenu newActionButton];
 	[self.radialMenu addSubview:rightButton];
 	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationRight)] = rightButton;
-	// Bottom
+	{
+		CGRect frame = rightButton.frame;
+		frame.origin.x = self.radialMenu.bounds.size.width - 8 - frame.size.width;
+		rightButton.frame = frame;
+	}
+	rightButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+	
+	// Bottom button
 	UIButton *bottomButton = [MTZRadialMenu newActionButton];
 	[self.radialMenu addSubview:bottomButton];
 	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationBottom)] = bottomButton;
-	
-	// Layout
-	NSDictionary *actionButtonViewsDictionary = NSDictionaryOfVariableBindings(topButton, leftButton, rightButton, bottomButton);
-	NSDictionary *metrics = @{@"padding": @(8)};
-	[self.radialMenu addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(padding)-[topButton]" options:NSLayoutFormatAlignAllCenterX metrics:metrics views:actionButtonViewsDictionary]];
-	[self.radialMenu addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(padding)-[leftButton]" options:NSLayoutFormatAlignAllCenterY metrics:metrics views:actionButtonViewsDictionary]];
-	[self.radialMenu addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[rightButton]-(padding)-|" options:NSLayoutFormatAlignAllCenterY metrics:metrics views:actionButtonViewsDictionary]];
-	[self.radialMenu addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[bottomButton]-(padding)-|" options:NSLayoutFormatAlignAllCenterX metrics:metrics views:actionButtonViewsDictionary]];
+	{
+		CGRect frame = bottomButton.frame;
+		frame.origin.y = self.radialMenu.bounds.size.height - 8 - frame.size.height;
+		bottomButton.frame = frame;
+	}
+	bottomButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 	
 	// Main button
 	self.button = [[UIButton alloc] initWithFrame:self.bounds];
 	[self addSubview:self.button];
-	self.button.translatesAutoresizingMaskIntoConstraints = NO;
+	self.button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
 	// Gestures
 	UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
 	[self.button addGestureRecognizer:longPress];
 	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapButton:)];
 	[self.button addGestureRecognizer:tap];
-	
-	// Layout
-	NSDictionary *views = NSDictionaryOfVariableBindings(_button);
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_button]|" options:0 metrics:nil views:views]];
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_button]|" options:0 metrics:nil views:views]];
 }
 
 #pragma mark -
