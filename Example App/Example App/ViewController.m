@@ -34,6 +34,8 @@
 													 NSLog(@"My second custom action was handled!");
 												 }];
 	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationLeft];
+	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationRight];
+	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationBottom];
 }
 
 @end
