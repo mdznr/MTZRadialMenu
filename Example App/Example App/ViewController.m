@@ -16,7 +16,11 @@
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 	
-	MTZRadialMenu *radialMenu = [[MTZRadialMenu alloc] initWithFrame:CGRectMake(145, 145, 30, 30)];
+	CGRect middle = CGRectMake(145, 145, 30, 30);
+	CGRect right = CGRectMake(278, 276, 30, 30);
+	CGRect left = CGRectMake(12, 276, 30, 30);
+	
+	MTZRadialMenu *radialMenu = [[MTZRadialMenu alloc] initWithFrame:right];
 	[radialMenu setImage:[UIImage imageNamed:@"Circle"] forState:UIControlStateNormal];
 	[radialMenu setImage:[UIImage imageNamed:@"CircleHighlighted"] forState:UIControlStateSelected];
 	[self.view addSubview:radialMenu];
@@ -34,7 +38,7 @@
 													 NSLog(@"My second custom action was handled!");
 												 }];
 	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationLeft];
-	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationRight];
+//	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationRight];
 	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationBottom];
 }
 
