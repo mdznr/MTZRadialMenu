@@ -7,7 +7,7 @@
 
 #import "MTZRadialMenu.h"
 
-#import "MTZCircleView.h"
+#import <UIKit/UIGestureRecognizerSubclass.h>
 
 #define RADIALMENU_OPEN_ANIMATION_DURATION 0.52
 #define RADIALMENU_OPEN_ANIMATION_DAMPING 0.7
@@ -16,6 +16,13 @@
 #define RADIALMENU_CLOSE_ANIMATION_DURATION 0.4
 #define RADIALMENU_CLOSE_ANIMATION_DAMPING 1
 #define RADIALMENU_CLOSE_ANIMATION_INITIAL_VELOCITY 0.4
+
+#define RADIALMENU_BUTTON_RADIUS 15
+#define RADIALMENU_RADIUS_CONTRACTED 15
+#define RADIALMENU_RADIUS_NORMAL 105
+#define RADIALMENU_RADIUS_EXPANDED 120
+
+#define RADIALMENU_BUTTON_PADDING 8
 
 @interface MTZAction ()
 
@@ -59,10 +66,48 @@
 	return action;
 }
 
-#pragma mark -
+@end
+
+
+@interface MTZTouchGestureRecognizer : UIGestureRecognizer
+@end
+
+@implementation MTZTouchGestureRecognizer
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	if ( self.state == UIGestureRecognizerStatePossible ) {
+		self.state = UIGestureRecognizerStateBegan;
+	}
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	self.state = UIGestureRecognizerStateChanged;
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	self.state = UIGestureRecognizerStateEnded;
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	self.state = UIGestureRecognizerStateCancelled;
+}
 
 @end
 
+
+/// The state of a radial menu.
+typedef enum {
+	// Contracted is the smallest size, used when hidden.
+	MTZRadialMenuStateContracted,
+	// Normal is the state while the menu is visible and not being interacted with.
+	MTZRadialMenuStateNormal,
+	// Expanding is the state while the menu is being interacted with and expanded.
+	MTZRadialMenuStateExpanding
+} MTZRadialMenuState;
 
 /// A simple description string for a given location.
 NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
@@ -103,6 +148,15 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 /// A Boolean value that indicates whether the menu is currently animating.
 @property (nonatomic, getter=isMenuAnimating) BOOL menuAnimating;
 
+/// The radius of the radial menu.
+@property (nonatomic) CGFloat menuRadius;
+
+/// The state of the menu.
+@property (nonatomic) MTZRadialMenuState menuState;
+
+@property (strong, nonatomic) UILongPressGestureRecognizer *longPressGestureRecognizer;
+@property (strong, nonatomic) MTZTouchGestureRecognizer *touchGestureRecognizer;
+
 @end
 
 
@@ -122,7 +176,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 - (instancetype)init
 {
-	self = [super initWithFrame:CGRectMake(0, 0, 30, 30)];
+	self = [super initWithFrame:CGRectMake(0, 0, 2*RADIALMENU_BUTTON_RADIUS, 2*RADIALMENU_BUTTON_RADIUS)];
 	if (self) {
 		// Initialization code
 		[self __MTZRadialMenuSetup];
@@ -132,8 +186,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 + (UIButton *)newActionButton
 {
-	UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-//	button.translatesAutoresizingMaskIntoConstraints = NO;
+	UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 2*RADIALMENU_BUTTON_RADIUS, 2*RADIALMENU_BUTTON_RADIUS)];
 	button.hidden = YES; // Hidden by default.
 	return button;
 }
@@ -147,13 +200,14 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.actions = [[NSMutableDictionary alloc] initWithCapacity:3];
 	self.menuVisible = NO;
 	self.menuAnimating = NO;
+	self.menuState = MTZRadialMenuStateContracted;
 	
 	// Radial menu
 	self.radialMenu = [[UIView alloc] init];
 	[self addSubview:self.radialMenu];
 	self.radialMenu.clipsToBounds = YES;
 	self.radialMenu.alpha = 0.0f;
-	[self setRadialMenuRadius:15];
+	self.menuRadius = RADIALMENU_RADIUS_CONTRACTED;
 	
 	UIImageView *radialMenuBackground = [[UIImageView alloc] initWithFrame:self.radialMenu.bounds];
 	radialMenuBackground.image = [UIImage imageNamed:@"MenuBackground"];
@@ -169,7 +223,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationTop)] = topButton;
 	{
 		CGRect frame = topButton.frame;
-		frame.origin.y = 8;
+		frame.origin.y = RADIALMENU_BUTTON_PADDING;
 		topButton.frame = frame;
 	}
 	topButton.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
@@ -180,7 +234,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationLeft)] = leftButton;
 	{
 		CGRect frame = leftButton.frame;
-		frame.origin.x = 8;
+		frame.origin.x = RADIALMENU_BUTTON_PADDING;
 		leftButton.frame = frame;
 	}
 	leftButton.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -191,7 +245,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationRight)] = rightButton;
 	{
 		CGRect frame = rightButton.frame;
-		frame.origin.x = self.radialMenu.bounds.size.width - 8 - frame.size.width;
+		frame.origin.x = self.radialMenu.bounds.size.width - RADIALMENU_BUTTON_PADDING - frame.size.width;
 		rightButton.frame = frame;
 	}
 	rightButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -202,7 +256,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationBottom)] = bottomButton;
 	{
 		CGRect frame = bottomButton.frame;
-		frame.origin.y = self.radialMenu.bounds.size.height - 8 - frame.size.height;
+		frame.origin.y = self.radialMenu.bounds.size.height - RADIALMENU_BUTTON_PADDING - frame.size.height;
 		bottomButton.frame = frame;
 	}
 	bottomButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
@@ -213,16 +267,30 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
 	// Gestures
-	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapButton:)];
-	[self addGestureRecognizer:tap];
-	UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
-	[self addGestureRecognizer:longPress];
-	UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPan:)];
-	[self addGestureRecognizer:pan];
+//	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapButton:)];
+//	[self addGestureRecognizer:tap];
+	self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
+	[self.button addGestureRecognizer:self.longPressGestureRecognizer];
+//	UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPan:)];
+//	pan.maximumNumberOfTouches = 1;
+//	[self addGestureRecognizer:pan];
+	self.touchGestureRecognizer = [[MTZTouchGestureRecognizer alloc] initWithTarget:self action:@selector(didPan:)];
+	self.touchGestureRecognizer.enabled = NO;
+	[self addGestureRecognizer:self.touchGestureRecognizer];
 }
 
-#pragma mark -
-#pragma mark - Responding to Gestures & Touches
+#pragma mark Properties
+
+- (void)setMenuRadius:(CGFloat)radius
+{
+	_menuRadius = radius;
+	self.radialMenu.frame = CGRectMake((self.bounds.size.width/2) - _menuRadius,
+									   (self.bounds.size.height/2) - _menuRadius,
+									   2 * _menuRadius,
+									   2 * _menuRadius);
+}
+
+#pragma mark Responding to Gestures & Touches
 
 - (void)didTapButton:(UIGestureRecognizer *)sender
 {
@@ -247,6 +315,8 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			break;
 		case UIGestureRecognizerStateEnded:
 			[self didPan:sender];
+			self.touchGestureRecognizer.enabled = YES;
+			self.longPressGestureRecognizer.enabled = NO;
 			break;
 		case UIGestureRecognizerStateCancelled:
 		default:
@@ -257,21 +327,83 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 - (void)didPan:(UIGestureRecognizer *)sender
 {
+	// Do not do anything if the menu isn't visible.
+	if ( !self.menuVisible ) return;
+	
+	CGPoint point = [sender locationInView:self.radialMenu];
+	CGFloat distance = [self distanceOfPointFromCenter:point];
+	
 	switch (sender.state) {
 		case UIGestureRecognizerStateBegan:
 		case UIGestureRecognizerStateChanged: {
-			CGPoint point = [sender locationInView:self];
-			CGPoint convertedPoint = [self.radialMenu convertPoint:point fromView:self];
-			CGFloat distance = [self distanceOfPointFromCenter:convertedPoint];
-			NSLog(@"%f", distance);
+			if ( distance >= 180 ) {
+				if ( self.menuState != MTZRadialMenuStateNormal ) {
+					[self returnMenuToNormalRadius];
+				}
+			} else {
+				CGFloat radius = radiusForDistance(distance);
+				if ( self.menuState == MTZRadialMenuStateExpanding ) {
+					self.menuRadius = radius;
+				} else {
+					self.menuState = MTZRadialMenuStateExpanding;
+					[UIView animateWithDuration:0.3
+										  delay:0
+						 usingSpringWithDamping:1.0
+						  initialSpringVelocity:0.3
+										options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
+									 animations:^{
+										 self.menuRadius = radius;
+									 }
+									 completion:^(BOOL finished) {}];
+				}
+			}
 		} break;
 		case UIGestureRecognizerStateEnded:
 			// Released touch, see if it is on an action.
+			if ( NO ) {
+				// Selected an action
+			} else if ( NO ) {
+				// Left radial menu
+				[self dismissMenuAnimated:YES];
+			} else {
+				// Still on menu, didn't select an action, though.
+				[self returnMenuToNormalRadius];
+			}
 			break;
 		case UIGestureRecognizerStateCancelled:
 		default:
+			[self returnMenuToNormalRadius];
 			break;
 	}
+}
+
+- (void)returnMenuToNormalRadius
+{
+	self.menuState = MTZRadialMenuStateNormal;
+	
+	[UIView animateWithDuration:0.45
+						  delay:0
+		 usingSpringWithDamping:0.6
+		  initialSpringVelocity:0
+						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
+					 animations:^{
+						 self.menuRadius = RADIALMENU_RADIUS_NORMAL;
+					 }
+					 completion:^(BOOL finished) {}];
+}
+
+CGFloat radiusForDistance(CGFloat distance)
+{
+	CGFloat percentage = distance / RADIALMENU_RADIUS_EXPANDED;
+	CGFloat difference = RADIALMENU_RADIUS_EXPANDED - RADIALMENU_RADIUS_NORMAL;
+	CGFloat radius = RADIALMENU_RADIUS_NORMAL + (easingCurveForPercentage(percentage) * difference);
+	return radius;
+}
+
+CGFloat easingCurveForPercentage(CGFloat percentage)
+{
+	// y = x
+	return percentage;
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
@@ -289,7 +421,6 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	return CGPointDistance(point, center);
 }
 
-#pragma mark -
 #pragma mark Configuring the Main Button Presentation
 
 - (void)setImage:(UIImage *)image forState:(UIControlState)state
@@ -312,7 +443,6 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	return self.button.imageEdgeInsets;
 }
 
-#pragma mark -
 #pragma mark Configuring the User Actions
 
 /// Sets the action for a particular location on the receiving radial menu.
@@ -349,7 +479,6 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	return self.actions[descriptionStringForLocation(location)];
 }
 
-#pragma mark -
 #pragma mark Display & Dismissal
 
 - (void)displayMenu
@@ -359,13 +488,14 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.menuAnimating = YES;
 	
 	void (^animations)() = ^void() {
-		[self setRadialMenuRadius:105];
+		self.menuRadius = RADIALMENU_RADIUS_NORMAL;
 		self.radialMenu.alpha = 1.0f;
 	};
 	
 	void (^completion)(BOOL) = ^void(BOOL finished) {
 		if ( finished ) {
 			self.menuVisible = YES;
+			self.menuState = MTZRadialMenuStateNormal;
 			self.menuAnimating = NO;
 		}
 	};
@@ -386,13 +516,14 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.menuAnimating = YES;
 	
 	void (^animations)() = ^void() {
-		[self setRadialMenuRadius:15];
+		self.menuRadius = RADIALMENU_RADIUS_CONTRACTED;
 		self.radialMenu.alpha = 0.0f;
 	};
 	
 	void (^completion)(BOOL) = ^void(BOOL finished) {
 		if ( finished ) {
 			self.menuVisible = NO;
+			self.menuState = MTZRadialMenuStateContracted;
 			self.menuAnimating = NO;
 		}
 	};
@@ -406,12 +537,13 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 					 completion:completion];
 }
 
-- (void)setRadialMenuRadius:(CGFloat)radius
+- (void)setMenuVisible:(BOOL)menuVisible
 {
-	self.radialMenu.frame = CGRectMake((self.bounds.size.width/2)-radius,
-									   (self.bounds.size.height/2)-radius,
-									   2*radius,
-									   2*radius);
+	_menuVisible = menuVisible;
+	if ( !_menuVisible ) {
+		self.touchGestureRecognizer.enabled = NO;
+		self.longPressGestureRecognizer.enabled = YES;
+	}
 }
 
 @end
