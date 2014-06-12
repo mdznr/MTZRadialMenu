@@ -206,8 +206,8 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	// Data
 	self.actions = [[NSMutableDictionary alloc] initWithCapacity:3];
-	self.menuVisible = NO;
 	self.menuAnimating = NO;
+	self.menuVisible = NO;
 	self.menuState = MTZRadialMenuStateContracted;
 	
 	// Radial menu
@@ -375,8 +375,10 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 - (void)setMenuState:(MTZRadialMenuState)menuState
 {
+	// Only apply if menu state has changed.
 	if ( _menuState == menuState ) return;
 	
+	// Animate changes.
 	switch (_menuState) {
 		// Contracted
 		case MTZRadialMenuStateContracted: {
@@ -400,7 +402,11 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 		} break;
 	}
 	
+	// Update menu state.
 	_menuState = menuState;
+	
+	// Update menu visible.
+	self.menuVisible = _menuState != MTZRadialMenuStateContracted;
 }
 
 - (void)setMenuStateExpandedFromNormal
@@ -453,7 +459,6 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	void (^completion)(BOOL) = ^void(BOOL finished) {
 		if ( finished ) {
-			self.menuVisible = YES;
 			self.menuState = MTZRadialMenuStateNormal;
 			self.menuAnimating = NO;
 		}
@@ -481,7 +486,6 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	void (^completion)(BOOL) = ^void(BOOL finished) {
 		if ( finished ) {
-			self.menuVisible = NO;
 			self.menuState = MTZRadialMenuStateContracted;
 			self.menuAnimating = NO;
 		}
@@ -502,6 +506,9 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	if ( !_menuVisible ) {
 		self.touchGestureRecognizer.enabled = NO;
 		self.longPressGestureRecognizer.enabled = YES;
+//		self.exclusiveTouch = NO;
+	} else {
+//		self.exclusiveTouch = YES;
 	}
 }
 
