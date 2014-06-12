@@ -17,6 +17,14 @@
 #define RADIALMENU_CLOSE_ANIMATION_DAMPING 1
 #define RADIALMENU_CLOSE_ANIMATION_INITIAL_VELOCITY 0.4
 
+#define RADIALMENU_EXPANDING_ANIMATION_DURATION 0.5
+#define RADIALMENU_EXPANDING_ANIMATION_DAMPING 1.0
+#define RADIALMENU_EXPANDING_ANIMATION_INITIAL_VELOCITY 0
+
+#define RADIALMENU_UNEXPANDING_ANIMATION_DURATION 0.3
+#define RADIALMENU_UNEXPANDING_ANIMATION_DAMPING 1.0
+#define RADIALMENU_UNEXPANDING_ANIMATION_INITIAL_VELOCITY 0.3
+
 #define RADIALMENU_BUTTON_RADIUS 15
 #define RADIALMENU_RADIUS_CONTRACTED 15
 #define RADIALMENU_RADIUS_NORMAL 105
@@ -105,8 +113,8 @@ typedef enum {
 	MTZRadialMenuStateContracted,
 	// Normal is the state while the menu is visible and not being interacted with.
 	MTZRadialMenuStateNormal,
-	// Expanding is the state while the menu is being interacted with and expanded.
-	MTZRadialMenuStateExpanding
+	// Expanded is the state while an outer menu item is highlighted.
+	MTZRadialMenuStateExpanded
 } MTZRadialMenuState;
 
 /// A simple description string for a given location.
@@ -279,7 +287,63 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	[self addGestureRecognizer:self.touchGestureRecognizer];
 }
 
-#pragma mark Properties
+#pragma mark Menu State
+
+- (void)setMenuState:(MTZRadialMenuState)menuState
+{
+	if ( _menuState == menuState ) return;
+	
+	switch (_menuState) {
+		// Contracted
+		case MTZRadialMenuStateContracted: {
+			[self displayMenu];
+		} break;
+		// Normal
+		case MTZRadialMenuStateNormal: {
+			if ( menuState == MTZRadialMenuStateContracted ) {
+				[self dismissMenuAnimated:YES];
+			} else {
+				[self setMenuStateExpandedFromNormal];
+			}
+		} break;
+		// Expanded
+		case MTZRadialMenuStateExpanded: {
+			if ( menuState == MTZRadialMenuStateContracted ) {
+				[self dismissMenuAnimated:YES];
+			} else {
+				[self setMenuStateNormalFromExpanded];
+			}
+		} break;
+	}
+	
+	_menuState = menuState;
+}
+
+- (void)setMenuStateExpandedFromNormal
+{
+	[UIView animateWithDuration:RADIALMENU_EXPANDING_ANIMATION_DURATION
+						  delay:0
+		 usingSpringWithDamping:RADIALMENU_EXPANDING_ANIMATION_DAMPING
+		  initialSpringVelocity:RADIALMENU_EXPANDING_ANIMATION_INITIAL_VELOCITY
+						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
+					 animations:^{
+						 self.menuRadius = RADIALMENU_RADIUS_EXPANDED;
+					 }
+					 completion:^(BOOL finished) {}];
+}
+
+- (void)setMenuStateNormalFromExpanded
+{
+	[UIView animateWithDuration:RADIALMENU_UNEXPANDING_ANIMATION_DURATION
+						  delay:0
+		 usingSpringWithDamping:RADIALMENU_UNEXPANDING_ANIMATION_DAMPING
+		  initialSpringVelocity:RADIALMENU_UNEXPANDING_ANIMATION_INITIAL_VELOCITY
+						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
+					 animations:^{
+						 self.menuRadius = RADIALMENU_RADIUS_NORMAL;
+					 }
+					 completion:^(BOOL finished) {}];
+}
 
 - (void)setMenuRadius:(CGFloat)radius
 {
@@ -336,26 +400,11 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	switch (sender.state) {
 		case UIGestureRecognizerStateBegan:
 		case UIGestureRecognizerStateChanged: {
+			// TODO: See what action it's hovering over.
 			if ( distance >= 180 ) {
-				if ( self.menuState != MTZRadialMenuStateNormal ) {
-					[self returnMenuToNormalRadius];
-				}
+				self.menuState = MTZRadialMenuStateNormal;
 			} else {
-				CGFloat radius = radiusForDistance(distance);
-				if ( self.menuState == MTZRadialMenuStateExpanding ) {
-					self.menuRadius = radius;
-				} else {
-					self.menuState = MTZRadialMenuStateExpanding;
-					[UIView animateWithDuration:0.3
-										  delay:0
-						 usingSpringWithDamping:1.0
-						  initialSpringVelocity:0.3
-										options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
-									 animations:^{
-										 self.menuRadius = radius;
-									 }
-									 completion:^(BOOL finished) {}];
-				}
+				self.menuState = MTZRadialMenuStateExpanded;
 			}
 		} break;
 		case UIGestureRecognizerStateEnded:
@@ -363,47 +412,18 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			if ( NO ) {
 				// Selected an action
 			} else if ( NO ) {
-				// Left radial menu
-				[self dismissMenuAnimated:YES];
+				// Outside the radial menu
+				self.menuState = MTZRadialMenuStateContracted;
 			} else {
 				// Still on menu, didn't select an action, though.
-				[self returnMenuToNormalRadius];
+				self.menuState = MTZRadialMenuStateNormal;
 			}
 			break;
 		case UIGestureRecognizerStateCancelled:
 		default:
-			[self returnMenuToNormalRadius];
+			self.menuState = MTZRadialMenuStateNormal;
 			break;
 	}
-}
-
-- (void)returnMenuToNormalRadius
-{
-	self.menuState = MTZRadialMenuStateNormal;
-	
-	[UIView animateWithDuration:0.45
-						  delay:0
-		 usingSpringWithDamping:0.6
-		  initialSpringVelocity:0
-						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
-					 animations:^{
-						 self.menuRadius = RADIALMENU_RADIUS_NORMAL;
-					 }
-					 completion:^(BOOL finished) {}];
-}
-
-CGFloat radiusForDistance(CGFloat distance)
-{
-	CGFloat percentage = distance / RADIALMENU_RADIUS_EXPANDED;
-	CGFloat difference = RADIALMENU_RADIUS_EXPANDED - RADIALMENU_RADIUS_NORMAL;
-	CGFloat radius = RADIALMENU_RADIUS_NORMAL + (easingCurveForPercentage(percentage) * difference);
-	return radius;
-}
-
-CGFloat easingCurveForPercentage(CGFloat percentage)
-{
-	// y = x
-	return percentage;
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
