@@ -275,16 +275,100 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
 	// Gestures
-//	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapButton:)];
-//	[self addGestureRecognizer:tap];
 	self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
 	[self.button addGestureRecognizer:self.longPressGestureRecognizer];
-//	UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didPan:)];
-//	pan.maximumNumberOfTouches = 1;
-//	[self addGestureRecognizer:pan];
 	self.touchGestureRecognizer = [[MTZTouchGestureRecognizer alloc] initWithTarget:self action:@selector(didPan:)];
 	self.touchGestureRecognizer.enabled = NO;
 	[self addGestureRecognizer:self.touchGestureRecognizer];
+}
+
+#pragma mark Responding to Gestures & Touches
+
+- (void)didTapButton:(UIGestureRecognizer *)sender
+{
+	// Only recognizes the ended state.
+	if (sender.state != UIGestureRecognizerStateEnded) return;
+	
+	if ( self.menuVisible || self.menuAnimating ) {
+		[self dismissMenuAnimated:YES];
+	} else {
+		// TODO: Perform regular tap action.
+	}
+}
+
+- (void)didLongPressButton:(UIGestureRecognizer *)sender
+{
+	switch (sender.state) {
+		case UIGestureRecognizerStateBegan:
+			[self displayMenu];
+			break;
+		case UIGestureRecognizerStateChanged:
+			[self didPan:sender];
+			break;
+		case UIGestureRecognizerStateEnded:
+			[self didPan:sender];
+			self.touchGestureRecognizer.enabled = YES;
+			self.longPressGestureRecognizer.enabled = NO;
+			break;
+		case UIGestureRecognizerStateCancelled:
+			[self dismissMenuAnimated:YES];
+			break;
+		default:
+			break;
+	}
+}
+
+- (void)didPan:(UIGestureRecognizer *)sender
+{
+	// Do not do anything if the menu isn't visible.
+	if ( !self.menuVisible ) return;
+	
+	CGPoint point = [sender locationInView:self.radialMenu];
+	CGFloat distance = [self distanceOfPointFromCenter:point];
+	
+	switch (sender.state) {
+		case UIGestureRecognizerStateBegan:
+		case UIGestureRecognizerStateChanged: {
+			// TODO: See what action it's hovering over.
+			if ( distance < 180 ) {
+				self.menuState = MTZRadialMenuStateExpanded;
+			} else {
+				self.menuState = MTZRadialMenuStateNormal;
+			}
+		} break;
+		case UIGestureRecognizerStateEnded:
+			// Released touch, see if it is on an action.
+			if ( NO ) {
+				// Selected an action
+			} else if ( distance < 180) {
+				// Still on menu, didn't select an action, though.
+				self.menuState = MTZRadialMenuStateNormal;
+			} else {
+				// Outside the radial menu.
+				self.menuState = MTZRadialMenuStateContracted;
+			}
+			break;
+		case UIGestureRecognizerStateCancelled:
+			self.menuState = MTZRadialMenuStateNormal;
+			break;
+		default:
+			break;
+	}
+}
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+	CGPoint convertedPoint = [self.radialMenu convertPoint:point fromView:self];
+	return [self.radialMenu pointInside:convertedPoint withEvent:event];
+}
+
+/// Find the distance of a point from the center of the radial menu.
+/// @param point The point in terms of the radial menu's bounds.
+/// @return The distance of the point to the center of the radial menu.
+- (CGFloat)distanceOfPointFromCenter:(CGPoint)point
+{
+	CGPoint center = CGPointMake(self.radialMenu.bounds.size.width/2, self.radialMenu.bounds.size.height/2);
+	return CGPointDistance(point, center);
 }
 
 #pragma mark Menu State
@@ -354,151 +438,6 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 									   2 * _menuRadius);
 }
 
-#pragma mark Responding to Gestures & Touches
-
-- (void)didTapButton:(UIGestureRecognizer *)sender
-{
-	// Only recognizes the ended state.
-	if (sender.state != UIGestureRecognizerStateEnded) return;
-	
-	if ( self.menuVisible || self.menuAnimating ) {
-		[self dismissMenuAnimated:YES];
-	} else {
-		// TODO: Perform regular tap action.
-	}
-}
-
-- (void)didLongPressButton:(UIGestureRecognizer *)sender
-{
-	switch (sender.state) {
-		case UIGestureRecognizerStateBegan:
-			[self displayMenu];
-			break;
-		case UIGestureRecognizerStateChanged:
-			[self didPan:sender];
-			break;
-		case UIGestureRecognizerStateEnded:
-			[self didPan:sender];
-			self.touchGestureRecognizer.enabled = YES;
-			self.longPressGestureRecognizer.enabled = NO;
-			break;
-		case UIGestureRecognizerStateCancelled:
-		default:
-			[self dismissMenuAnimated:YES];
-			break;
-	}
-}
-
-- (void)didPan:(UIGestureRecognizer *)sender
-{
-	// Do not do anything if the menu isn't visible.
-	if ( !self.menuVisible ) return;
-	
-	CGPoint point = [sender locationInView:self.radialMenu];
-	CGFloat distance = [self distanceOfPointFromCenter:point];
-	
-	switch (sender.state) {
-		case UIGestureRecognizerStateBegan:
-		case UIGestureRecognizerStateChanged: {
-			// TODO: See what action it's hovering over.
-			if ( distance >= 180 ) {
-				self.menuState = MTZRadialMenuStateNormal;
-			} else {
-				self.menuState = MTZRadialMenuStateExpanded;
-			}
-		} break;
-		case UIGestureRecognizerStateEnded:
-			// Released touch, see if it is on an action.
-			if ( NO ) {
-				// Selected an action
-			} else if ( NO ) {
-				// Outside the radial menu
-				self.menuState = MTZRadialMenuStateContracted;
-			} else {
-				// Still on menu, didn't select an action, though.
-				self.menuState = MTZRadialMenuStateNormal;
-			}
-			break;
-		case UIGestureRecognizerStateCancelled:
-		default:
-			self.menuState = MTZRadialMenuStateNormal;
-			break;
-	}
-}
-
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
-{
-	CGPoint convertedPoint = [self.radialMenu convertPoint:point fromView:self];
-	return [self.radialMenu pointInside:convertedPoint withEvent:event];
-}
-
-/// Find the distance of a point from the center of the radial menu.
-/// @param point The point in terms of the radial menu's bounds.
-/// @return The distance of the point to the center of the radial menu.
-- (CGFloat)distanceOfPointFromCenter:(CGPoint)point
-{
-	CGPoint center = CGPointMake(self.radialMenu.bounds.size.width/2, self.radialMenu.bounds.size.height/2);
-	return CGPointDistance(point, center);
-}
-
-#pragma mark Configuring the Main Button Presentation
-
-- (void)setImage:(UIImage *)image forState:(UIControlState)state
-{
-	[_button setImage:image forState:state];
-}
-
-- (UIImage *)imageForState:(UIControlState)state
-{
-	return [_button imageForState:state];
-}
-
-- (void)setImageEdgeInsets:(UIEdgeInsets)insets
-{
-	self.button.imageEdgeInsets = insets;
-}
-
-- (UIEdgeInsets)imageEdgeInsets
-{
-	return self.button.imageEdgeInsets;
-}
-
-#pragma mark Configuring the User Actions
-
-/// Sets the action for a particular location on the receiving radial menu.
-/// @param action The action to add to the radial menu.
-/// @param location The location on the radial menu to position this action.
-- (void)setAction:(MTZAction *)action forLocation:(MTZRadialMenuLocation)location
-{
-	NSString *locationKey = descriptionStringForLocation(location);
-	UIButton *actionButton = self.actionButtons[locationKey];
-	
-	if ( !action ) {
-		[self.actions removeObjectForKey:locationKey];
-		actionButton.hidden = YES;
-	} else {
-		self.actions[locationKey] = action;
-		actionButton.hidden = NO;
-	}
-	
-	UIImage *image = nil;
-	UIImage *highlightedImage = nil;
-	if ( action.isStandardType ) {
-		// TODO: Look up standard graphic resources for type.
-	} else {
-		image = action.image;
-		highlightedImage = action.highlightedImage;
-	}
-	[actionButton setImage:image forState:UIControlStateNormal];
-	[actionButton setImage:highlightedImage forState:UIControlStateHighlighted];
-}
-
-/// Returns the actino for a particular location on the receiving radial menu.
-- (MTZAction *)actionForLocation:(MTZRadialMenuLocation)location
-{
-	return self.actions[descriptionStringForLocation(location)];
-}
-
 #pragma mark Display & Dismissal
 
 - (void)displayMenu
@@ -564,6 +503,64 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 		self.touchGestureRecognizer.enabled = NO;
 		self.longPressGestureRecognizer.enabled = YES;
 	}
+}
+
+#pragma mark Configuring the Main Button Presentation
+
+- (void)setImage:(UIImage *)image forState:(UIControlState)state
+{
+	[_button setImage:image forState:state];
+}
+
+- (UIImage *)imageForState:(UIControlState)state
+{
+	return [_button imageForState:state];
+}
+
+- (void)setImageEdgeInsets:(UIEdgeInsets)insets
+{
+	self.button.imageEdgeInsets = insets;
+}
+
+- (UIEdgeInsets)imageEdgeInsets
+{
+	return self.button.imageEdgeInsets;
+}
+
+#pragma mark Configuring the User Actions
+
+/// Sets the action for a particular location on the receiving radial menu.
+/// @param action The action to add to the radial menu.
+/// @param location The location on the radial menu to position this action.
+- (void)setAction:(MTZAction *)action forLocation:(MTZRadialMenuLocation)location
+{
+	NSString *locationKey = descriptionStringForLocation(location);
+	UIButton *actionButton = self.actionButtons[locationKey];
+	
+	if ( !action ) {
+		[self.actions removeObjectForKey:locationKey];
+		actionButton.hidden = YES;
+	} else {
+		self.actions[locationKey] = action;
+		actionButton.hidden = NO;
+	}
+	
+	UIImage *image = nil;
+	UIImage *highlightedImage = nil;
+	if ( action.isStandardType ) {
+		// TODO: Look up standard graphic resources for type.
+	} else {
+		image = action.image;
+		highlightedImage = action.highlightedImage;
+	}
+	[actionButton setImage:image forState:UIControlStateNormal];
+	[actionButton setImage:highlightedImage forState:UIControlStateHighlighted];
+}
+
+/// Returns the actino for a particular location on the receiving radial menu.
+- (MTZAction *)actionForLocation:(MTZRadialMenuLocation)location
+{
+	return self.actions[descriptionStringForLocation(location)];
 }
 
 @end
