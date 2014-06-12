@@ -284,24 +284,11 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 #pragma mark Responding to Gestures & Touches
 
-- (void)didTapButton:(UIGestureRecognizer *)sender
-{
-	// Only recognizes the ended state.
-	if (sender.state != UIGestureRecognizerStateEnded) return;
-	
-	if ( self.menuVisible || self.menuAnimating ) {
-		[self dismissMenuAnimated:YES];
-	} else {
-		// TODO: Perform regular tap action.
-	}
-}
-
 - (void)didLongPressButton:(UIGestureRecognizer *)sender
 {
 	switch (sender.state) {
 		case UIGestureRecognizerStateBegan:
 			[self displayMenu];
-			break;
 		case UIGestureRecognizerStateChanged:
 			[self didPan:sender];
 			break;
@@ -328,6 +315,10 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	switch (sender.state) {
 		case UIGestureRecognizerStateBegan:
+			if ( distance >= 180 ) {
+				[self dismissMenuAnimated:YES];
+				break;
+			}
 		case UIGestureRecognizerStateChanged: {
 			// TODO: See what action it's hovering over.
 			if ( distance < 180 ) {
