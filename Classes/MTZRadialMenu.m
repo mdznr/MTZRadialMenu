@@ -358,6 +358,8 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
+	if ( self.exclusiveTouch ) { return YES; }
+	
 	CGPoint convertedPoint = [self.radialMenu convertPoint:point fromView:self];
 	return [self.radialMenu pointInside:convertedPoint withEvent:event];
 }
@@ -404,9 +406,6 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	// Update menu state.
 	_menuState = menuState;
-	
-	// Update menu visible.
-	self.menuVisible = _menuState != MTZRadialMenuStateContracted;
 }
 
 - (void)setMenuStateExpandedFromNormal
@@ -460,6 +459,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	void (^completion)(BOOL) = ^void(BOOL finished) {
 		if ( finished ) {
 			self.menuState = MTZRadialMenuStateNormal;
+			self.menuVisible = YES;
 			self.menuAnimating = NO;
 		}
 	};
@@ -487,6 +487,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	void (^completion)(BOOL) = ^void(BOOL finished) {
 		if ( finished ) {
 			self.menuState = MTZRadialMenuStateContracted;
+			self.menuVisible = NO;
 			self.menuAnimating = NO;
 		}
 	};
@@ -506,9 +507,9 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	if ( !_menuVisible ) {
 		self.touchGestureRecognizer.enabled = NO;
 		self.longPressGestureRecognizer.enabled = YES;
-//		self.exclusiveTouch = NO;
+		self.exclusiveTouch = NO;
 	} else {
-//		self.exclusiveTouch = YES;
+		self.exclusiveTouch = YES;
 	}
 }
 
