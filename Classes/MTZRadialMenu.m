@@ -317,7 +317,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	switch (sender.state) {
 		case UIGestureRecognizerStateBegan:
-			if ( distance >= 180 ) {
+			if ( distance >= RADIALMENU_RADIUS_EXPANDED * 1.5 ) {
 				[self dismissMenuAnimated:YES];
 				break;
 			}
@@ -341,36 +341,23 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 				}
 			}
 		} break;
-		case UIGestureRecognizerStateEnded:
+		case UIGestureRecognizerStateEnded: {
 			// Released touch, see if it is on an action.
-			if ( NO ) {
-				// Selected an action
-			} else if ( distance < RADIALMENU_RADIUS_EXPANDED * 1.5 ) {
-				// Still on menu, didn't select an action, though.
-				self.menuState = MTZRadialMenuStateNormal;
-			} else {
-				// Outside the radial menu.
-				self.menuState = MTZRadialMenuStateContracted;
-			}
-			
 			MTZRadialMenuLocation location = [self locationForPoint:point];
-			if ( location < 0 ) {
-				// Outside the radial menu.
+			MTZAction *action = [self actionForLocation:location];
+			if ( action ) {
+				// Act on it!
+				action.handler(action);
 				self.menuState = MTZRadialMenuStateContracted;
 			} else {
-				// Possibly highlighting outer actions.
-				MTZAction *action = [self actionForLocation:location];
-				if ( action ) {
-					// Act on it!
-					action.handler(action);
-					self.menuState = MTZRadialMenuStateContracted;
-				} else {
+				if ( distance <= RADIALMENU_RADIUS_NORMAL ) {
 					// Keep menu open.
 					self.menuState = MTZRadialMenuStateNormal;
+				} else {
+					self.menuState = MTZRadialMenuStateContracted;
 				}
 			}
-			
-			break;
+		} break;
 		case UIGestureRecognizerStateCancelled:
 			// TODO: If still on the original gesture to open the menu, close it (return to state before gesture started)
 			self.menuState = MTZRadialMenuStateNormal;
