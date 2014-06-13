@@ -196,7 +196,9 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 + (UIButton *)newActionButton
 {
-	UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 2*RADIALMENU_BUTTON_RADIUS, 2*RADIALMENU_BUTTON_RADIUS)];
+	CGRect frame = CGRectMake(0, 0, 2 * RADIALMENU_BUTTON_RADIUS, 2 * RADIALMENU_BUTTON_RADIUS);
+	UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+	button.frame = frame;
 	button.hidden = YES; // Hidden by default.
 	return button;
 }
@@ -380,7 +382,10 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	NSString *locationKey = descriptionStringForLocation(location);
 	for ( NSString *key in self.actionButtons.allKeys ) {
 		UIButton *button = self.actionButtons[key];
-		button.highlighted = key == locationKey;
+		BOOL highlighted = key == locationKey;
+		if ( button.highlighted != highlighted ) {
+			button.highlighted = highlighted;
+		}
 	}
 }
 
