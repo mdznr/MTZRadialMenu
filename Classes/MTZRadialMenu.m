@@ -338,11 +338,11 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 				} else {
 					// Valid location, but nothing's there.
 					self.menuState = MTZRadialMenuStateNormal;
-					// From here on out, use the center action.
-					action = [self actionForLocation:MTZRadialMenuLocationCenter];
+					// From here on out, use the center location.
+					location = MTZRadialMenuLocationCenter;
 				}
 			}
-			// TODO: Highlight button.
+			[self highlightLocation:location];
 		} break;
 		case UIGestureRecognizerStateEnded: {
 			// Released touch, see if it is on an action.
@@ -372,6 +372,15 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			break;
 		default:
 			break;
+	}
+}
+
+- (void)highlightLocation:(MTZRadialMenuLocation)location
+{
+	NSString *locationKey = descriptionStringForLocation(location);
+	for ( NSString *key in self.actionButtons.allKeys ) {
+		UIButton *button = self.actionButtons[key];
+		button.highlighted = key == locationKey;
 	}
 }
 
