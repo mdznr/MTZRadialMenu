@@ -321,9 +321,14 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			}
 		case UIGestureRecognizerStateChanged: {
 			// TODO: See what action it's hovering over.
-			if ( distance < 180 ) {
+			if ( distance < 48 ) {
+				// Highlighting center action.
+				self.menuState = MTZRadialMenuStateNormal;
+			} else if ( distance < 180 ) {
+				// Possibly highlighting outer actions.
 				self.menuState = MTZRadialMenuStateExpanded;
 			} else {
+				// Outside the radial menu.
 				self.menuState = MTZRadialMenuStateNormal;
 			}
 		} break;
