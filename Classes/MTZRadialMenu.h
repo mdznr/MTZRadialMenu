@@ -7,6 +7,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class MTZRadialMenu;
+
 /// Possible standard action types to apply to a button in a radial menu.
 /// @discussion Be sure to read the guidelines for usage on the radial menu. Standard actions should be used consistently.
 typedef enum MTZActionType: NSInteger {
@@ -16,7 +18,6 @@ typedef enum MTZActionType: NSInteger {
 	MTZActionTypeConfirm,
 } MTZActionType;
 
-
 /// A @c MTZAction object represents an action that can be taken in a radial menu. You use this class to configure information about a single action, including the image to display, and a handler to execute when the user selects the action. After creating an action object, add it to a @c MTZRadialMenu object before displaying the corresponding radial menu to the user.
 @interface MTZAction : NSObject
 
@@ -24,18 +25,18 @@ typedef enum MTZActionType: NSInteger {
 
 /// Create and return an action with the specified images and behavior.
 /// @param type The standard type of action. Use the appropriate standard type if the corresponding action is standard. For a list of possible values, see the constants in @c MTZActionType.
-/// @param handler A block to execute when the user selects the action. This block hasn o return value and takes the selected action object as its only parameter.
+/// @param handler A block to execute when the user selects the action. This block has no return value and takes the radial menu and selected action object. The handler is responsible for dismissing the menu, if appropriate.
 /// @return A new action object.
 /// @discussion Actions are enabled by default when you create them.
-+ (instancetype)actionOfType:(MTZActionType)type handler:(void (^)(MTZAction *action))handler;
++ (instancetype)actionOfType:(MTZActionType)type handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler;
 
 /// Create and return an action with the specified images and behavior.
 /// @param image The image to use for the radial menu item.
 /// @param highlightedImage The image to use when the menu item is highlighted.
-/// @param handler A block to execute when the user selects the action. This block hasn o return value and takes the selected action object as its only parameter.
+/// @param handler A block to execute when the user selects the action. This block has no return value and takes the radial menu and selected action object. The handler is responsible for dismissing the menu, if appropriate.
 /// @return A new action object.
 /// @discussion Actions are enabled by default when you create them.
-+ (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZAction *action))handler;
++ (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler;
 
 #pragma mark -
 

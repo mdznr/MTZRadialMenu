@@ -47,7 +47,7 @@
 @property (nonatomic, copy) UIImage *highlightedImage;
 
 ///
-@property (nonatomic, weak) void (^handler)(MTZAction *);
+@property (nonatomic, weak) void (^handler)(MTZRadialMenu *radialMenu, MTZAction *);
 
 @end
 
@@ -55,7 +55,7 @@
 
 #pragma mark Creating an Action
 
-+ (instancetype)actionOfType:(MTZActionType)type handler:(void (^)(MTZAction *action))handler
++ (instancetype)actionOfType:(MTZActionType)type handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler
 {
 	MTZAction *action = [[MTZAction alloc] init];
 	action.standardType = YES;
@@ -64,7 +64,7 @@
 	return action;
 }
 
-+ (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZAction *action))handler
++ (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler
 {
 	MTZAction *action = [[MTZAction alloc] init];
 	action.standardType = NO;
@@ -292,6 +292,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 {
 	switch (sender.state) {
 		case UIGestureRecognizerStateBegan:
+			[self highlightLocation:MTZRadialMenuLocationCenter];
 			[self displayMenu];
 		case UIGestureRecognizerStateChanged:
 			[self didTouch:sender];
@@ -353,20 +354,13 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			// Outside the menu, close it.
 			if ( location < 0 ) {
 				self.menuState = MTZRadialMenuStateContracted;
-			}
-			
-			// Get the corresponding action.
-			MTZAction *action = [self actionForLocation:location];
-			action = action ? action : [self actionForLocation:MTZRadialMenuLocationCenter];
-			if ( action ) {
-				// Act on it!
-				action.handler(action);
-				// Dismiss the menu afterwards.
-				self.menuState = MTZRadialMenuStateContracted;
 			} else {
-				// Something weird happened, dismiss the menu.
-				self.menuState = MTZRadialMenuStateContracted;
+				self.menuState = MTZRadialMenuStateNormal;
 			}
+			// Don't highlight anything.
+			[self highlightLocation:-1];
+			// Set the location to be selected.
+			[self selectLocation:location];
 		} break;
 		case UIGestureRecognizerStateCancelled:
 			// TODO: If still on the original gesture to open the menu, close it (return to state before gesture started)
@@ -386,6 +380,19 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 		if ( button.highlighted != highlighted ) {
 			button.highlighted = highlighted;
 		}
+	}
+}
+
+- (void)selectLocation:(MTZRadialMenuLocation)location
+{
+	MTZAction *action = [self actionForLocation:location];
+	action = action ? action : [self actionForLocation:MTZRadialMenuLocationCenter];
+	if ( action ) {
+		// Act on it!
+		action.handler(self, action);
+	} else {
+		// Something weird happened, dismiss the menu.
+		[self dismissMenuAnimated:YES];
 	}
 }
 
