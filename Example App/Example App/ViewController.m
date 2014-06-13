@@ -20,7 +20,7 @@
 	CGRect right = CGRectMake(278, 276, 30, 30);
 	CGRect left = CGRectMake(12, 276, 30, 30);
 	
-	MTZRadialMenu *radialMenu = [[MTZRadialMenu alloc] initWithFrame:right];
+	MTZRadialMenu *radialMenu = [[MTZRadialMenu alloc] initWithFrame:middle];
 	[radialMenu setImage:[UIImage imageNamed:@"Circle"] forState:UIControlStateNormal];
 	[radialMenu setImage:[UIImage imageNamed:@"CircleHighlighted"] forState:UIControlStateSelected];
 	[self.view addSubview:radialMenu];
@@ -39,7 +39,7 @@
 												 }];
 	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationLeft];
 //	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationRight];
-	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationBottom];
+//	[radialMenu setAction:secondAction forLocation:MTZRadialMenuLocationBottom];
 }
 
 @end

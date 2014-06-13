@@ -45,16 +45,18 @@ typedef enum MTZActionType: NSInteger {
 /// Describes the location of an action in a @c MTZRadialMenu.
 /// @discussion Remember: Some of these locations may not be visible on screen.
 typedef enum MTZRadialMenuLocation: NSInteger {
+	/// The center of the radial menu.
+	MTZRadialMenuLocationCenter = 0,
 	/// The top of the radial menu.
-	MTZRadialMenuLocationTop,
+	MTZRadialMenuLocationTop = 1,
 	/// The left of the radial menu.
-	MTZRadialMenuLocationLeft,
+	MTZRadialMenuLocationLeft = 2,
 	/// The right of the radial menu.
-	MTZRadialMenuLocationRight,
+	MTZRadialMenuLocationRight = 3,
 	/// The bottom of the radial menu.
 	/// @discussion Use with caution. The finger used to activate this radial menu might be obstructing visibility of this item.
 	/// @discussion Not only may the user be unaware of functionality at this location, but may accidentally trigger it.
-	MTZRadialMenuLocationBottom,
+	MTZRadialMenuLocationBottom = 4,
 } MTZRadialMenuLocation;
 
 

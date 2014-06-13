@@ -121,10 +121,12 @@ typedef enum {
 NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 {
 	switch (location) {
+		case MTZRadialMenuLocationCenter: return @"MTZRadialMenuLocationCenter";
 		case MTZRadialMenuLocationTop:    return @"MTZRadialMenuLocationTop";
 		case MTZRadialMenuLocationLeft:   return @"MTZRadialMenuLocationLeft";
 		case MTZRadialMenuLocationRight:  return @"MTZRadialMenuLocationRight";
 		case MTZRadialMenuLocationBottom: return @"MTZRadialMenuLocationBottom";
+		default: return nil;
 	}
 }
 
@@ -321,22 +323,30 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			}
 		case UIGestureRecognizerStateChanged: {
 			// TODO: See what action it's hovering over.
-			if ( distance < 48 ) {
+			MTZRadialMenuLocation location = [self locationForPoint:point];
+			if ( location == MTZRadialMenuLocationCenter ) {
 				// Highlighting center action.
 				self.menuState = MTZRadialMenuStateNormal;
-			} else if ( distance < 180 ) {
-				// Possibly highlighting outer actions.
-				self.menuState = MTZRadialMenuStateExpanded;
-			} else {
+			} else if ( location < 0 ) {
 				// Outside the radial menu.
 				self.menuState = MTZRadialMenuStateNormal;
+			} else {
+				// Possibly highlighting outer actions.
+				MTZAction *action = [self actionForLocation:location];
+				if ( action ) {
+					// Highlighting an action on the outer ring.
+					self.menuState = MTZRadialMenuStateExpanded;
+				} else {
+					// Valid location, but nothing's there.
+					self.menuState = MTZRadialMenuStateNormal;
+				}
 			}
 		} break;
 		case UIGestureRecognizerStateEnded:
 			// Released touch, see if it is on an action.
 			if ( NO ) {
 				// Selected an action
-			} else if ( distance < 180) {
+			} else if ( distance < RADIALMENU_RADIUS_EXPANDED * 1.5 ) {
 				// Still on menu, didn't select an action, though.
 				self.menuState = MTZRadialMenuStateNormal;
 			} else {
@@ -367,6 +377,47 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 {
 	CGPoint center = CGPointMake(self.radialMenu.bounds.size.width/2, self.radialMenu.bounds.size.height/2);
 	return CGPointDistance(point, center);
+}
+
+/// Find the point relative to the center of the radial menu.
+/// @param point The point in terms of the radial menu's bounds.
+/// @return The adjusted point relative to the center of the radial menu.
+- (CGPoint)pointRelativeToCenter:(CGPoint)point
+{
+	CGPoint center = CGPointMake(self.radialMenu.bounds.size.width/2, self.radialMenu.bounds.size.height/2);
+	return CGPointMake(point.x - center.x, point.y - center.y);
+}
+
+/// Find the corresponding location for a point on a radial menu.
+/// @param point The point inside the radial menu (with respect to the bounds).
+/// @return The location in the radial menu the point maps to or -1, if nothing found.
+- (MTZRadialMenuLocation)locationForPoint:(CGPoint)point
+{
+	CGFloat distance = [self distanceOfPointFromCenter:point];
+	
+	if ( distance >= RADIALMENU_RADIUS_EXPANDED * 1.5 ) {
+		// It's outside the radial menu.
+		return -1;
+	} else if ( distance < 48 ) {
+		// It's the center of the radial menu.
+		return MTZRadialMenuLocationCenter;
+	} else {
+		// It must be one of the other locations.
+		
+		// Size of the radialMenu
+		CGSize size = self.radialMenu.bounds.size;
+		// Coordinates on a 0 to 1 scale.
+		CGFloat x = point.x / size.width;
+		CGFloat y = point.y / size.height;
+		// Where can it be? Let's narrow it down.
+		BOOL topOrRight = y < x;
+		BOOL bottomOrRight = (1-y) < x;
+		if ( topOrRight ) {
+			return bottomOrRight ? MTZRadialMenuLocationRight : MTZRadialMenuLocationTop;
+		} else {
+			return bottomOrRight ? MTZRadialMenuLocationBottom : MTZRadialMenuLocationLeft;
+		}
+	}
 }
 
 #pragma mark Menu State
