@@ -3,12 +3,12 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "MenuBackground.png"
+      "filename" : "ActionPlayHighlighted.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "MenuBackground@2x.png"
+      "filename" : "ActionPlayHighlighted@2x.png"
     }
   ],
   "info" : {
