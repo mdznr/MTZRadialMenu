@@ -323,6 +323,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			}
 		case UIGestureRecognizerStateChanged: {
 			MTZRadialMenuLocation location = [self locationForPoint:point];
+			MTZAction *action = [self actionForLocation:location];
 			if ( location == MTZRadialMenuLocationCenter ) {
 				// Highlighting center action.
 				self.menuState = MTZRadialMenuStateNormal;
@@ -331,31 +332,33 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 				self.menuState = MTZRadialMenuStateNormal;
 			} else {
 				// Possibly highlighting outer actions.
-				MTZAction *action = [self actionForLocation:location];
 				if ( action ) {
 					// Highlighting an action on the outer ring.
 					self.menuState = MTZRadialMenuStateExpanded;
 				} else {
 					// Valid location, but nothing's there.
 					self.menuState = MTZRadialMenuStateNormal;
+					// From here on out, use the center action.
+					action = [self actionForLocation:MTZRadialMenuLocationCenter];
 				}
 			}
+			// TODO: Highlight button.
 		} break;
 		case UIGestureRecognizerStateEnded: {
 			// Released touch, see if it is on an action.
 			MTZRadialMenuLocation location = [self locationForPoint:point];
+			if ( location < 0 ) {
+				self.menuState = MTZRadialMenuStateContracted;
+			}
+			
 			MTZAction *action = [self actionForLocation:location];
+			action = action ? action : [self actionForLocation:MTZRadialMenuLocationCenter];
 			if ( action ) {
 				// Act on it!
 				action.handler(action);
 				self.menuState = MTZRadialMenuStateContracted;
 			} else {
-				if ( distance <= RADIALMENU_RADIUS_NORMAL ) {
-					// Keep menu open.
-					self.menuState = MTZRadialMenuStateNormal;
-				} else {
-					self.menuState = MTZRadialMenuStateContracted;
-				}
+				self.menuState = MTZRadialMenuStateContracted;
 			}
 		} break;
 		case UIGestureRecognizerStateCancelled:
