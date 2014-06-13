@@ -322,7 +322,6 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 				break;
 			}
 		case UIGestureRecognizerStateChanged: {
-			// TODO: See what action it's hovering over.
 			MTZRadialMenuLocation location = [self locationForPoint:point];
 			if ( location == MTZRadialMenuLocationCenter ) {
 				// Highlighting center action.
@@ -353,8 +352,27 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 				// Outside the radial menu.
 				self.menuState = MTZRadialMenuStateContracted;
 			}
+			
+			MTZRadialMenuLocation location = [self locationForPoint:point];
+			if ( location < 0 ) {
+				// Outside the radial menu.
+				self.menuState = MTZRadialMenuStateContracted;
+			} else {
+				// Possibly highlighting outer actions.
+				MTZAction *action = [self actionForLocation:location];
+				if ( action ) {
+					// Act on it!
+					action.handler(action);
+					self.menuState = MTZRadialMenuStateContracted;
+				} else {
+					// Keep menu open.
+					self.menuState = MTZRadialMenuStateNormal;
+				}
+			}
+			
 			break;
 		case UIGestureRecognizerStateCancelled:
+			// TODO: If still on the original gesture to open the menu, close it (return to state before gesture started)
 			self.menuState = MTZRadialMenuStateNormal;
 			break;
 		default:
