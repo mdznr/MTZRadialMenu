@@ -220,7 +220,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.menuRadius = RADIALMENU_RADIUS_CONTRACTED;
 	
 	UIImageView *radialMenuBackground = [[UIImageView alloc] initWithFrame:self.radialMenu.bounds];
-	radialMenuBackground.image = [UIImage imageNamed:@"MenuBackground"];
+	radialMenuBackground.image = [UIImage imageNamed:@"MTZRadialMenuBackground"];
 	radialMenuBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.radialMenu addSubview:radialMenuBackground];
 	
@@ -279,7 +279,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	// Gestures
 	self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
 	[self.button addGestureRecognizer:self.longPressGestureRecognizer];
-	self.touchGestureRecognizer = [[MTZTouchGestureRecognizer alloc] initWithTarget:self action:@selector(didPan:)];
+	self.touchGestureRecognizer = [[MTZTouchGestureRecognizer alloc] initWithTarget:self action:@selector(didTouch:)];
 	self.touchGestureRecognizer.enabled = NO;
 	[self addGestureRecognizer:self.touchGestureRecognizer];
 }
@@ -292,10 +292,10 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 		case UIGestureRecognizerStateBegan:
 			[self displayMenu];
 		case UIGestureRecognizerStateChanged:
-			[self didPan:sender];
+			[self didTouch:sender];
 			break;
 		case UIGestureRecognizerStateEnded:
-			[self didPan:sender];
+			[self didTouch:sender];
 			self.touchGestureRecognizer.enabled = YES;
 			self.longPressGestureRecognizer.enabled = NO;
 			break;
@@ -307,7 +307,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	}
 }
 
-- (void)didPan:(UIGestureRecognizer *)sender
+- (void)didTouch:(UIGestureRecognizer *)sender
 {
 	// Do not do anything if the menu isn't visible.
 	if ( !self.menuVisible ) return;
@@ -347,17 +347,22 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 		case UIGestureRecognizerStateEnded: {
 			// Released touch, see if it is on an action.
 			MTZRadialMenuLocation location = [self locationForPoint:point];
+			
+			// Outside the menu, close it.
 			if ( location < 0 ) {
 				self.menuState = MTZRadialMenuStateContracted;
 			}
 			
+			// Get the corresponding action.
 			MTZAction *action = [self actionForLocation:location];
 			action = action ? action : [self actionForLocation:MTZRadialMenuLocationCenter];
 			if ( action ) {
 				// Act on it!
 				action.handler(action);
+				// Dismiss the menu afterwards.
 				self.menuState = MTZRadialMenuStateContracted;
 			} else {
+				// Something weird happened, dismiss the menu.
 				self.menuState = MTZRadialMenuStateContracted;
 			}
 		} break;
@@ -611,7 +616,19 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	UIImage *image = nil;
 	UIImage *highlightedImage = nil;
 	if ( action.isStandardType ) {
-		// TODO: Look up standard graphic resources for type.
+		// Look up standard graphic resources for type.
+		switch (action.type) {
+			case MTZActionTypeCancel:
+				image = [UIImage imageNamed:@"MTZActionTypeCancel"];
+				highlightedImage = [UIImage imageNamed:@"MTZActionTypeCancelHighlighted"];
+				break;
+			case MTZActionTypeConfirm:
+				image = [UIImage imageNamed:@"MTZActionTypeConfirm"];
+				highlightedImage = [UIImage imageNamed:@"MTZActionTypeConfirmHighlighted"];
+				break;
+			default:
+				break;
+		}
 	} else {
 		image = action.image;
 		highlightedImage = action.highlightedImage;
