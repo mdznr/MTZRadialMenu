@@ -296,7 +296,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	// Gestures
 	self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
-	[self.button addGestureRecognizer:self.longPressGestureRecognizer];
+	[self addGestureRecognizer:self.longPressGestureRecognizer];
 	self.touchGestureRecognizer = [[MTZTouchGestureRecognizer alloc] initWithTarget:self action:@selector(didTouch:)];
 	self.touchGestureRecognizer.enabled = NO;
 	[self addGestureRecognizer:self.touchGestureRecognizer];
