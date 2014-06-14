@@ -622,16 +622,6 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	return [_button imageForState:state];
 }
 
-- (void)setImageEdgeInsets:(UIEdgeInsets)insets
-{
-	self.button.imageEdgeInsets = insets;
-}
-
-- (UIEdgeInsets)imageEdgeInsets
-{
-	return self.button.imageEdgeInsets;
-}
-
 #pragma mark Configuring the User Actions
 
 /// Sets the action for a particular location on the receiving radial menu.
