@@ -153,7 +153,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 @property (strong, nonatomic) MTZButton *button;
 
 /// The action buttons.
-@property (strong,  nonatomic) UIButton *topButton, *leftButton, *rightButton, *bottomButton;
+@property (strong,  nonatomic) UIButton *centerButton, *topButton, *leftButton, *rightButton, *bottomButton;
 
 /// A Boolean value that indicates whether the menu is displayed.
 @property (nonatomic, readwrite, getter=isMenuVisible) BOOL menuVisible;
@@ -231,6 +231,18 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	// Action buttons
 	self.actionButtons = [[NSMutableDictionary alloc] initWithCapacity:4];
+	
+	// Center button
+	UIButton *centerButton = [MTZRadialMenu newActionButton];
+	[self.radialMenu addSubview:centerButton];
+	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationCenter)] = centerButton;
+	{
+		CGRect frame = centerButton.frame;
+		frame.origin.x = (self.radialMenu.bounds.size.width - frame.size.width)/2;
+		frame.origin.y = (self.radialMenu.bounds.size.height - frame.size.height)/2;
+		centerButton.frame = frame;
+	}
+	centerButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
 	
 	// Top button
 	UIButton *topButton = [MTZRadialMenu newActionButton];
