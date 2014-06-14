@@ -16,9 +16,9 @@
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 	
-	CGRect middle = CGRectMake(145, 145, 30, 30);
-	CGRect right = CGRectMake(278, 276, 30, 30);
-	CGRect left = CGRectMake(12, 276, 30, 30);
+	CGRect middle = CGRectMake(138, 269, 44, 44);
+	CGRect right = CGRectMake(271, 269, 44, 44);
+	CGRect left = CGRectMake(5, 269, 44, 44);
 	
 	MTZRadialMenu *radialMenu = [[MTZRadialMenu alloc] initWithFrame:right];
 	[radialMenu setImage:[UIImage imageNamed:@"Circle"] forState:UIControlStateNormal];
