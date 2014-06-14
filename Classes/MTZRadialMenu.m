@@ -601,12 +601,12 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 - (void)setMenuVisible:(BOOL)menuVisible
 {
 	_menuVisible = menuVisible;
-	if ( !_menuVisible ) {
+	if ( _menuVisible ) {
+		self.exclusiveTouch = YES;
+	} else {
 		self.touchGestureRecognizer.enabled = NO;
 		self.longPressGestureRecognizer.enabled = YES;
 		self.exclusiveTouch = NO;
-	} else {
-		self.exclusiveTouch = YES;
 	}
 }
 
