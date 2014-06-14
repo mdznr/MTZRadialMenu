@@ -7,6 +7,8 @@
 
 #import "MTZRadialMenu.h"
 
+#import "MTZButton.h"
+
 #import <UIKit/UIGestureRecognizerSubclass.h>
 
 #define RADIALMENU_OPEN_ANIMATION_DURATION 0.52
@@ -148,7 +150,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 @property (strong, nonatomic) UIView *radialMenu;
 
 /// The main button to activate the radial menu.
-@property (strong, nonatomic) UIButton *button;
+@property (strong, nonatomic) MTZButton *button;
 
 /// The action buttons.
 @property (strong,  nonatomic) UIButton *topButton, *leftButton, *rightButton, *bottomButton;
@@ -275,8 +277,9 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	bottomButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 	
 	// Main button
-	self.button = [[UIButton alloc] initWithFrame:self.bounds];
-	[self addSubview:self.button];
+	self.button = [MTZButton buttonWithType:UIButtonTypeCustom];
+	self.button.frame = self.bounds;
+	[self insertSubview:self.button belowSubview:self.radialMenu];
 	self.button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
 	// Gestures
