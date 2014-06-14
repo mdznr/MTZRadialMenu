@@ -29,6 +29,7 @@
 
 #define RADIALMENU_BUTTON_RADIUS 15
 #define RADIALMENU_RADIUS_CONTRACTED 15
+#define RADIALMENU_CENTER_TARGET_RADIUS 48
 #define RADIALMENU_RADIUS_NORMAL 105
 #define RADIALMENU_RADIUS_EXPANDED 120
 
@@ -449,7 +450,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	if ( distance >= RADIALMENU_RADIUS_EXPANDED * 1.5 ) {
 		// It's outside the radial menu.
 		return -1;
-	} else if ( distance < 48 ) {
+	} else if ( distance < RADIALMENU_CENTER_TARGET_RADIUS ) {
 		// It's the center of the radial menu.
 		return MTZRadialMenuLocationCenter;
 	} else {
