@@ -605,29 +605,29 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 + (MTZSpringAnimationParameters)menuStateAnimationParametersFromMenuState:(MTZRadialMenuState)fromMenuState
 															  toMenuState:(MTZRadialMenuState)toMenuState
 {
-	MTZSpringAnimationParameters params = (MTZSpringAnimationParameters) {0, 0, 0};
+	MTZSpringAnimationParameters params = (MTZSpringAnimationParameters) {0, 1, 0};
 	
 	switch (fromMenuState) {
 		case MTZRadialMenuStateExpanded: {
 			if ( toMenuState == MTZRadialMenuStateContracted ) {
-				params = [MTZRadialMenu menuStateAnimationFromExpandedToContractedParameters];
+				params = [MTZRadialMenu menuStateAnimationParametersFromExpandedToContracted];
 			} else if ( toMenuState == MTZRadialMenuStateNormal ) {
-				params = [MTZRadialMenu menuStateAnimationFromExpandedToNormalParameters];
+				params = [MTZRadialMenu menuStateAnimationParametersFromExpandedToNormal];
 			}
 		} break;
 		case MTZRadialMenuStateNormal: {
 			if ( toMenuState == MTZRadialMenuStateExpanded ) {
-				params = [MTZRadialMenu menuStateAnimationFromNormalToExpandedParameters];
+				params = [MTZRadialMenu menuStateAnimationParametersFromNormalToExpanded];
 			} else if ( toMenuState == MTZRadialMenuStateContracted ) {
-				params = [MTZRadialMenu menuStateAnimationFromNormalToContractedParameters];
+				params = [MTZRadialMenu menuStateAnimationParametersFromNormalToContracted];
 			}
 		} break;
 		case MTZRadialMenuStateContracted:
 		default: {
 			if ( toMenuState == MTZRadialMenuStateNormal ) {
-				params = [MTZRadialMenu menuStateAnimationFromContractedToNormalParameters];
+				params = [MTZRadialMenu menuStateAnimationParametersFromContractedToNormal];
 			} else if ( toMenuState == MTZRadialMenuStateExpanded ) {
-				params = [MTZRadialMenu menuStateAnimationFromContractedToExpandedParameters];
+				params = [MTZRadialMenu menuStateAnimationParametersFromContractedToExpanded];
 			}
 		} break;
 	}
@@ -636,37 +636,37 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 }
 
 /// Contracted -> Normal
-+ (MTZSpringAnimationParameters)menuStateAnimationFromContractedToNormalParameters
++ (MTZSpringAnimationParameters)menuStateAnimationParametersFromContractedToNormal
 {
 	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_NORMAL_DURATION, RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_NORMAL_DAMPING, RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_NORMAL_INITIAL_VELOCITY};
 }
 
 /// Contracted -> Expanded
-+ (MTZSpringAnimationParameters)menuStateAnimationFromContractedToExpandedParameters
++ (MTZSpringAnimationParameters)menuStateAnimationParametersFromContractedToExpanded
 {
 	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_EXPANDED_DURATION, RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_EXPANDED_DAMPING, RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_EXPANDED_INITIAL_VELOCITY};
 }
 
 /// Normal -> Contracted
-+ (MTZSpringAnimationParameters)menuStateAnimationFromNormalToContractedParameters
++ (MTZSpringAnimationParameters)menuStateAnimationParametersFromNormalToContracted
 {
 	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_NORMAL_TO_CONTRACTED_DURATION, RADIALMENU_ANIMATION_FROM_NORMAL_TO_CONTRACTED_DAMPING, RADIALMENU_ANIMATION_FROM_NORMAL_TO_CONTRACTED_INITIAL_VELOCITY};
 }
 
 /// Normal -> Expanded
-+ (MTZSpringAnimationParameters)menuStateAnimationFromNormalToExpandedParameters
++ (MTZSpringAnimationParameters)menuStateAnimationParametersFromNormalToExpanded
 {
 	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_NORMAL_TO_EXPANDED_DURATION, RADIALMENU_ANIMATION_FROM_NORMAL_TO_EXPANDED_DAMPING, RADIALMENU_ANIMATION_FROM_NORMAL_TO_EXPANDED_INITIAL_VELOCITY};
 }
 
 /// Expanded -> Normal
-+ (MTZSpringAnimationParameters)menuStateAnimationFromExpandedToNormalParameters
++ (MTZSpringAnimationParameters)menuStateAnimationParametersFromExpandedToNormal
 {
 	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_EXPANDED_TO_NORMAL_DURATION, RADIALMENU_ANIMATION_FROM_EXPANDED_TO_NORMAL_DAMPING, RADIALMENU_ANIMATION_FROM_EXPANDED_TO_NORMAL_INITIAL_VELOCITY};
 }
 
 /// Expanded -> Contracted
-+ (MTZSpringAnimationParameters)menuStateAnimationFromExpandedToContractedParameters
++ (MTZSpringAnimationParameters)menuStateAnimationParametersFromExpandedToContracted
 {
 	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_EXPANDED_TO_CONTRACTED_DURATION, RADIALMENU_ANIMATION_FROM_EXPANDED_TO_CONTRACTED_DAMPING, RADIALMENU_ANIMATION_FROM_EXPANDED_TO_CONTRACTED_INITIAL_VELOCITY};
 }
