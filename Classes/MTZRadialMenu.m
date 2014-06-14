@@ -150,13 +150,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 @property (strong, nonatomic) UIView *radialMenu;
 
 /// The main button to activate the radial menu.
-@property (strong, nonatomic) MTZButton *button;
-
-/// The action buttons.
-@property (strong,  nonatomic) UIButton *centerButton, *topButton, *leftButton, *rightButton, *bottomButton;
-
-/// A Boolean value that indicates whether the menu is displayed.
-@property (nonatomic, readwrite, getter=isMenuVisible) BOOL menuVisible;
+@property (strong, nonatomic) MTZButton *mainButton;
 
 /// A Boolean value that indicates whether the menu is currently animating.
 @property (nonatomic, getter=isMenuAnimating) BOOL menuAnimating;
@@ -189,7 +183,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 - (instancetype)init
 {
-	self = [super initWithFrame:CGRectMake(0, 0, 2*RADIALMENU_BUTTON_RADIUS, 2*RADIALMENU_BUTTON_RADIUS)];
+	self = [super initWithFrame:CGRectMake(0, 0, 2 * RADIALMENU_BUTTON_RADIUS, 2 * RADIALMENU_BUTTON_RADIUS)];
 	if (self) {
 		// Initialization code
 		[self __MTZRadialMenuSetup];
@@ -213,15 +207,12 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	// Data
 	self.actions = [[NSMutableDictionary alloc] initWithCapacity:3];
-	self.menuAnimating = NO;
-	self.menuVisible = NO;
-	self.menuState = MTZRadialMenuStateContracted;
 	
 	// Main button
-	self.button = [MTZButton buttonWithType:UIButtonTypeCustom];
-	self.button.frame = self.bounds;
-	[self addSubview:self.button];
-	self.button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	self.mainButton = [MTZButton buttonWithType:UIButtonTypeCustom];
+	self.mainButton.frame = self.bounds;
+	[self addSubview:self.mainButton];
+	self.mainButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
 	// Radial menu
 	self.radialMenu = [[UIView alloc] init];
@@ -236,7 +227,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	[self.radialMenu addSubview:radialMenuBackground];
 	
 	// Action buttons
-	self.actionButtons = [[NSMutableDictionary alloc] initWithCapacity:4];
+	self.actionButtons = [[NSMutableDictionary alloc] initWithCapacity:5];
 	
 	// Center button
 	UIButton *centerButton = [MTZRadialMenu newActionButton];
@@ -306,6 +297,10 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.touchGestureRecognizer = [[MTZTouchGestureRecognizer alloc] initWithTarget:self action:@selector(didTouch:)];
 	self.touchGestureRecognizer.enabled = NO;
 	[self addGestureRecognizer:self.touchGestureRecognizer];
+	
+	// Defaults
+	self.menuAnimating = NO;
+	self.menuState = MTZRadialMenuStateContracted;
 }
 
 #pragma mark Responding to Gestures & Touches
@@ -335,7 +330,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 - (void)didTouch:(UIGestureRecognizer *)sender
 {
 	// Do not do anything if the menu isn't visible.
-	if ( !self.menuVisible ) return;
+	if ( ![self isMenuVisible] ) return;
 	
 	CGPoint point = [sender locationInView:self.radialMenu];
 	CGFloat distance = [self distanceOfPointFromCenter:point];
@@ -550,7 +545,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 - (void)displayMenu
 {
-	if ( self.menuVisible && !self.menuAnimating ) return;
+	if ( [self isMenuVisible] && !self.menuAnimating ) return;
 	
 	self.menuAnimating = YES;
 	
@@ -562,7 +557,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	void (^completion)(BOOL) = ^void(BOOL finished) {
 		if ( finished ) {
 			self.menuState = MTZRadialMenuStateNormal;
-			self.menuVisible = YES;
+			self.exclusiveTouch = YES;
 			self.menuAnimating = NO;
 		}
 	};
@@ -578,7 +573,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 - (void)dismissMenuAnimated:(BOOL)animated
 {
-	if ( !self.menuVisible && !self.menuAnimating ) return;
+	if ( ![self isMenuVisible] && !self.menuAnimating ) return;
 	
 	self.menuAnimating = YES;
 	
@@ -590,7 +585,9 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	void (^completion)(BOOL) = ^void(BOOL finished) {
 		if ( finished ) {
 			self.menuState = MTZRadialMenuStateContracted;
-			self.menuVisible = NO;
+			self.exclusiveTouch = NO;
+			self.touchGestureRecognizer.enabled = NO;
+			self.longPressGestureRecognizer.enabled = YES;
 			self.menuAnimating = NO;
 		}
 	};
@@ -604,28 +601,21 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 					 completion:completion];
 }
 
-- (void)setMenuVisible:(BOOL)menuVisible
+- (BOOL)isMenuVisible
 {
-	_menuVisible = menuVisible;
-	if ( _menuVisible ) {
-		self.exclusiveTouch = YES;
-	} else {
-		self.touchGestureRecognizer.enabled = NO;
-		self.longPressGestureRecognizer.enabled = YES;
-		self.exclusiveTouch = NO;
-	}
+	return self.menuState != MTZRadialMenuStateContracted;
 }
 
 #pragma mark Configuring the Main Button Presentation
 
 - (void)setImage:(UIImage *)image forState:(UIControlState)state
 {
-	[_button setImage:image forState:state];
+	[self.mainButton setImage:image forState:state];
 }
 
 - (UIImage *)imageForState:(UIControlState)state
 {
-	return [_button imageForState:state];
+	return [self.mainButton imageForState:state];
 }
 
 #pragma mark Configuring the User Actions
