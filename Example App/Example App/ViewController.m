@@ -42,7 +42,7 @@
 										 handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
 											 NSLog(@"Play");
 										 }];
-	[radialMenu setAction:play forLocation:MTZRadialMenuLocationBottom];
+	[radialMenu setAction:play forLocation:MTZRadialMenuLocationCenter];
 }
 
 @end
