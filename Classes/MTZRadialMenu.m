@@ -11,29 +11,74 @@
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
 
-#define RADIALMENU_OPEN_ANIMATION_DURATION 0.52
-#define RADIALMENU_OPEN_ANIMATION_DAMPING 0.7
-#define RADIALMENU_OPEN_ANIMATION_INITIAL_VELOCITY 0.35
+// Menu State Animation Parameters
+// Contracted -> Normal
+#define RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_NORMAL_DURATION           0.52
+#define RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_NORMAL_DAMPING            0.70
+#define RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_NORMAL_INITIAL_VELOCITY   0.35
+// Contracted -> Expanded
+#define RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_EXPANDED_DURATION         0.52
+#define RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_EXPANDED_DAMPING          0.80
+#define RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_EXPANDED_INITIAL_VELOCITY 0.35
+// Normal -> Contracted
+#define RADIALMENU_ANIMATION_FROM_NORMAL_TO_CONTRACTED_DURATION           0.40
+#define RADIALMENU_ANIMATION_FROM_NORMAL_TO_CONTRACTED_DAMPING            1.00
+#define RADIALMENU_ANIMATION_FROM_NORMAL_TO_CONTRACTED_INITIAL_VELOCITY   0.00
+// Normal -> Expanded
+#define RADIALMENU_ANIMATION_FROM_NORMAL_TO_EXPANDED_DURATION             0.50
+#define RADIALMENU_ANIMATION_FROM_NORMAL_TO_EXPANDED_DAMPING              1.00
+#define RADIALMENU_ANIMATION_FROM_NORMAL_TO_EXPANDED_INITIAL_VELOCITY     0.00
+// Expanded -> Normal
+#define RADIALMENU_ANIMATION_FROM_EXPANDED_TO_NORMAL_DURATION             0.30
+#define RADIALMENU_ANIMATION_FROM_EXPANDED_TO_NORMAL_DAMPING              1.00
+#define RADIALMENU_ANIMATION_FROM_EXPANDED_TO_NORMAL_INITIAL_VELOCITY     0.30
+// Expanded -> Contracted
+#define RADIALMENU_ANIMATION_FROM_EXPANDED_TO_CONTRACTED_DURATION         0.40
+#define RADIALMENU_ANIMATION_FROM_EXPANDED_TO_CONTRACTED_DAMPING          1.00
+#define RADIALMENU_ANIMATION_FROM_EXPANDED_TO_CONTRACTED_INITIAL_VELOCITY 0.00
 
-#define RADIALMENU_CLOSE_ANIMATION_DURATION 0.4
-#define RADIALMENU_CLOSE_ANIMATION_DAMPING 1
-#define RADIALMENU_CLOSE_ANIMATION_INITIAL_VELOCITY 0.4
-
-#define RADIALMENU_EXPANDING_ANIMATION_DURATION 0.5
-#define RADIALMENU_EXPANDING_ANIMATION_DAMPING 1.0
-#define RADIALMENU_EXPANDING_ANIMATION_INITIAL_VELOCITY 0
-
-#define RADIALMENU_UNEXPANDING_ANIMATION_DURATION 0.3
-#define RADIALMENU_UNEXPANDING_ANIMATION_DAMPING 1.0
-#define RADIALMENU_UNEXPANDING_ANIMATION_INITIAL_VELOCITY 0.3
-
+// Menu Metrics
 #define RADIALMENU_BUTTON_RADIUS 15
 #define RADIALMENU_RADIUS_CONTRACTED (RADIALMENU_BUTTON_RADIUS)
 #define RADIALMENU_CENTER_TARGET_RADIUS (RADIALMENU_BUTTON_RADIUS * 3.2)
 #define RADIALMENU_RADIUS_NORMAL 105
 #define RADIALMENU_RADIUS_EXPANDED 120
-
 #define RADIALMENU_BUTTON_PADDING 8
+
+
+#pragma mark Misc. Helpers
+
+/// The distance between two points.
+CGFloat CGPointDistance(CGPoint a, CGPoint b)
+{
+	return sqrt(pow((a.x - b.x), 2) + pow((a.y - b.y), 2));
+}
+
+/// A container for three varying parameters of a spring animation.
+typedef struct {
+	NSTimeInterval duration;
+	CGFloat damping;
+	CGFloat initialVelocity;
+} MTZSpringAnimationParameters;
+
+
+#pragma mark MTZRadialMenuLocation
+
+/// A simple description string for a given location.
+NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
+{
+	switch (location) {
+		case MTZRadialMenuLocationCenter: return @"MTZRadialMenuLocationCenter";
+		case MTZRadialMenuLocationTop:    return @"MTZRadialMenuLocationTop";
+		case MTZRadialMenuLocationLeft:   return @"MTZRadialMenuLocationLeft";
+		case MTZRadialMenuLocationRight:  return @"MTZRadialMenuLocationRight";
+		case MTZRadialMenuLocationBottom: return @"MTZRadialMenuLocationBottom";
+		default: return nil;
+	}
+}
+
+
+#pragma mark MTZAction
 
 @interface MTZAction ()
 
@@ -115,6 +160,8 @@
 @end
 
 
+#pragma mark MTZRadialMenuState
+
 /// The state of a radial menu.
 typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	// Contracted is the smallest size, used when hidden.
@@ -125,23 +172,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	MTZRadialMenuStateExpanded
 };
 
-/// A simple description string for a given location.
-NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
-{
-	switch (location) {
-		case MTZRadialMenuLocationCenter: return @"MTZRadialMenuLocationCenter";
-		case MTZRadialMenuLocationTop:    return @"MTZRadialMenuLocationTop";
-		case MTZRadialMenuLocationLeft:   return @"MTZRadialMenuLocationLeft";
-		case MTZRadialMenuLocationRight:  return @"MTZRadialMenuLocationRight";
-		case MTZRadialMenuLocationBottom: return @"MTZRadialMenuLocationBottom";
-		default: return nil;
-	}
-}
 
-CGFloat CGPointDistance(CGPoint a, CGPoint b)
-{
-	return sqrt(pow((a.x - b.x), 2) + pow((a.y - b.y), 2));
-}
+#pragma mark MTZRadialMenu
 
 @interface MTZRadialMenu ()
 
@@ -168,6 +200,10 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 @property (strong, nonatomic) UILongPressGestureRecognizer *longPressGestureRecognizer;
 @property (strong, nonatomic) MTZTouchGestureRecognizer *touchGestureRecognizer;
+
+/// The number of active state transitions.
+/// @discussion This is used to know when all of the additive transitions have succesfully ended.
+@property (nonatomic) NSInteger activeStateTransitionCount;
 
 @end
 
@@ -221,10 +257,8 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	
 	// Radial menu
 	self.radialMenu = [[UIView alloc] init];
-	[self addSubview:self.radialMenu];
 	self.radialMenu.clipsToBounds = YES;
-	self.radialMenu.alpha = 0.0f;
-	self.menuRadius = RADIALMENU_RADIUS_CONTRACTED;
+	[self addSubview:self.radialMenu];
 	
 	UIImageView *radialMenuBackground = [[UIImageView alloc] initWithFrame:self.radialMenu.bounds];
 	radialMenuBackground.image = [UIImage imageNamed:@"MTZRadialMenuBackground"];
@@ -300,11 +334,11 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
 	[self addGestureRecognizer:self.longPressGestureRecognizer];
 	self.touchGestureRecognizer = [[MTZTouchGestureRecognizer alloc] initWithTarget:self action:@selector(didTouch:)];
-	self.touchGestureRecognizer.enabled = NO;
 	[self addGestureRecognizer:self.touchGestureRecognizer];
 	
 	// Defaults
 	self.menuAnimating = NO;
+	_menuState = -1; // Forces next call to setMenuState: to go through.
 	self.menuState = MTZRadialMenuStateContracted;
 }
 
@@ -315,7 +349,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	switch (sender.state) {
 		case UIGestureRecognizerStateBegan:
 			[self highlightLocation:MTZRadialMenuLocationCenter];
-			[self displayMenu];
+			[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 		case UIGestureRecognizerStateChanged:
 			[self didTouch:sender];
 			break;
@@ -325,7 +359,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			self.longPressGestureRecognizer.enabled = NO;
 			break;
 		case UIGestureRecognizerStateCancelled:
-			[self dismissMenuAnimated:YES];
+			[self setMenuState:MTZRadialMenuStateContracted animated:YES];
 			break;
 		default:
 			break;
@@ -351,18 +385,18 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			MTZAction *action = [self actionForLocation:location];
 			if ( location == MTZRadialMenuLocationCenter ) {
 				// Highlighting center action.
-				self.menuState = MTZRadialMenuStateNormal;
+				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 			} else if ( location < 0 ) {
 				// Outside the radial menu.
-				self.menuState = MTZRadialMenuStateNormal;
+				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 			} else {
 				// Possibly highlighting outer actions.
 				if ( action ) {
 					// Highlighting an action on the outer ring.
-					self.menuState = MTZRadialMenuStateExpanded;
+					[self setMenuState:MTZRadialMenuStateExpanded animated:YES];;
 				} else {
 					// Valid location, but nothing's there.
-					self.menuState = MTZRadialMenuStateNormal;
+					[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 					// From here on out, use the center location.
 					location = MTZRadialMenuLocationCenter;
 				}
@@ -375,9 +409,9 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 			
 			// Outside the menu, close it.
 			if ( location < 0 ) {
-				self.menuState = MTZRadialMenuStateContracted;
+				[self setMenuState:MTZRadialMenuStateContracted animated:YES];
 			} else {
-				self.menuState = MTZRadialMenuStateNormal;
+				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 			}
 			// Don't highlight anything.
 			[self highlightLocation:-1];
@@ -386,7 +420,7 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 		} break;
 		case UIGestureRecognizerStateCancelled:
 			// TODO: If still on the original gesture to open the menu, close it (return to state before gesture started)
-			self.menuState = MTZRadialMenuStateNormal;
+			[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 			break;
 		default:
 			break;
@@ -478,63 +512,163 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 #pragma mark Menu State
 
+- (void)setMenuState:(MTZRadialMenuState)menuState animated:(BOOL)animated
+{
+	// Only apply if menu state has changed.
+	if ( _menuState == menuState ) {
+		return;
+	}
+	
+	// The changes to make.
+	void (^changeMenuState)() = ^void() {
+		self.menuState = menuState;
+	};
+	
+	// If not animated, don't bother animating.
+	if ( !animated ) {
+		changeMenuState();
+		return;
+	}
+	
+	// The parameters for the spring animation.
+	MTZSpringAnimationParameters animationParameters = [MTZRadialMenu menuStateAnimationParametersFromMenuState:_menuState toMenuState:menuState];
+	
+	// Animate with the correct parameters.
+	[UIView animateWithDuration:animationParameters.duration
+						  delay:0
+		 usingSpringWithDamping:animationParameters.damping
+		  initialSpringVelocity:animationParameters.initialVelocity
+						options:0
+					 animations:changeMenuState
+					 completion:nil];
+}
+
+/// Set the state of the radial menu.
+/// @param menuState The state of the menu to change to.
+/// @discussion Note that this method is safe to call externally in an animation block or outside of one.
 - (void)setMenuState:(MTZRadialMenuState)menuState
 {
 	// Only apply if menu state has changed.
-	if ( _menuState == menuState ) return;
+	if ( _menuState == menuState ) {
+		return;
+	}
 	
-	// Animate changes.
-	switch (_menuState) {
-		// Contracted
-		case MTZRadialMenuStateContracted: {
-			[self displayMenu];
-		} break;
-		// Normal
-		case MTZRadialMenuStateNormal: {
-			if ( menuState == MTZRadialMenuStateContracted ) {
-				[self dismissMenuAnimated:YES];
-			} else {
-				[self setMenuStateExpandedFromNormal];
+	_menuState = menuState;
+	
+	CGFloat radius;
+	CGFloat alpha;
+	BOOL exclusiveTouch;
+	BOOL longPressGestureRecognizerEnabled;
+	BOOL touchGestureRecognizerEnabled;
+	
+	if ( _menuState == MTZRadialMenuStateContracted ) {
+		alpha = 0.0f;
+		longPressGestureRecognizerEnabled = YES;
+		touchGestureRecognizerEnabled = !longPressGestureRecognizerEnabled;
+		radius = RADIALMENU_RADIUS_CONTRACTED;
+	} else {
+		alpha = 1.0f;
+		longPressGestureRecognizerEnabled = NO;
+		touchGestureRecognizerEnabled = !longPressGestureRecognizerEnabled;
+		if ( _menuState == MTZRadialMenuStateNormal ) {
+			radius = RADIALMENU_RADIUS_NORMAL;
+		} else if ( _menuState == MTZRadialMenuStateExpanded ) {
+			radius = RADIALMENU_RADIUS_EXPANDED;
+		}
+	}
+	
+	// Update visual appearance.
+	void (^animations)() = ^void() {
+		self.menuRadius = radius;
+		self.radialMenu.alpha = alpha;
+	};
+	
+	// Update gesture recognizers and touch behaviours.
+	void (^completion)(BOOL) = ^void(BOOL finished) {
+		_activeStateTransitionCount--;
+		if ( _activeStateTransitionCount == 0 ) {
+			self.exclusiveTouch = exclusiveTouch;
+			self.longPressGestureRecognizer.enabled = longPressGestureRecognizerEnabled;
+			self.touchGestureRecognizer.enabled = touchGestureRecognizerEnabled;
+		}
+	};
+	
+	_activeStateTransitionCount++;
+	
+	// Put in an animation block with 0 duration to inherit parent's animation context.
+	[UIView animateWithDuration:0 animations:animations completion:completion];
+}
+
+
+#pragma Menu State to Menu State
+
++ (MTZSpringAnimationParameters)menuStateAnimationParametersFromMenuState:(MTZRadialMenuState)fromMenuState
+															  toMenuState:(MTZRadialMenuState)toMenuState
+{
+	MTZSpringAnimationParameters params = (MTZSpringAnimationParameters) {0, 0, 0};
+	
+	switch (fromMenuState) {
+		case MTZRadialMenuStateExpanded: {
+			if ( toMenuState == MTZRadialMenuStateContracted ) {
+				params = [MTZRadialMenu menuStateAnimationFromExpandedToContractedParameters];
+			} else if ( toMenuState == MTZRadialMenuStateNormal ) {
+				params = [MTZRadialMenu menuStateAnimationFromExpandedToNormalParameters];
 			}
 		} break;
-		// Expanded
-		case MTZRadialMenuStateExpanded: {
-			if ( menuState == MTZRadialMenuStateContracted ) {
-				[self dismissMenuAnimated:YES];
-			} else {
-				[self setMenuStateNormalFromExpanded];
+		case MTZRadialMenuStateNormal: {
+			if ( toMenuState == MTZRadialMenuStateExpanded ) {
+				params = [MTZRadialMenu menuStateAnimationFromNormalToExpandedParameters];
+			} else if ( toMenuState == MTZRadialMenuStateContracted ) {
+				params = [MTZRadialMenu menuStateAnimationFromNormalToContractedParameters];
+			}
+		} break;
+		case MTZRadialMenuStateContracted:
+		default: {
+			if ( toMenuState == MTZRadialMenuStateNormal ) {
+				params = [MTZRadialMenu menuStateAnimationFromContractedToNormalParameters];
+			} else if ( toMenuState == MTZRadialMenuStateExpanded ) {
+				params = [MTZRadialMenu menuStateAnimationFromContractedToExpandedParameters];
 			}
 		} break;
 	}
 	
-	// Update menu state.
-	_menuState = menuState;
+	return params;
 }
 
-- (void)setMenuStateExpandedFromNormal
+/// Contracted -> Normal
++ (MTZSpringAnimationParameters)menuStateAnimationFromContractedToNormalParameters
 {
-	[UIView animateWithDuration:RADIALMENU_EXPANDING_ANIMATION_DURATION
-						  delay:0
-		 usingSpringWithDamping:RADIALMENU_EXPANDING_ANIMATION_DAMPING
-		  initialSpringVelocity:RADIALMENU_EXPANDING_ANIMATION_INITIAL_VELOCITY
-						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
-					 animations:^{
-						 self.menuRadius = RADIALMENU_RADIUS_EXPANDED;
-					 }
-					 completion:^(BOOL finished) {}];
+	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_NORMAL_DURATION, RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_NORMAL_DAMPING, RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_NORMAL_INITIAL_VELOCITY};
 }
 
-- (void)setMenuStateNormalFromExpanded
+/// Contracted -> Expanded
++ (MTZSpringAnimationParameters)menuStateAnimationFromContractedToExpandedParameters
 {
-	[UIView animateWithDuration:RADIALMENU_UNEXPANDING_ANIMATION_DURATION
-						  delay:0
-		 usingSpringWithDamping:RADIALMENU_UNEXPANDING_ANIMATION_DAMPING
-		  initialSpringVelocity:RADIALMENU_UNEXPANDING_ANIMATION_INITIAL_VELOCITY
-						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
-					 animations:^{
-						 self.menuRadius = RADIALMENU_RADIUS_NORMAL;
-					 }
-					 completion:^(BOOL finished) {}];
+	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_EXPANDED_DURATION, RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_EXPANDED_DAMPING, RADIALMENU_ANIMATION_FROM_CONTRACTED_TO_EXPANDED_INITIAL_VELOCITY};
+}
+
+/// Normal -> Contracted
++ (MTZSpringAnimationParameters)menuStateAnimationFromNormalToContractedParameters
+{
+	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_NORMAL_TO_CONTRACTED_DURATION, RADIALMENU_ANIMATION_FROM_NORMAL_TO_CONTRACTED_DAMPING, RADIALMENU_ANIMATION_FROM_NORMAL_TO_CONTRACTED_INITIAL_VELOCITY};
+}
+
+/// Normal -> Expanded
++ (MTZSpringAnimationParameters)menuStateAnimationFromNormalToExpandedParameters
+{
+	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_NORMAL_TO_EXPANDED_DURATION, RADIALMENU_ANIMATION_FROM_NORMAL_TO_EXPANDED_DAMPING, RADIALMENU_ANIMATION_FROM_NORMAL_TO_EXPANDED_INITIAL_VELOCITY};
+}
+
+/// Expanded -> Normal
++ (MTZSpringAnimationParameters)menuStateAnimationFromExpandedToNormalParameters
+{
+	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_EXPANDED_TO_NORMAL_DURATION, RADIALMENU_ANIMATION_FROM_EXPANDED_TO_NORMAL_DAMPING, RADIALMENU_ANIMATION_FROM_EXPANDED_TO_NORMAL_INITIAL_VELOCITY};
+}
+
+/// Expanded -> Contracted
++ (MTZSpringAnimationParameters)menuStateAnimationFromExpandedToContractedParameters
+{
+	return (MTZSpringAnimationParameters) {RADIALMENU_ANIMATION_FROM_EXPANDED_TO_CONTRACTED_DURATION, RADIALMENU_ANIMATION_FROM_EXPANDED_TO_CONTRACTED_DAMPING, RADIALMENU_ANIMATION_FROM_EXPANDED_TO_CONTRACTED_INITIAL_VELOCITY};
 }
 
 - (void)setMenuRadius:(CGFloat)radius
@@ -550,60 +684,20 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 
 - (void)displayMenu
 {
-	if ( [self isMenuVisible] && !self.menuAnimating ) return;
+	if ( [self isMenuVisible] ) {
+		return;
+	}
 	
-	self.menuAnimating = YES;
-	
-	void (^animations)() = ^void() {
-		self.menuRadius = RADIALMENU_RADIUS_NORMAL;
-		self.radialMenu.alpha = 1.0f;
-	};
-	
-	void (^completion)(BOOL) = ^void(BOOL finished) {
-		if ( finished ) {
-			self.menuState = MTZRadialMenuStateNormal;
-			self.exclusiveTouch = YES;
-			self.menuAnimating = NO;
-		}
-	};
-	
-	[UIView animateWithDuration:RADIALMENU_OPEN_ANIMATION_DURATION
-						  delay:0
-		 usingSpringWithDamping:RADIALMENU_OPEN_ANIMATION_DAMPING
-		  initialSpringVelocity:RADIALMENU_OPEN_ANIMATION_INITIAL_VELOCITY
-						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
-					 animations:animations
-					 completion:completion];
+	[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 }
 
 - (void)dismissMenuAnimated:(BOOL)animated
 {
-	if ( ![self isMenuVisible] && !self.menuAnimating ) return;
+	if ( ![self isMenuVisible] ) {
+		return;
+	}
 	
-	self.menuAnimating = YES;
-	
-	void (^animations)() = ^void() {
-		self.menuRadius = RADIALMENU_RADIUS_CONTRACTED;
-		self.radialMenu.alpha = 0.0f;
-	};
-	
-	void (^completion)(BOOL) = ^void(BOOL finished) {
-		if ( finished ) {
-			self.menuState = MTZRadialMenuStateContracted;
-			self.exclusiveTouch = NO;
-			self.touchGestureRecognizer.enabled = NO;
-			self.longPressGestureRecognizer.enabled = YES;
-			self.menuAnimating = NO;
-		}
-	};
-	
-	[UIView animateWithDuration:animated ? RADIALMENU_CLOSE_ANIMATION_DURATION : 0
-						  delay:0
-		 usingSpringWithDamping:RADIALMENU_CLOSE_ANIMATION_DAMPING
-		  initialSpringVelocity:RADIALMENU_CLOSE_ANIMATION_INITIAL_VELOCITY
-						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
-					 animations:animations
-					 completion:completion];
+	[self setMenuState:MTZRadialMenuStateContracted animated:animated];
 }
 
 - (BOOL)isMenuVisible
