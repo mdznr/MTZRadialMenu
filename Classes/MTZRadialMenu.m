@@ -111,14 +111,14 @@
 
 
 /// The state of a radial menu.
-typedef enum {
+typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	// Contracted is the smallest size, used when hidden.
 	MTZRadialMenuStateContracted,
 	// Normal is the state while the menu is visible and not being interacted with.
 	MTZRadialMenuStateNormal,
 	// Expanded is the state while an outer menu item is highlighted.
 	MTZRadialMenuStateExpanded
-} MTZRadialMenuState;
+};
 
 /// A simple description string for a given location.
 NSString *descriptionStringForLocation(MTZRadialMenuLocation location)

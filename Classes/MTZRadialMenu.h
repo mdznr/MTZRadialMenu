@@ -11,12 +11,12 @@
 
 /// Possible standard action types to apply to a button in a radial menu.
 /// @discussion Be sure to read the guidelines for usage on the radial menu. Standard actions should be used consistently.
-typedef enum MTZActionType: NSInteger {
+typedef NS_ENUM(NSInteger, MTZActionType){
 	/// Indicates the action cancels the operation and leaves things unchanged.
 	MTZActionTypeCancel,
 	/// Indicates the action confirms the operation.
 	MTZActionTypeConfirm,
-} MTZActionType;
+};
 
 /// A @c MTZAction object represents an action that can be taken in a radial menu. You use this class to configure information about a single action, including the image to display, and a handler to execute when the user selects the action. After creating an action object, add it to a @c MTZRadialMenu object before displaying the corresponding radial menu to the user.
 @interface MTZAction : NSObject
@@ -43,7 +43,7 @@ typedef enum MTZActionType: NSInteger {
 
 /// Describes the location of an action in a @c MTZRadialMenu.
 /// @discussion Remember: Some of these locations may not be visible on screen.
-typedef enum MTZRadialMenuLocation: NSInteger {
+typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 	/// The center of the radial menu.
 	MTZRadialMenuLocationCenter = 0,
 	/// The top of the radial menu.
@@ -56,7 +56,7 @@ typedef enum MTZRadialMenuLocation: NSInteger {
 	/// @discussion Use with caution. The finger used to activate this radial menu might be obstructing visibility of this item.
 	/// @discussion Not only may the user be unaware of functionality at this location, but may accidentally trigger it.
 	MTZRadialMenuLocationBottom
-} MTZRadialMenuLocation;
+};
 
 
 /// An instance of the @c MTZRadialMenu class implements a radial menu that appears when long-pressing on a button. This class provides methods for setting the main button image, the presentation of menu items, and other appearance properties of a radial menu.
