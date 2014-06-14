@@ -217,6 +217,12 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	self.menuVisible = NO;
 	self.menuState = MTZRadialMenuStateContracted;
 	
+	// Main button
+	self.button = [MTZButton buttonWithType:UIButtonTypeCustom];
+	self.button.frame = self.bounds;
+	[self addSubview:self.button];
+	self.button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	
 	// Radial menu
 	self.radialMenu = [[UIView alloc] init];
 	[self addSubview:self.radialMenu];
@@ -288,11 +294,11 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	}
 	bottomButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 	
-	// Main button
-	self.button = [MTZButton buttonWithType:UIButtonTypeCustom];
-	self.button.frame = self.bounds;
-	[self insertSubview:self.button belowSubview:self.radialMenu];
-	self.button.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	// Default center action
+	MTZAction *defaultCenter = [MTZAction actionOfType:MTZActionTypeCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+		[radialMenu dismissMenuAnimated:YES];
+	}];
+	[self setAction:defaultCenter forLocation:MTZRadialMenuLocationCenter];
 	
 	// Gestures
 	self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
@@ -632,12 +638,12 @@ CGFloat CGPointDistance(CGPoint a, CGPoint b)
 	NSString *locationKey = descriptionStringForLocation(location);
 	UIButton *actionButton = self.actionButtons[locationKey];
 	
-	if ( !action ) {
-		[self.actions removeObjectForKey:locationKey];
-		actionButton.hidden = YES;
-	} else {
+	if (action) {
 		self.actions[locationKey] = action;
 		actionButton.hidden = NO;
+	} else {
+		[self.actions removeObjectForKey:locationKey];
+		actionButton.hidden = YES;
 	}
 	
 	UIImage *image = nil;
