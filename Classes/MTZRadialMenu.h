@@ -13,7 +13,7 @@
 /// @discussion Be sure to read the guidelines for usage on the radial menu. Standard actions should be used consistently.
 typedef NS_ENUM(NSInteger, MTZActionType){
 	/// Indicates the action cancels the operation and leaves things unchanged.
-	MTZActionTypeCancel,
+	MTZActionTypeCancel = 0,
 	/// Indicates the action confirms the operation.
 	MTZActionTypeConfirm,
 };

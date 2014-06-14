@@ -38,7 +38,7 @@
 @interface MTZAction ()
 
 /// A Boolean value representing whether the action is a standard type.
-@property (nonatomic, getter=isStandardType) BOOL standardType;
+@property (nonatomic, readonly, getter=isStandardType) BOOL standardType;
 
 /// The type of standard action, if any.
 /// @discussion Check @c standardType to see if this will be a valid action type.
@@ -62,7 +62,6 @@
 + (instancetype)actionOfType:(MTZActionType)type handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler
 {
 	MTZAction *action = [[MTZAction alloc] init];
-	action.standardType = YES;
 	action.type = type;
 	action.handler = handler;
 	return action;
@@ -71,11 +70,16 @@
 + (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler
 {
 	MTZAction *action = [[MTZAction alloc] init];
-	action.standardType = NO;
+	action.type = -1;
 	action.image = image;
 	action.highlightedImage = highlightedImage;
 	action.handler = handler;
 	return action;
+}
+
+- (BOOL)isStandardType
+{
+	return self.type >= 0;
 }
 
 @end
