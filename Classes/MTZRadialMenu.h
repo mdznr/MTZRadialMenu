@@ -38,8 +38,6 @@ typedef enum MTZActionType: NSInteger {
 /// @discussion Actions are enabled by default when you create them.
 + (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler;
 
-#pragma mark -
-
 @end
 
 
@@ -51,13 +49,13 @@ typedef enum MTZRadialMenuLocation: NSInteger {
 	/// The top of the radial menu.
 	MTZRadialMenuLocationTop = 1,
 	/// The left of the radial menu.
-	MTZRadialMenuLocationLeft = 2,
+	MTZRadialMenuLocationLeft,
 	/// The right of the radial menu.
-	MTZRadialMenuLocationRight = 3,
+	MTZRadialMenuLocationRight,
 	/// The bottom of the radial menu.
 	/// @discussion Use with caution. The finger used to activate this radial menu might be obstructing visibility of this item.
 	/// @discussion Not only may the user be unaware of functionality at this location, but may accidentally trigger it.
-	MTZRadialMenuLocationBottom = 4,
+	MTZRadialMenuLocationBottom
 } MTZRadialMenuLocation;
 
 
@@ -81,7 +79,6 @@ typedef enum MTZRadialMenuLocation: NSInteger {
 @property (nonatomic) UIEdgeInsets imageEdgeInsets;
 */
 
-#pragma mark -
 #pragma mark Configuring the User Actions
 
 /// Sets the action for a particular location on the receiving radial menu.
@@ -92,14 +89,12 @@ typedef enum MTZRadialMenuLocation: NSInteger {
 /// Returns the actino for a particular location on the receiving radial menu.
 - (MTZAction *)actionForLocation:(MTZRadialMenuLocation)location;
 
-#pragma mark -
 #pragma mark Getting the Current State
 
 /// A Boolean value that indicates whether the menu is displayed. (read-only)
 /// @discussion If @c NO, the menu is hidden and a long-press gesture must be used to present the menu.
 @property (nonatomic, readonly, getter=isMenuVisible) BOOL menuVisible;
 
-#pragma mark -
 #pragma mark Dismissal
 
 /// Dismiss the menu, optionally with animation.
