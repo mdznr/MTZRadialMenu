@@ -355,8 +355,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 			break;
 		case UIGestureRecognizerStateEnded:
 			[self didTouch:sender];
-			self.touchGestureRecognizer.enabled = YES;
 			self.longPressGestureRecognizer.enabled = NO;
+			self.touchGestureRecognizer.enabled = YES;
 			break;
 		case UIGestureRecognizerStateCancelled:
 			[self setMenuState:MTZRadialMenuStateContracted animated:YES];
@@ -558,18 +558,14 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	CGFloat radius;
 	CGFloat alpha;
 	BOOL exclusiveTouch;
-	BOOL longPressGestureRecognizerEnabled;
-	BOOL touchGestureRecognizerEnabled;
+	BOOL revertToLongPressGestureRecognizer = NO;
 	
 	if ( _menuState == MTZRadialMenuStateContracted ) {
 		alpha = 0.0f;
-		longPressGestureRecognizerEnabled = YES;
-		touchGestureRecognizerEnabled = !longPressGestureRecognizerEnabled;
+		revertToLongPressGestureRecognizer = YES;
 		radius = RADIALMENU_RADIUS_CONTRACTED;
 	} else {
 		alpha = 1.0f;
-		longPressGestureRecognizerEnabled = NO;
-		touchGestureRecognizerEnabled = !longPressGestureRecognizerEnabled;
 		if ( _menuState == MTZRadialMenuStateNormal ) {
 			radius = RADIALMENU_RADIUS_NORMAL;
 		} else if ( _menuState == MTZRadialMenuStateExpanded ) {
@@ -588,8 +584,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		_activeStateTransitionCount--;
 		if ( _activeStateTransitionCount == 0 ) {
 			self.exclusiveTouch = exclusiveTouch;
-			self.longPressGestureRecognizer.enabled = longPressGestureRecognizerEnabled;
-			self.touchGestureRecognizer.enabled = touchGestureRecognizerEnabled;
+			if ( revertToLongPressGestureRecognizer ) {
+				self.longPressGestureRecognizer.enabled = YES;
+				self.touchGestureRecognizer.enabled = NO;
+			}
 		}
 	};
 	
