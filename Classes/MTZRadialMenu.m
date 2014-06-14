@@ -34,20 +34,21 @@
 
 @interface MTZAction ()
 
-///
+/// A Boolean value representing whether the action is a standard type.
 @property (nonatomic, getter=isStandardType) BOOL standardType;
 
-///
+/// The type of standard action, if any.
+/// @discussion Check @c standardType to see if this will be a valid action type.
 @property (nonatomic) MTZActionType type;
 
-///
+/// The image to use for the normal state.
 @property (nonatomic, copy) UIImage *image;
 
-///
+/// The image to use for the highlighted state.
 @property (nonatomic, copy) UIImage *highlightedImage;
 
-///
-@property (nonatomic, weak) void (^handler)(MTZRadialMenu *radialMenu, MTZAction *);
+/// The handler for when the action is selected.
+@property (nonatomic, weak) void (^handler)(MTZRadialMenu *radialMenu, MTZAction *action);
 
 @end
 
