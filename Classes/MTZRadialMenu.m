@@ -410,7 +410,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 /// @return The distance of the point to the center of the radial menu.
 - (CGFloat)distanceOfPointFromCenter:(CGPoint)point
 {
-	CGPoint center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
+	CGPoint center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
 	return CGPointDistance(point, center);
 }
 
