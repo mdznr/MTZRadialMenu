@@ -130,36 +130,6 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 @end
 
 
-@interface MTZTouchGestureRecognizer : UIGestureRecognizer
-@end
-
-@implementation MTZTouchGestureRecognizer
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	if ( self.state == UIGestureRecognizerStatePossible ) {
-		self.state = UIGestureRecognizerStateBegan;
-	}
-}
-
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	self.state = UIGestureRecognizerStateChanged;
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	self.state = UIGestureRecognizerStateEnded;
-}
-
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
-{
-	self.state = UIGestureRecognizerStateCancelled;
-}
-
-@end
-
-
 #pragma mark MTZRadialMenuState
 
 /// The state of a radial menu.
@@ -195,8 +165,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 /// The state of the menu.
 @property (nonatomic) MTZRadialMenuState menuState;
 
-@property (strong, nonatomic) UILongPressGestureRecognizer *longPressGestureRecognizer;
-@property (strong, nonatomic) MTZTouchGestureRecognizer *touchGestureRecognizer;
+@property (strong, nonatomic) UILongPressGestureRecognizer *pressGestureRecognizer;
 
 /// The number of active state transitions.
 /// @discussion This is used to know when all of the additive transitions have succesfully ended.
@@ -245,6 +214,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	// Data
 	self.actions = [[NSMutableDictionary alloc] initWithCapacity:3];
+	self.activeStateTransitionCount = 0;
 	
 	// Main button
 	self.mainButton = [MTZButton buttonWithType:UIButtonTypeCustom];
@@ -328,10 +298,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	[self setAction:defaultCenter forLocation:MTZRadialMenuLocationCenter];
 	
 	// Gestures
-	self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didLongPressButton:)];
-	[self addGestureRecognizer:self.longPressGestureRecognizer];
-	self.touchGestureRecognizer = [[MTZTouchGestureRecognizer alloc] initWithTarget:self action:@selector(didTouch:)];
-	[self addGestureRecognizer:self.touchGestureRecognizer];
+	self.pressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didTouch:)];
+	[self addGestureRecognizer:self.pressGestureRecognizer];
 	
 	// Defaults
 	_menuState = -1; // Forces next call to setMenuState: to go through.
@@ -340,42 +308,24 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 #pragma mark Responding to Gestures & Touches
 
-- (void)didLongPressButton:(UIGestureRecognizer *)sender
-{
-	switch (sender.state) {
-		case UIGestureRecognizerStateBegan:
-			[self highlightLocation:MTZRadialMenuLocationCenter];
-			[self setMenuState:MTZRadialMenuStateNormal animated:YES];
-		case UIGestureRecognizerStateChanged:
-			[self didTouch:sender];
-			break;
-		case UIGestureRecognizerStateEnded:
-			[self didTouch:sender];
-			self.longPressGestureRecognizer.enabled = NO;
-			self.touchGestureRecognizer.enabled = YES;
-			break;
-		case UIGestureRecognizerStateCancelled:
-			[self setMenuState:MTZRadialMenuStateContracted animated:YES];
-			break;
-		default:
-			break;
-	}
-}
-
 - (void)didTouch:(UIGestureRecognizer *)sender
 {
-	// Do not do anything if the menu isn't visible.
-	if ( ![self isMenuVisible] ) return;
-	
-	CGPoint point = [sender locationInView:self.radialMenu];
+	CGPoint point = [sender locationInView:self];
 	CGFloat distance = [self distanceOfPointFromCenter:point];
 	
 	switch (sender.state) {
-		case UIGestureRecognizerStateBegan:
+		case UIGestureRecognizerStateBegan: {
+			// Open menu, if not already. Note: This only happens when `minimumPressDuration` is normal.
+			if ( ![self isMenuVisible] ) {
+				[self highlightLocation:-1];
+				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
+			}
+			// Dismiss menu, if way outside. Note: This only happens when `exclusiveTouch` is YES.
 			if ( distance >= RADIALMENU_RADIUS_EXPANDED * 1.5 ) {
 				[self dismissMenuAnimated:YES];
 				break;
 			}
+		}
 		case UIGestureRecognizerStateChanged: {
 			MTZRadialMenuLocation location = [self locationForPoint:point];
 			MTZAction *action = [self actionForLocation:location];
@@ -402,7 +352,6 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		case UIGestureRecognizerStateEnded: {
 			// Released touch, see if it is on an action.
 			MTZRadialMenuLocation location = [self locationForPoint:point];
-			
 			// Outside the menu, close it.
 			if ( location < 0 ) {
 				[self setMenuState:MTZRadialMenuStateContracted animated:YES];
@@ -415,11 +364,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 			[self selectLocation:location];
 		} break;
 		case UIGestureRecognizerStateCancelled:
+		default: {
 			// TODO: If still on the original gesture to open the menu, close it (return to state before gesture started)
 			[self setMenuState:MTZRadialMenuStateNormal animated:YES];
-			break;
-		default:
-			break;
+		} break;
 	}
 }
 
@@ -428,7 +376,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	NSString *locationKey = descriptionStringForLocation(location);
 	for ( NSString *key in self.actionButtons.allKeys ) {
 		UIButton *button = self.actionButtons[key];
-		BOOL highlighted = key == locationKey;
+		BOOL highlighted = [key isEqualToString:locationKey];
 		if ( button.highlighted != highlighted ) {
 			button.highlighted = highlighted;
 		}
@@ -457,11 +405,11 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 }
 
 /// Find the distance of a point from the center of the radial menu.
-/// @param point The point in terms of the radial menu's bounds.
+/// @param point The point in terms of the bounds of the view.
 /// @return The distance of the point to the center of the radial menu.
 - (CGFloat)distanceOfPointFromCenter:(CGPoint)point
 {
-	CGPoint center = CGPointMake(self.radialMenu.bounds.size.width/2, self.radialMenu.bounds.size.height/2);
+	CGPoint center = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
 	return CGPointDistance(point, center);
 }
 
@@ -490,8 +438,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	} else {
 		// It must be one of the other locations.
 		
-		// Size of the radialMenu
-		CGSize size = self.radialMenu.bounds.size;
+		// Size of the view.
+		CGSize size = self.bounds.size;
 		// Coordinates on a 0 to 1 scale.
 		CGFloat x = point.x / size.width;
 		CGFloat y = point.y / size.height;
@@ -551,16 +499,16 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	_menuState = menuState;
 	
-	CGFloat radius;
+	BOOL menuOpen;
 	CGFloat alpha;
-	BOOL exclusiveTouch;
-	BOOL revertToLongPressGestureRecognizer = NO;
+	CGFloat radius;
 	
 	if ( _menuState == MTZRadialMenuStateContracted ) {
+		menuOpen = NO;
 		alpha = 0.0f;
-		revertToLongPressGestureRecognizer = YES;
 		radius = RADIALMENU_RADIUS_CONTRACTED;
 	} else {
+		menuOpen = YES;
 		alpha = 1.0f;
 		if ( _menuState == MTZRadialMenuStateNormal ) {
 			radius = RADIALMENU_RADIUS_NORMAL;
@@ -575,27 +523,31 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		self.radialMenu.alpha = alpha;
 	};
 	
+	// The completion after all animations are complete.
 	// Update gesture recognizers and touch behaviours.
 	void (^completion)(BOOL) = ^void(BOOL finished) {
-		_activeStateTransitionCount--;
-		if ( _activeStateTransitionCount == 0 ) {
-			self.exclusiveTouch = exclusiveTouch;
-			if ( revertToLongPressGestureRecognizer ) {
-				self.longPressGestureRecognizer.enabled = YES;
-				self.touchGestureRecognizer.enabled = NO;
-			}
+		self.exclusiveTouch = menuOpen;
+		CFTimeInterval minimumPressDuration = menuOpen ? 0.0 : 0.5;
+		if ( self.pressGestureRecognizer.minimumPressDuration != minimumPressDuration ) {
+			self.pressGestureRecognizer.minimumPressDuration = minimumPressDuration;
 		}
 	};
 	
-	_activeStateTransitionCount++;
 	
 	// Put in an animation block with 0 duration to inherit parent's animation context.
-	[UIView animateWithDuration:0 animations:animations completion:completion];
+	[UIView animateWithDuration:0 animations:animations completion:^(BOOL finished) {
+		self.activeStateTransitionCount--;
+		if ( self.activeStateTransitionCount == 0 ) {
+			completion(finished);
+		}
+	}];
+	
+	self.activeStateTransitionCount++;
 }
 
 
 #pragma Menu State to Menu State
-
+	
 + (MTZSpringAnimationParameters)menuStateAnimationParametersFromMenuState:(MTZRadialMenuState)fromMenuState
 															  toMenuState:(MTZRadialMenuState)toMenuState
 {
