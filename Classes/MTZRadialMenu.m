@@ -189,9 +189,6 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 /// The main button to activate the radial menu.
 @property (strong, nonatomic) MTZButton *mainButton;
 
-/// A Boolean value that indicates whether the menu is currently animating.
-@property (nonatomic, getter=isMenuAnimating) BOOL menuAnimating;
-
 /// The radius of the radial menu.
 @property (nonatomic) CGFloat menuRadius;
 
@@ -337,7 +334,6 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	[self addGestureRecognizer:self.touchGestureRecognizer];
 	
 	// Defaults
-	self.menuAnimating = NO;
 	_menuState = -1; // Forces next call to setMenuState: to go through.
 	self.menuState = MTZRadialMenuStateContracted;
 }
