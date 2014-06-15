@@ -366,6 +366,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		case UIGestureRecognizerStateCancelled:
 		default: {
 			// TODO: If still on the original gesture to open the menu, close it (return to state before gesture started)
+			[self highlightLocation:-1];
 			[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 		} break;
 	}
