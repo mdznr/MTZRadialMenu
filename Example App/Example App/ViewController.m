@@ -7,7 +7,8 @@
 //
 
 #import "ViewController.h"
-#import "MTZRadialMenu.h"
+
+@import RadialMenu;
 
 @implementation ViewController
             

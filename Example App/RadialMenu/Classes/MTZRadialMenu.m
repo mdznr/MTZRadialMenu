@@ -228,7 +228,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	[self addSubview:self.radialMenu];
 	
 	UIImageView *radialMenuBackground = [[UIImageView alloc] initWithFrame:self.radialMenu.bounds];
-	radialMenuBackground.image = [UIImage imageNamed:@"MTZRadialMenuBackground"];
+	radialMenuBackground.image = [UIImage imageNamed:@"MTZRadialMenuBackground" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
 	radialMenuBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.radialMenu addSubview:radialMenuBackground];
 	
@@ -688,12 +688,12 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		// Look up standard graphic resources for type.
 		switch (action.type) {
 			case MTZActionTypeCancel:
-				image = [UIImage imageNamed:@"MTZActionTypeCancel"];
-				highlightedImage = [UIImage imageNamed:@"MTZActionTypeCancelHighlighted"];
+				image = [UIImage imageNamed:@"MTZActionTypeCancel" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
+				highlightedImage = [UIImage imageNamed:@"MTZActionTypeCancelHighlighted" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
 				break;
 			case MTZActionTypeConfirm:
-				image = [UIImage imageNamed:@"MTZActionTypeConfirm"];
-				highlightedImage = [UIImage imageNamed:@"MTZActionTypeConfirmHighlighted"];
+				image = [UIImage imageNamed:@"MTZActionTypeConfirm" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
+				highlightedImage = [UIImage imageNamed:@"MTZActionTypeConfirmHighlighted" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
 				break;
 			default:
 				break;
