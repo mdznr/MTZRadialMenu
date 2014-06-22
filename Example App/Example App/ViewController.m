@@ -40,9 +40,12 @@
 	
 	MTZAction *play = [MTZAction actionWithImage:[UIImage imageNamed:@"ActionPlay"]
 								highlightedImage:[UIImage imageNamed:@"ActionPlayHighlighted"]
-										 handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
-											 NSLog(@"Play");
-										 }];
+							  highlightedHandler:^(MTZRadialMenu *radialMenu, MTZAction *action, BOOL highlighted) {
+								  NSLog(@"Play Highlighted: %d", highlighted);
+							  }
+								 selectedHandler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+									 NSLog(@"Play");
+								 }];
 	[radialMenu setAction:play forLocation:MTZRadialMenuLocationCenter];
 }
 

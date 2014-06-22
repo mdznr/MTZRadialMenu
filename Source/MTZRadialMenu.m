@@ -78,6 +78,31 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 	}
 }
 
+MTZRadialMenuLocation locationFromLocationString(NSString *locationString)
+{
+	if ( [locationString isEqualToString:@"MTZRadialMenuLocationCenter"] ) {
+		return MTZRadialMenuLocationCenter;
+	}
+	
+	if ( [locationString isEqualToString:@"MTZRadialMenuLocationTop"] ) {
+		return MTZRadialMenuLocationTop;
+	}
+	
+	if ( [locationString isEqualToString:@"MTZRadialMenuLocationLeft"] ) {
+		return MTZRadialMenuLocationLeft;
+	}
+	
+	if ( [locationString isEqualToString:@"MTZRadialMenuLocationRight"] ) {
+		return MTZRadialMenuLocationRight;
+	}
+	
+	if ( [locationString isEqualToString:@"MTZRadialMenuLocationBottom"] ) {
+		return MTZRadialMenuLocationBottom;
+	}
+	
+	return -1;
+}
+
 
 #pragma mark MTZRadialMenuState
 
@@ -328,7 +353,15 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		UIButton *button = self.actionButtons[key];
 		BOOL highlighted = [key isEqualToString:locationKey];
 		if ( button.highlighted != highlighted ) {
+			// Set the highlighted state on the button.
 			button.highlighted = highlighted;
+			
+			// Call highlighted handler.
+			MTZRadialMenuLocation currentLocation = locationFromLocationString(key);
+			MTZAction *action = [self actionForLocation:currentLocation];
+			if (action && action.highlightedHandler) {
+				action.highlightedHandler(self, action, highlighted);
+			}
 		}
 	}
 }
@@ -633,7 +666,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	UIImage *image = nil;
 	UIImage *highlightedImage = nil;
-	if ( action.isStandardStyle ) {
+	if ([action isStandardStyle]) {
 		// Look up standard graphic resources for type.
 		switch (action.style) {
 			case MTZActionStyleCancel:
