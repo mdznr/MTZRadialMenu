@@ -17,9 +17,9 @@
 @property (nonatomic, copy) UIImage *highlightedImage;
 
 /// The handler for when the action is highlighted.
-@property (nonatomic, weak) void (^highlightedHandler)(MTZRadialMenu *radialMenu, MTZAction *action);
+@property (nonatomic, weak) MTZActionHighlightedHandler highlightedHandler;
 
 /// The handler for when the action is selected.
-@property (nonatomic, weak) void (^handler)(MTZRadialMenu *radialMenu, MTZAction *action);
+@property (nonatomic, weak) MTZActionSelectedHandler selectedHandler;
 
 @end

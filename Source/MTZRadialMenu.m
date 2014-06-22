@@ -339,7 +339,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	action = action ? action : [self actionForLocation:MTZRadialMenuLocationCenter];
 	if ( action ) {
 		// Act on it!
-		action.handler(self, action);
+		action.selectedHandler(self, action);
 	} else {
 		// Something weird happened, dismiss the menu.
 		[self dismissMenuAnimated:YES];
