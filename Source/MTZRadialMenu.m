@@ -228,7 +228,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	[self addSubview:self.radialMenu];
 	
 	UIImageView *radialMenuBackground = [[UIImageView alloc] initWithFrame:self.radialMenu.bounds];
-	radialMenuBackground.image = [UIImage imageNamed:@"MTZRadialMenuBackground" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
+	radialMenuBackground.image = [MTZRadialMenu resourceNamed:@"MTZRadialMenuBackground"];
 	radialMenuBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.radialMenu addSubview:radialMenuBackground];
 	
@@ -688,12 +688,12 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		// Look up standard graphic resources for type.
 		switch (action.type) {
 			case MTZActionTypeCancel:
-				image = [UIImage imageNamed:@"MTZActionTypeCancel" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
-				highlightedImage = [UIImage imageNamed:@"MTZActionTypeCancelHighlighted" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
+				image = [MTZRadialMenu resourceNamed:@"MTZActionTypeCancel"];
+				highlightedImage = [MTZRadialMenu resourceNamed:@"MTZActionTypeCancelHighlighted"];
 				break;
 			case MTZActionTypeConfirm:
-				image = [UIImage imageNamed:@"MTZActionTypeConfirm" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
-				highlightedImage = [UIImage imageNamed:@"MTZActionTypeConfirmHighlighted" inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
+				image = [MTZRadialMenu resourceNamed:@"MTZActionTypeConfirm"];
+				highlightedImage = [MTZRadialMenu resourceNamed:@"MTZActionTypeConfirmHighlighted"];
 				break;
 			default:
 				break;
@@ -710,6 +710,11 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 - (MTZAction *)actionForLocation:(MTZRadialMenuLocation)location
 {
 	return self.actions[descriptionStringForLocation(location)];
+}
+
++ (UIImage *)resourceNamed:(NSString *)name
+{
+	return [UIImage imageNamed:name inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
 }
 
 @end
