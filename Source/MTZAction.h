@@ -39,6 +39,16 @@ typedef NS_ENUM(NSInteger, MTZActionStyle){
 /// @discussion Actions are enabled by default when you create them.
 + (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler;
 
+/// Create and return an action with the specified images and behavior.
+/// Create and return an action with the specified images and behavior.
+/// @param image The image to use for the radial menu item.
+/// @param highlightedImage The image to use when the menu item is highlighted.
+/// @param highlightedHandler A block to execute when the user highlights the action (a touch enters the action's location). This block has no return value and takes the radial menu and highlighted action object. Usage of this includes——but is not limited to——starting or stopping an action while the radial menu remains open. Most of the time nothing is required here, see @c actionWithImage:highlightedImage:handler: instead.
+/// @param selectedHandler A block to execute when the user selects the action. This block has no return value and takes the radial menu and selected action object. The handler is responsible for dismissing the menu, if appropriate.
+/// @return A new action object.
+/// @discussion Actions are enabled by default when you create them.
++ (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage highlightedHandler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))highlightedHandler selectedHandler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))selectedHandler;
+
 
 #pragma mark Properties
 

@@ -10,25 +10,44 @@
 
 #import "MTZAction_Private.h"
 
+@interface MTZAction ()
+
+/// A readwrite property of style.
+@property (nonatomic, readwrite) MTZActionStyle style;
+
+@end
+
 @implementation MTZAction
 
 #pragma mark Creating an Action
 
 + (instancetype)actionWithStyle:(MTZActionStyle)style handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler
 {
+	return [MTZAction actionWithStyle:style highlightedHandler:nil selectedHandler:handler];
+}
+
++ (instancetype)actionWithStyle:(MTZActionStyle)style highlightedHandler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))highlightedHandler selectedHandler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))selectedHandler
+{
 	MTZAction *action = [[MTZAction alloc] init];
 	action.style = style;
-	action.handler = handler;
+	action.highlightedHandler = highlightedHandler;
+	action.handler = selectedHandler;
 	return action;
 }
 
 + (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler
 {
+	return [MTZAction actionWithImage:image highlightedImage:highlightedImage highlightedHandler:nil selectedHandler:handler];
+}
+
++ (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage highlightedHandler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))highlightedHandler selectedHandler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))selectedHandler
+{
 	MTZAction *action = [[MTZAction alloc] init];
 	action.style = -1;
 	action.image = image;
 	action.highlightedImage = highlightedImage;
-	action.handler = handler;
+	action.highlightedHandler = highlightedHandler;
+	action.handler = selectedHandler;
 	return action;
 }
 
