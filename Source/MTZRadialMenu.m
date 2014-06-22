@@ -7,6 +7,7 @@
 
 #import "MTZRadialMenu.h"
 
+#import "MTZAction_Private.h"
 #import "MTZButton.h"
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
@@ -76,58 +77,6 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 		default: return nil;
 	}
 }
-
-
-#pragma mark MTZAction
-
-@interface MTZAction ()
-
-/// A Boolean value representing whether the action is a standard type.
-@property (nonatomic, readonly, getter=isStandardType) BOOL standardType;
-
-/// The type of standard action, if any.
-/// @discussion Check @c standardType to see if this will be a valid action type.
-@property (nonatomic) MTZActionType type;
-
-/// The image to use for the normal state.
-@property (nonatomic, copy) UIImage *image;
-
-/// The image to use for the highlighted state.
-@property (nonatomic, copy) UIImage *highlightedImage;
-
-/// The handler for when the action is selected.
-@property (nonatomic, weak) void (^handler)(MTZRadialMenu *radialMenu, MTZAction *action);
-
-@end
-
-@implementation MTZAction
-
-#pragma mark Creating an Action
-
-+ (instancetype)actionOfType:(MTZActionType)type handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler
-{
-	MTZAction *action = [[MTZAction alloc] init];
-	action.type = type;
-	action.handler = handler;
-	return action;
-}
-
-+ (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(void (^)(MTZRadialMenu *radialMenu, MTZAction *action))handler
-{
-	MTZAction *action = [[MTZAction alloc] init];
-	action.type = -1;
-	action.image = image;
-	action.highlightedImage = highlightedImage;
-	action.handler = handler;
-	return action;
-}
-
-- (BOOL)isStandardType
-{
-	return self.type >= 0;
-}
-
-@end
 
 
 #pragma mark MTZRadialMenuState
@@ -292,7 +241,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	bottomButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 	
 	// Default center action
-	MTZAction *defaultCenter = [MTZAction actionOfType:MTZActionTypeCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+	MTZAction *defaultCenter = [MTZAction actionWithStyle:MTZActionStyleCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
 		[radialMenu dismissMenuAnimated:YES];
 	}];
 	[self setAction:defaultCenter forLocation:MTZRadialMenuLocationCenter];
@@ -684,16 +633,16 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	UIImage *image = nil;
 	UIImage *highlightedImage = nil;
-	if ( action.isStandardType ) {
+	if ( action.isStandardStyle ) {
 		// Look up standard graphic resources for type.
-		switch (action.type) {
-			case MTZActionTypeCancel:
-				image = [MTZRadialMenu resourceNamed:@"MTZActionTypeCancel"];
-				highlightedImage = [MTZRadialMenu resourceNamed:@"MTZActionTypeCancelHighlighted"];
+		switch (action.style) {
+			case MTZActionStyleCancel:
+				image = [MTZRadialMenu resourceNamed:@"MTZActionStyleCancel"];
+				highlightedImage = [MTZRadialMenu resourceNamed:@"MTZActionStyleCancelHighlighted"];
 				break;
-			case MTZActionTypeConfirm:
-				image = [MTZRadialMenu resourceNamed:@"MTZActionTypeConfirm"];
-				highlightedImage = [MTZRadialMenu resourceNamed:@"MTZActionTypeConfirmHighlighted"];
+			case MTZActionStyleConfirm:
+				image = [MTZRadialMenu resourceNamed:@"MTZActionStyleConfirm"];
+				highlightedImage = [MTZRadialMenu resourceNamed:@"MTZActionStyleConfirmHighlighted"];
 				break;
 			default:
 				break;

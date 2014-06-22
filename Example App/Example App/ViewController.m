@@ -26,13 +26,13 @@
 	[radialMenu setImage:[UIImage imageNamed:@"CircleHighlighted"] forState:UIControlStateSelected];
 	[self.view addSubview:radialMenu];
 	
-	MTZAction *send = [MTZAction actionOfType:MTZActionTypeConfirm handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+	MTZAction *send = [MTZAction actionWithStyle:MTZActionStyleConfirm handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
 		NSLog(@"Send");
 		[radialMenu dismissMenuAnimated:YES];
 	}];
 	[radialMenu setAction:send forLocation:MTZRadialMenuLocationTop];
 	
-	MTZAction *cancel = [MTZAction actionOfType:MTZActionTypeCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+	MTZAction *cancel = [MTZAction actionWithStyle:MTZActionStyleCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
 		NSLog(@"Cancel");
 		[radialMenu dismissMenuAnimated:YES];
 	}];
