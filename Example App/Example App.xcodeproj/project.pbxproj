@@ -12,6 +12,13 @@
 		C909C7D019480AFC00080438 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C7CF19480AFC00080438 /* ViewController.m */; };
 		C909C7D319480AFC00080438 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C909C7D119480AFC00080438 /* Main.storyboard */; };
 		C909C7E119480AFC00080438 /* Example_AppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C909C7E019480AFC00080438 /* Example_AppTests.m */; };
+		C95055EE1956879F00515AA6 /* MTZButton.h in Headers */ = {isa = PBXBuildFile; fileRef = C95055E71956879F00515AA6 /* MTZButton.h */; };
+		C95055EF1956879F00515AA6 /* MTZButton.m in Sources */ = {isa = PBXBuildFile; fileRef = C95055E81956879F00515AA6 /* MTZButton.m */; };
+		C95055F01956879F00515AA6 /* MTZCircleView.h in Headers */ = {isa = PBXBuildFile; fileRef = C95055E91956879F00515AA6 /* MTZCircleView.h */; };
+		C95055F11956879F00515AA6 /* MTZCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = C95055EA1956879F00515AA6 /* MTZCircleView.m */; };
+		C95055F21956879F00515AA6 /* MTZRadialMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = C95055EB1956879F00515AA6 /* MTZRadialMenu.h */; };
+		C95055F31956879F00515AA6 /* MTZRadialMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = C95055EC1956879F00515AA6 /* MTZRadialMenu.m */; };
+		C95055F41956879F00515AA6 /* RadialMenuAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C95055ED1956879F00515AA6 /* RadialMenuAssets.xcassets */; };
 		C9B08A151956180A003EE674 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C909C7D419480AFC00080438 /* Images.xcassets */; };
 		C9B08A3919561B71003EE674 /* RadialMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B08A3819561B71003EE674 /* RadialMenu.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C9B08A3F19561B71003EE674 /* RadialMenu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B08A3419561B71003EE674 /* RadialMenu.framework */; };
@@ -27,6 +34,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = C909C7C319480AFC00080438;
 			remoteInfo = "Example App";
+		};
+		C95055F5195687E400515AA6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C909C7BC19480AFC00080438 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9B08A3319561B71003EE674;
+			remoteInfo = RadialMenu;
 		};
 		C9B08A131956179F003EE674 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -92,12 +106,19 @@
 		C909C7DA19480AFC00080438 /* Example AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Example AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C909C7DF19480AFC00080438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C909C7E019480AFC00080438 /* Example_AppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example_AppTests.m; sourceTree = "<group>"; };
+		C95055E71956879F00515AA6 /* MTZButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTZButton.h; path = ../Source/MTZButton.h; sourceTree = "<group>"; };
+		C95055E81956879F00515AA6 /* MTZButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTZButton.m; path = ../Source/MTZButton.m; sourceTree = "<group>"; };
+		C95055E91956879F00515AA6 /* MTZCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTZCircleView.h; path = ../Source/MTZCircleView.h; sourceTree = "<group>"; };
+		C95055EA1956879F00515AA6 /* MTZCircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTZCircleView.m; path = ../Source/MTZCircleView.m; sourceTree = "<group>"; };
+		C95055EB1956879F00515AA6 /* MTZRadialMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTZRadialMenu.h; path = ../Source/MTZRadialMenu.h; sourceTree = "<group>"; };
+		C95055EC1956879F00515AA6 /* MTZRadialMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTZRadialMenu.m; path = ../Source/MTZRadialMenu.m; sourceTree = "<group>"; };
+		C95055ED1956879F00515AA6 /* RadialMenuAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = RadialMenuAssets.xcassets; path = ../Source/RadialMenuAssets.xcassets; sourceTree = "<group>"; };
 		C9B08A3419561B71003EE674 /* RadialMenu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RadialMenu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9B08A3719561B71003EE674 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C9B08A3819561B71003EE674 /* RadialMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RadialMenu.h; sourceTree = "<group>"; };
+		C9B08A3719561B71003EE674 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = ../Framework/Info.plist; sourceTree = "<group>"; };
+		C9B08A3819561B71003EE674 /* RadialMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RadialMenu.h; path = ../Framework/RadialMenu.h; sourceTree = "<group>"; };
 		C9B08A3E19561B71003EE674 /* RadialMenuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RadialMenuTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9B08A4419561B71003EE674 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C9B08A4519561B71003EE674 /* RadialMenuTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RadialMenuTests.m; sourceTree = "<group>"; };
+		C9B08A4419561B71003EE674 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = ../Framework/RadialMenuTests/Info.plist; sourceTree = "<group>"; };
+		C9B08A4519561B71003EE674 /* RadialMenuTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RadialMenuTests.m; path = ../Framework/RadialMenuTests/RadialMenuTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,10 +217,26 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		C95055E61956879F00515AA6 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				C95055E71956879F00515AA6 /* MTZButton.h */,
+				C95055E81956879F00515AA6 /* MTZButton.m */,
+				C95055E91956879F00515AA6 /* MTZCircleView.h */,
+				C95055EA1956879F00515AA6 /* MTZCircleView.m */,
+				C95055EB1956879F00515AA6 /* MTZRadialMenu.h */,
+				C95055EC1956879F00515AA6 /* MTZRadialMenu.m */,
+				C95055ED1956879F00515AA6 /* RadialMenuAssets.xcassets */,
+			);
+			name = Source;
+			path = ../../Source;
+			sourceTree = "<group>";
+		};
 		C9B08A3519561B71003EE674 /* RadialMenu */ = {
 			isa = PBXGroup;
 			children = (
 				C9B08A3819561B71003EE674 /* RadialMenu.h */,
+				C95055E61956879F00515AA6 /* Source */,
 				C9B08A3619561B71003EE674 /* Supporting Files */,
 			);
 			path = RadialMenu;
@@ -237,6 +274,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C95055F01956879F00515AA6 /* MTZCircleView.h in Headers */,
+				C95055EE1956879F00515AA6 /* MTZButton.h in Headers */,
+				C95055F21956879F00515AA6 /* MTZRadialMenu.h in Headers */,
 				C9B08A3919561B71003EE674 /* RadialMenu.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -314,6 +354,7 @@
 			dependencies = (
 				C9B08A4119561B71003EE674 /* PBXTargetDependency */,
 				C9B08A5419561B72003EE674 /* PBXTargetDependency */,
+				C95055F6195687E400515AA6 /* PBXTargetDependency */,
 			);
 			name = RadialMenuTests;
 			productName = RadialMenuTests;
@@ -388,6 +429,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C95055F41956879F00515AA6 /* RadialMenuAssets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,6 +465,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C95055F31956879F00515AA6 /* MTZRadialMenu.m in Sources */,
+				C95055F11956879F00515AA6 /* MTZCircleView.m in Sources */,
+				C95055EF1956879F00515AA6 /* MTZButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,6 +486,11 @@
 			isa = PBXTargetDependency;
 			target = C909C7C319480AFC00080438 /* Example App */;
 			targetProxy = C909C7DB19480AFC00080438 /* PBXContainerItemProxy */;
+		};
+		C95055F6195687E400515AA6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9B08A3319561B71003EE674 /* RadialMenu */;
+			targetProxy = C95055F5195687E400515AA6 /* PBXContainerItemProxy */;
 		};
 		C9B08A141956179F003EE674 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -730,6 +780,7 @@
 				C9B08A4F19561B71003EE674 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C9B08A5019561B71003EE674 /* Build configuration list for PBXNativeTarget "RadialMenuTests" */ = {
 			isa = XCConfigurationList;
@@ -738,6 +789,7 @@
 				C9B08A5219561B71003EE674 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
