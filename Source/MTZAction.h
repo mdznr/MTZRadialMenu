@@ -44,6 +44,6 @@ typedef NS_ENUM(NSInteger, MTZActionStyle){
 
 /// The standard action style, if any.
 /// @discussion Check @c standardStyle to see if this will be a valid action type.
-@property (nonatomic) MTZActionStyle style;
+@property (nonatomic, readonly) MTZActionStyle style;
 
 @end
