@@ -28,12 +28,20 @@ typedef void (^MTZActionSelectedHandler)(MTZRadialMenu *radialMenu, MTZAction *a
 
 #pragma mark Creating an Action
 
-/// Create and return an action with the specified images and behavior.
+/// Create and return an action of the specified style and behavior.
 /// @param style The standard action style. Use the appropriate style if the corresponding action is standard. For a list of possible values, see the constants in @c MTZActionStyle.
 /// @param handler A block to execute when the user selects the action. This block has no return value and takes the radial menu and selected action object. The handler is responsible for dismissing the menu, if appropriate.
 /// @return A new action object.
 /// @discussion Actions are enabled by default when you create them.
 + (instancetype)actionWithStyle:(MTZActionStyle)style handler:(MTZActionSelectedHandler)handler;
+
+/// Create and return an action of the specified style and behavior.
+/// @param style The standard action style. Use the appropriate style if the corresponding action is standard. For a list of possible values, see the constants in @c MTZActionStyle.
+/// @param highlightedHandler A block to execute when the user highlights the action (a touch enters the action's location). This block has no return value and takes the radial menu and highlighted action object. Usage of this includes——but is not limited to——starting or stopping an action while the radial menu remains open. Most of the time nothing is required here, see @c actionWithImage:highlightedImage:handler: instead.
+/// @param selectedHandler A block to execute when the user selects the action. This block has no return value and takes the radial menu and selected action object. The handler is responsible for dismissing the menu, if appropriate.
+/// @return A new action object.
+/// @discussion Actions are enabled by default when you create them.
++ (instancetype)actionWithStyle:(MTZActionStyle)style highlightedHandler:(MTZActionHighlightedHandler)highlightedHandler selectedHandler:(MTZActionSelectedHandler)selectedHandler;
 
 /// Create and return an action with the specified images and behavior.
 /// @param image The image to use for the radial menu item.
