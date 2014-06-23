@@ -504,6 +504,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	void (^animations)() = ^void() {
 		self.menuRadius = radius;
 		self.radialMenu.alpha = alpha;
+		self.mainButton.alpha = 1 - alpha;
 	};
 	
 	// The completion after all animations are complete.
