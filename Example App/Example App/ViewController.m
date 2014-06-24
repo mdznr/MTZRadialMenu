@@ -10,6 +10,12 @@
 
 @import RadialMenu;
 
+@interface ViewController ()
+
+@property (atomic) BOOL toggled;
+
+@end
+
 @implementation ViewController
             
 - (void)viewDidLoad
@@ -38,12 +44,31 @@
 	}];
 	[radialMenu setAction:cancel forLocation:MTZRadialMenuLocationLeft];
 	
+	self.toggled = YES;
+	
+	__block ViewController *blocksafeSelf = self;
+	
 	MTZAction *play = [MTZAction actionWithImage:[UIImage imageNamed:@"ActionPlay"]
 								highlightedImage:[UIImage imageNamed:@"ActionPlayHighlighted"]
-							  highlightedHandler:^(MTZRadialMenu *radialMenu, MTZAction *action, BOOL highlighted) {
+							  highlightedHandler:^(MTZRadialMenu *radialMenu, MTZAction *action, BOOL highlighted){
 								  NSLog(@"Play Highlighted: %d", highlighted);
+								  
+								  if (highlighted) {
+									  blocksafeSelf.toggled = !blocksafeSelf.toggled;
+								  }
+								  
+								  if (blocksafeSelf.toggled) {
+									  action.image = [UIImage imageNamed:@"Circle"];
+									  action.highlightedImage = [UIImage imageNamed:@"CircleHighlighted"];
+								  } else {
+									  action.image = [UIImage imageNamed:@"ActionPlay"];
+									  action.highlightedImage = [UIImage imageNamed:@"ActionPlayHighlighted"];
+								  }
 							  }
 								 selectedHandler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+									 blocksafeSelf.toggled = YES;
+									 action.image = [UIImage imageNamed:@"Circle"];
+									 action.highlightedImage = [UIImage imageNamed:@"CircleHighlighted"];
 									 NSLog(@"Play");
 								 }];
 	[radialMenu setAction:play forLocation:MTZRadialMenuLocationCenter];
