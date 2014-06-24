@@ -68,4 +68,10 @@ typedef void (^MTZActionSelectedHandler)(MTZRadialMenu *radialMenu, MTZAction *a
 /// @discussion Check @c standardStyle to see if this will be a valid action type.
 @property (nonatomic, readonly) MTZActionStyle style;
 
+/// The image to use for the normal state.
+@property (nonatomic, copy) UIImage *image;
+
+/// The image to use for the highlighted state.
+@property (nonatomic, copy) UIImage *highlightedImage;
+
 @end

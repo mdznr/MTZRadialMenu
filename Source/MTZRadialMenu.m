@@ -119,7 +119,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 #pragma mark MTZRadialMenu
 
-@interface MTZRadialMenu ()
+@interface MTZRadialMenu () <MTZActionDelegate>
 
 /// The actions for locations.
 @property (strong, nonatomic) NSMutableDictionary *actions;
@@ -617,7 +617,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	if ( [self isMenuVisible] ) {
 		return;
 	}
-	
+
 	[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 }
 
@@ -626,7 +626,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	if ( ![self isMenuVisible] ) {
 		return;
 	}
-	
+
 	[self setMenuState:MTZRadialMenuStateContracted animated:animated];
 }
 
@@ -658,6 +658,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	UIButton *actionButton = self.actionButtons[locationKey];
 	
 	if (action) {
+		action.delegate = self;
 		self.actions[locationKey] = action;
 		actionButton.hidden = NO;
 	} else {
@@ -693,6 +694,34 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 - (MTZAction *)actionForLocation:(MTZRadialMenuLocation)location
 {
 	return self.actions[descriptionStringForLocation(location)];
+}
+
+
+#pragma mark MTZActionDelegate
+
+- (void)actionImagesChanged:(MTZAction *)action
+{
+	// Look up the location for the action.
+	NSString *locationKey = [self locationStringForAction:action];
+	// Get the button for the location.
+	UIButton *actionButton = self.actionButtons[locationKey];
+	
+	// Update button resources.
+	[actionButton setImage:action.image forState:UIControlStateNormal];
+	[actionButton setImage:action.highlightedImage forState:UIControlStateHighlighted];
+}
+
+
+#pragma mark Misc.
+
+- (NSString *)locationStringForAction:(MTZAction *)action
+{
+	for (NSString *key in self.actions.allKeys) {
+		if (self.actions[key] == action) {
+			return key;
+		}
+	}
+	return nil;
 }
 
 + (UIImage *)resourceNamed:(NSString *)name

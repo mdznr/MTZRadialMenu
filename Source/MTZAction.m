@@ -56,4 +56,18 @@
 	return self.style >= 0;
 }
 
+#pragma mark Changing Images
+
+- (void)setImage:(UIImage *)image
+{
+	_image = image;
+	[self.delegate actionImagesChanged:self];
+}
+
+- (void)setHighlightedImage:(UIImage *)highlightedImage
+{
+	_highlightedImage = highlightedImage;
+	[self.delegate actionImagesChanged:self];
+}
+
 @end
