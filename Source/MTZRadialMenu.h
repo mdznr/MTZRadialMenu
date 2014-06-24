@@ -9,6 +9,28 @@
 
 #import "MTZAction.h"
 
+/// The delegate of a @c MTZRadialMenu object must adopt the @c MTZRadialMenuDelegate protocol. Optional methods of the protocol allow the delegate to handle dependant UI and state when a radial menu is displayed and dismissed.
+@protocol MTZRadialMenuDelegate <NSObject>
+
+/// Called before the radial menu is displayed.
+/// @param radialMenu The radial menu that is about to display.
+- (void)radialMenuWillDisplay:(MTZRadialMenu *)radialMenu;
+
+/// Called after the radial menu is displayed.
+/// @param radialMenu The radial menu that just displayed.
+- (void)radialMenuDidDisplay:(MTZRadialMenu *)radialMenu;
+
+/// Called before the radial menu is closed.
+/// @param radialMenu The radial menu that is about to close.
+- (void)radialMenuWillDismiss:(MTZRadialMenu *)radialMenu;
+
+/// Called after the radial menu is closed.
+/// @param radialMenu The radial menu that just closed.
+- (void)radialMenuDidDismiss:(MTZRadialMenu *)radialMenu;
+
+@end
+
+
 /// Describes the location of an action in a @c MTZRadialMenu.
 /// @discussion Remember: Some of these locations may not be visible on screen.
 typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
@@ -30,6 +52,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 /// An instance of the @c MTZRadialMenu class implements a radial menu that appears when long-pressing on a button. This class provides methods for setting the main button image, the presentation of menu items, and other appearance properties of a radial menu.
 /// @discussion If using commonly used action items, but sure to use them consistently. Send (@c MTZActionStyleSend) actions should be located at the top of the radial menu. Cancel (@c MTZActionStyleCancel) actions should be located on either the left or right side, depending on which side is closest to the center of the display. This ensures that the action is visible and consistently activated for users of both handedness and for use of radial menus on any side of the display.
 @interface MTZRadialMenu : UIControl
+
+/// The object that acts as the delegate of the receiving radial menu.
+/// @discussion The delegate must adopt the @c MTZRadialMenuDelegate protocol.
+@property (nonatomic, weak) id<MTZRadialMenuDelegate> delegate;
 
 #pragma mark Configuring the Main Button Presentation
 
