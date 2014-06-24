@@ -27,22 +27,24 @@
 	CGRect right = CGRectMake(271, 269, 44, 44);
 	CGRect left = CGRectMake(5, 269, 44, 44);
 	
-	MTZRadialMenu *radialMenu = [[MTZRadialMenu alloc] initWithFrame:right];
-	[radialMenu setImage:[UIImage imageNamed:@"Circle"] forState:UIControlStateNormal];
-	[radialMenu setImage:[UIImage imageNamed:@"CircleHighlighted"] forState:UIControlStateSelected];
-	[self.view addSubview:radialMenu];
+	// Microphone Radial Menu
+	MTZRadialMenu *microphoneRadialMenu = [[MTZRadialMenu alloc] initWithFrame:right];
+	[microphoneRadialMenu setImage:[UIImage imageNamed:@"Microphone"] forState:UIControlStateNormal];
+	[microphoneRadialMenu setImage:[UIImage imageNamed:@"Microphone"] forState:UIControlStateSelected];
+	[self.view addSubview:microphoneRadialMenu];
 	
-	MTZAction *send = [MTZAction actionWithStyle:MTZActionStyleConfirm handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
-		NSLog(@"Send");
+	MTZAction *microphoneSend = [MTZAction actionWithStyle:MTZActionStyleConfirm handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+		NSLog(@"Microphone: Send");
 		[radialMenu dismissMenuAnimated:YES];
 	}];
-	[radialMenu setAction:send forLocation:MTZRadialMenuLocationTop];
+	[microphoneRadialMenu setAction:microphoneSend forLocation:MTZRadialMenuLocationTop];
 	
-	MTZAction *cancel = [MTZAction actionWithStyle:MTZActionStyleCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
-		NSLog(@"Cancel");
+	MTZAction *microphoneCancel = [MTZAction actionWithStyle:MTZActionStyleCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+		NSLog(@"Micrphone: Cancel");
 		[radialMenu dismissMenuAnimated:YES];
 	}];
-	[radialMenu setAction:cancel forLocation:MTZRadialMenuLocationLeft];
+	
+	[microphoneRadialMenu setAction:microphoneCancel forLocation:MTZRadialMenuLocationLeft];
 	
 	self.toggled = YES;
 	
@@ -71,7 +73,33 @@
 									 action.highlightedImage = [UIImage imageNamed:@"CircleHighlighted"];
 									 NSLog(@"Play");
 								 }];
-	[radialMenu setAction:play forLocation:MTZRadialMenuLocationCenter];
+	[microphoneRadialMenu setAction:play forLocation:MTZRadialMenuLocationCenter];
+	
+	// Camera Radial Menu
+	MTZRadialMenu *cameraRadialMenu = [[MTZRadialMenu alloc] initWithFrame:left];
+	[cameraRadialMenu setImage:[UIImage imageNamed:@"Camera"] forState:UIControlStateNormal];
+	[cameraRadialMenu setImage:[UIImage imageNamed:@"CameraHighlighted"] forState:UIControlStateSelected];
+	[self.view addSubview:cameraRadialMenu];
+	
+	MTZAction *cameraSend = [MTZAction actionWithStyle:MTZActionStyleConfirm handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+		NSLog(@"Camera: Send");
+		[radialMenu dismissMenuAnimated:YES];
+	}];
+	
+	MTZAction *cameraCancel = [MTZAction actionWithStyle:MTZActionStyleCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+		NSLog(@"Camera: Cancel");
+		[radialMenu dismissMenuAnimated:YES];
+	}];
+	
+	MTZAction *cameraRecord = [MTZAction actionWithImage:[UIImage imageNamed:@""] highlightedImage:[UIImage imageNamed:@""] highlightedHandler:^(MTZRadialMenu *radialMenu, MTZAction *action, BOOL highlighted) {
+		NSLog(@"Camera: Start Record");
+	} selectedHandler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+		NSLog(@"Camera: Selected Record");
+	}];
+	
+	[cameraRadialMenu setAction:cameraSend forLocation:MTZRadialMenuLocationTop];
+	[cameraRadialMenu setAction:cameraCancel forLocation:MTZRadialMenuLocationCenter];
+	[cameraRadialMenu setAction:cameraRecord forLocation:MTZRadialMenuLocationRight];
 }
 
 @end
