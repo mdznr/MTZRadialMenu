@@ -18,6 +18,12 @@ typedef NS_ENUM(NSInteger, MTZActionStyle){
 	MTZActionStyleCancel = 0,
 	/// Indicates the action confirms the operation.
 	MTZActionStyleConfirm,
+	/// Indicates the action pauses some media.
+	MTZActionStylePause,
+	/// Indicates the action plays some media.
+	MTZActionStylePlay,
+	/// Indicates the action triggers the camera.
+	MTZActionStyleCamera,
 };
 
 typedef void (^MTZActionHighlightedHandler)(MTZRadialMenu *radialMenu, MTZAction *action, BOOL highlighted);
