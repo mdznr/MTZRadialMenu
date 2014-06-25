@@ -35,6 +35,21 @@
 	return action;
 }
 
++ (instancetype)actionWithIcon:(UIImage *)icon handler:(MTZActionSelectedHandler)handler
+{
+	return [MTZAction actionWithIcon:icon highlightedHandler:nil selectedHandler:handler];
+}
+
++ (instancetype)actionWithIcon:(UIImage *)icon highlightedHandler:(MTZActionHighlightedHandler)highlightedHandler selectedHandler:(MTZActionSelectedHandler)selectedHandler
+{
+	MTZAction *action = [[MTZAction alloc] init];
+	action.style = -1;
+	action.icon = icon;
+	action.highlightedHandler = highlightedHandler;
+	action.selectedHandler = selectedHandler;
+	return action;
+}
+
 + (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(MTZActionSelectedHandler)handler
 {
 	return [MTZAction actionWithImage:image highlightedImage:highlightedImage highlightedHandler:nil selectedHandler:handler];
