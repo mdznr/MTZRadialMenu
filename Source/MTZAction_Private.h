@@ -5,6 +5,9 @@
 //  Copyright (c) 2014 Matt Zanchelli. All rights reserved.
 //
 
+/// Get a string representation of an action style.
+NSString *NSStringFromMTZActionStyle(MTZActionStyle style);
+
 @protocol MTZActionDelegate <NSObject>
 
 /// The images for the action have changed.

@@ -10,12 +10,17 @@
 
 #import "MTZAction_Private.h"
 
-@interface MTZAction ()
-
-/// A readwrite property of style.
-@property (nonatomic, readwrite) MTZActionStyle style;
-
-@end
+NSString *NSStringFromMTZActionStyle(MTZActionStyle style)
+{
+	switch (style) {
+		case MTZActionStyleCancel:  return @"MTZActionStyleCancel";
+		case MTZActionStyleConfirm: return @"MTZActionStyleConfirm";
+		case MTZActionStyleCamera:  return @"MTZActionStyleCamera";
+		case MTZActionStylePause:   return @"MTZActionStylePause";
+		case MTZActionStylePlay:    return @"MTZActionStylePlay";
+		default: return nil;
+	}
+}
 
 @implementation MTZAction
 
