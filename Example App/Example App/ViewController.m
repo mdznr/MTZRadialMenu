@@ -13,7 +13,7 @@
 @interface ViewController () <MTZRadialMenuDelegate>
 
 @property (strong, nonatomic) MTZRadialMenu *cameraRadialMenu;
-@property (nonatomic) BOOL recording;
+@property (nonatomic, getter=isCameraRecording) BOOL cameraRecording;
 @property (strong, nonatomic) MTZAction *cameraPhotoTakeAndSendAction;
 @property (strong, nonatomic) MTZAction *cameraRecordingStartAction;
 @property (strong, nonatomic) MTZAction *cameraRecordingStopAction;
@@ -30,15 +30,13 @@
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 	
+	
+	self.cameraRecording = NO;
+	
+	
 	CGRect middle = CGRectMake(138, 269, 44, 44);
 	CGRect right = CGRectMake(271, 269, 44, 44);
 	CGRect left = CGRectMake(5, 269, 44, 44);
-	
-	
-	
-	
-	
-	
 	
 	
 	// Camera Radial Menu
@@ -46,10 +44,6 @@
 	[self.cameraRadialMenu setImage:[UIImage imageNamed:@"Camera"] forState:UIControlStateNormal];
 	[self.cameraRadialMenu setImage:[UIImage imageNamed:@"CameraHighlighted"] forState:UIControlStateSelected];
 	[self.view addSubview:self.cameraRadialMenu];
-	
-	
-	self.recording = NO;
-	__block ViewController *blocksafeSelf = self;
 	
 	// Camera Cancel
 	MTZAction *cameraCancel = [MTZAction actionWithStyle:MTZActionStyleCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
@@ -72,12 +66,13 @@
 	}];
 
 	// Camera Recording Stop
-	self.cameraRecordingStopAction = [MTZAction actionWithImage:[UIImage imageNamed:@"ActionCameraStop"] highlightedImage:[UIImage imageNamed:@"ActionCameraStopHighlighted"] highlightedHandler:^(MTZRadialMenu *radialMenu, MTZAction *action, BOOL highlighted) {
-		if (highlighted) {
-			[self cameraStop];
-		}
-	} selectedHandler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+	self.cameraRecordingStopAction = [MTZAction actionWithImage:[UIImage imageNamed:@"ActionCameraStop"] highlightedImage:[UIImage imageNamed:@"ActionCameraStopHighlighted"] handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
 		[self cameraStop];
+	}];
+	
+	// Camera Recording Send
+	self.cameraRecordingSendAction = [MTZAction actionWithStyle:MTZActionStyleConfirm handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+		[self cameraRecordingSend];
 	}];
 	
 	// Camera Recording Playback Play
@@ -90,24 +85,8 @@
 		[self cameraRecordingPlaybackPause];
 	}];
 	
-	// Camera Recording Send
-	self.cameraRecordingSendAction = [MTZAction actionWithStyle:MTZActionStyleConfirm handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
-		[self cameraRecordingSend];
-	}];
-	
 	[self.cameraRadialMenu setAction:cameraCancel forLocation:MTZRadialMenuLocationCenter];
 	[self resetCameraRadialMenu];
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	// Microphone Radial Menu
@@ -169,7 +148,7 @@
 	NSLog(@"Camera: Start Recording");
 	
 	// The camera is now recording.
-	self.recording = YES;
+	self.cameraRecording = YES;
 	
 	// Change the action to stop.
 	[self.cameraRadialMenu setAction:self.cameraRecordingStopAction forLocation:MTZRadialMenuLocationRight];
@@ -180,10 +159,17 @@
 	NSLog(@"Camera: Stop");
 	
 	// The camera is no longer recording.
-	self.recording = NO;
+	self.cameraRecording = NO;
 	
 	[self.cameraRadialMenu setAction:self.cameraRecordingPlaybackPlayAction forLocation:MTZRadialMenuLocationRight];
 	[self.cameraRadialMenu setAction:self.cameraRecordingSendAction forLocation:MTZRadialMenuLocationTop];
+}
+
+- (void)cameraRecordingSend
+{
+	NSLog(@"Camera: Sending Recording");
+	
+	[self.cameraRadialMenu dismissMenuAnimated:YES];
 }
 
 - (void)cameraRecordingPlaybackPlay
@@ -198,13 +184,6 @@
 	NSLog(@"Camera: Pause");
 	
 	[self.cameraRadialMenu setAction:self.cameraRecordingPlaybackPlayAction forLocation:MTZRadialMenuLocationRight];
-}
-
-- (void)cameraRecordingSend
-{
-	NSLog(@"Camera: Sending Recording");
-	
-	[self.cameraRadialMenu dismissMenuAnimated:YES];
 }
 
 
