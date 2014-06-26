@@ -3,16 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "MTZActionTypeConfirmHighlighted.png"
+      "filename" : "MTZActionStylePlay.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "MTZActionTypeConfirmHighlighted@2x.png"
+      "filename" : "MTZActionStylePlay@2x.png"
     }
   ],
   "info" : {
     "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "template-rendering-intent" : "template"
   }
 }

@@ -3,12 +3,12 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "ActionPlay.png"
+      "filename" : "ActionCameraStop.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "ActionPlay@2x.png"
+      "filename" : "ActionCameraStop@2x.png"
     }
   ],
   "info" : {
