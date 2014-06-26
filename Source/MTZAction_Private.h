@@ -13,10 +13,24 @@
 @end
 
 
+/// Represents the different types of possible action items.
+typedef NS_ENUM(NSInteger, MTZActionType) {
+	/// The action is of a standard style.
+	MTZActionTypeStandardStyle,
+	/// The action uses an icon.
+	MTZActionTypeIcon,
+	/// The action uses images for different states.
+	MTZActionTypeImages,
+};
+
+
 @interface MTZAction ()
 
-/// A Boolean value representing whether the action is a standard style.
-@property (nonatomic, readonly, getter=isStandardStyle) BOOL standardStyle;
+/// The type of action this is. This is dependent on which method was used to create the action.
+@property (nonatomic, readwrite) MTZActionType actionType;
+
+/// A readwrite property of style.
+@property (nonatomic, readwrite) MTZActionStyle style;
 
 /// The handler for when the action is highlighted.
 @property (nonatomic, copy) MTZActionHighlightedHandler highlightedHandler;
