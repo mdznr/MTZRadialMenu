@@ -29,6 +29,7 @@
 + (instancetype)actionWithStyle:(MTZActionStyle)style highlightedHandler:(MTZActionHighlightedHandler)highlightedHandler selectedHandler:(MTZActionSelectedHandler)selectedHandler
 {
 	MTZAction *action = [[MTZAction alloc] init];
+	action.actionType = MTZActionTypeStandardStyle;
 	action.style = style;
 	action.highlightedHandler = highlightedHandler;
 	action.selectedHandler = selectedHandler;
@@ -43,7 +44,7 @@
 + (instancetype)actionWithIcon:(UIImage *)icon highlightedHandler:(MTZActionHighlightedHandler)highlightedHandler selectedHandler:(MTZActionSelectedHandler)selectedHandler
 {
 	MTZAction *action = [[MTZAction alloc] init];
-	action.style = -1;
+	action.actionType = MTZActionTypeIcon;
 	action.icon = icon;
 	action.highlightedHandler = highlightedHandler;
 	action.selectedHandler = selectedHandler;
@@ -58,17 +59,12 @@
 + (instancetype)actionWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage highlightedHandler:(MTZActionHighlightedHandler)highlightedHandler selectedHandler:(MTZActionSelectedHandler)selectedHandler
 {
 	MTZAction *action = [[MTZAction alloc] init];
-	action.style = -1;
+	action.actionType = MTZActionTypeImages;
 	action.image = image;
 	action.highlightedImage = highlightedImage;
 	action.highlightedHandler = highlightedHandler;
 	action.selectedHandler = selectedHandler;
 	return action;
-}
-
-- (BOOL)isStandardStyle
-{
-	return self.style >= 0;
 }
 
 #pragma mark Changing Images
