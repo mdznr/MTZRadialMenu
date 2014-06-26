@@ -712,6 +712,37 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 }
 
 
+#pragma mark Sending delegate (MTZRadialMenuDelegate) methods
+
+- (void)tellDelegateRadialMenuWillDisplay
+{
+	if ( [self.delegate respondsToSelector:@selector(radialMenuWillDisplay:)] ) {
+		[self.delegate radialMenuWillDisplay:self];
+	}
+}
+
+- (void)tellDelegateRadialMenuDidDisplay
+{
+	if ( [self.delegate respondsToSelector:@selector(radialMenuDidDisplay:)] ) {
+		[self.delegate radialMenuDidDisplay:self];
+	}
+}
+
+- (void)tellDelegateRadialMenuWillDismiss
+{
+	if ( [self.delegate respondsToSelector:@selector(radialMenuWillDismiss:)] ) {
+		[self.delegate radialMenuWillDismiss:self];
+	}
+}
+
+- (void)tellDelegateRadialMenuDidDismiss
+{
+	if ( [self.delegate respondsToSelector:@selector(radialMenuDidDismiss:)] ) {
+		[self.delegate radialMenuDidDismiss:self];
+	}
+}
+
+
 #pragma mark Misc.
 
 - (NSString *)locationStringForAction:(MTZAction *)action
