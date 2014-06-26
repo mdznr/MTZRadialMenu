@@ -666,28 +666,22 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		actionButton.hidden = YES;
 	}
 	
-	UIImage *image = nil;
-	UIImage *highlightedImage = nil;
-	if ([action isStandardStyle]) {
-		// Look up standard graphic resources for type.
-		switch (action.style) {
-			case MTZActionStyleCancel:
-				image = [MTZRadialMenu resourceNamed:@"MTZActionStyleCancel"];
-				highlightedImage = [MTZRadialMenu resourceNamed:@"MTZActionStyleCancelHighlighted"];
-				break;
-			case MTZActionStyleConfirm:
-				image = [MTZRadialMenu resourceNamed:@"MTZActionStyleConfirm"];
-				highlightedImage = [MTZRadialMenu resourceNamed:@"MTZActionStyleConfirmHighlighted"];
-				break;
-			default:
-				break;
-		}
-	} else {
-		image = action.image;
-		highlightedImage = action.highlightedImage;
+	switch (action.actionType) {
+		case MTZActionTypeStandardStyle: {
+			NSString *styleName = NSStringFromMTZActionStyle(action.style);
+			UIImage *icon = [MTZRadialMenu resourceNamed:styleName];
+			[actionButton setImage:icon forState:UIControlStateNormal];
+			[actionButton setImage:nil forState:UIControlStateHighlighted];
+		} break;
+		case MTZActionTypeIcon: {
+			[actionButton setImage:action.icon forState:UIControlStateNormal];
+			[actionButton setImage:nil forState:UIControlStateHighlighted];
+		} break;
+		case MTZActionTypeImages: {
+			[actionButton setImage:action.image forState:UIControlStateNormal];
+			[actionButton setImage:action.highlightedImage forState:UIControlStateHighlighted];
+		} break;
 	}
-	[actionButton setImage:image forState:UIControlStateNormal];
-	[actionButton setImage:highlightedImage forState:UIControlStateHighlighted];
 }
 
 /// Returns the actino for a particular location on the receiving radial menu.
