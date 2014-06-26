@@ -191,7 +191,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	self.activeStateTransitionCount = 0;
 	
 	// Main button
-	self.mainButton = [MTZButton buttonWithType:UIButtonTypeCustom];
+	self.mainButton = [MTZButton buttonWithType:UIButtonTypeSystem];
 	self.mainButton.frame = self.bounds;
 	[self addSubview:self.mainButton];
 	self.mainButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
