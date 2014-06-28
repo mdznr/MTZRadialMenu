@@ -480,6 +480,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		return;
 	}
 	
+	BOOL menuWasOpen = _menuState != MTZRadialMenuStateContracted;
+	
 	_menuState = menuState;
 	
 	BOOL menuOpen;
@@ -500,6 +502,12 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		}
 	}
 	
+	if ( menuOpen && !menuWasOpen ) {
+		[self tellDelegateRadialMenuWillDisplay];
+	} else if ( !menuOpen && menuWasOpen ) {
+		[self tellDelegateRadialMenuWillDismiss];
+	}
+	
 	// Update visual appearance.
 	void (^animations)() = ^void() {
 		self.menuRadius = radius;
@@ -510,6 +518,13 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	// The completion after all animations are complete.
 	// Update gesture recognizers and touch behaviours.
 	void (^completion)(BOOL) = ^void(BOOL finished) {
+		
+		if ( menuOpen && !menuWasOpen ) {
+			[self tellDelegateRadialMenuDidDisplay];
+		} else if ( !menuOpen && menuWasOpen ) {
+			[self tellDelegateRadialMenuDidDismiss];
+		}
+		
 		self.exclusiveTouch = menuOpen;
 		CFTimeInterval minimumPressDuration = menuOpen ? 0.0 : 0.5;
 		if ( self.pressGestureRecognizer.minimumPressDuration != minimumPressDuration ) {
@@ -617,8 +632,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	if ( [self isMenuVisible] ) {
 		return;
 	}
-
+	
+	[self tellDelegateRadialMenuWillDisplay];
 	[self setMenuState:MTZRadialMenuStateNormal animated:YES];
+	[self tellDelegateRadialMenuDidDisplay];
 }
 
 - (void)dismissMenuAnimated:(BOOL)animated
