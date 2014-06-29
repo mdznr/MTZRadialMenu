@@ -3,12 +3,12 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "MTZActionStyleCamera.png"
+      "filename" : "MTZRadialMenuStandardItemCamera.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "MTZActionStyleCamera@2x.png"
+      "filename" : "MTZRadialMenuStandardItemCamera@2x.png"
     }
   ],
   "info" : {

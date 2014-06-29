@@ -3,12 +3,12 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "MTZActionTypeCancel.png"
+      "filename" : "MTZRadialMenuStandardItemCancel.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "MTZActionTypeCancel@2x.png"
+      "filename" : "MTZRadialMenuStandardItemCancel@2x.png"
     }
   ],
   "info" : {

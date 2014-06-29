@@ -3,12 +3,12 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "MTZActionStylePause.png"
+      "filename" : "MTZRadialMenuStandardItemPause.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "MTZActionStylePause@2x.png"
+      "filename" : "MTZRadialMenuStandardItemPause@2x.png"
     }
   ],
   "info" : {
