@@ -7,7 +7,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "MTZAction.h"
+#import "MTZRadialMenuItem.h"
 
 /// The delegate of a @c MTZRadialMenu object must adopt the @c MTZRadialMenuDelegate protocol. Optional methods of the protocol allow the delegate to handle dependant UI and state when a radial menu is displayed and dismissed.
 @protocol MTZRadialMenuDelegate <NSObject>
@@ -75,13 +75,13 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 
 #pragma mark Configuring the User Actions
 
-/// Sets the action for a particular location on the receiving radial menu.
-/// @param action The action to add to the radial menu.
+/// Sets the item for a particular location on the receiving radial menu.
+/// @param item The action to add to the radial menu.
 /// @param location The location on the radial menu to position this action.
-- (void)setAction:(MTZAction *)action forLocation:(MTZRadialMenuLocation)location;
+- (void)setItem:(MTZRadialMenuItem *)item forLocation:(MTZRadialMenuLocation)location;
 
-/// Returns the actino for a particular location on the receiving radial menu.
-- (MTZAction *)actionForLocation:(MTZRadialMenuLocation)location;
+/// Returns the menu item for a particular location on the receiving radial menu.
+- (MTZRadialMenuItem *)menuItemForLocation:(MTZRadialMenuLocation)location;
 
 #pragma mark Getting the Current State
 

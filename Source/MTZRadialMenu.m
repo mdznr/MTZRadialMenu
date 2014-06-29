@@ -7,7 +7,7 @@
 
 #import "MTZRadialMenu.h"
 
-#import "MTZAction_Private.h"
+#import "MTZRadialMenuItem_Private.h"
 #import "MTZButton.h"
 
 #import <UIKit/UIGestureRecognizerSubclass.h>
@@ -119,13 +119,13 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 #pragma mark MTZRadialMenu
 
-@interface MTZRadialMenu () <MTZActionDelegate>
+@interface MTZRadialMenu () <MTZRadialMenuItemDelegate>
 
-/// The actions for locations.
-@property (strong, nonatomic) NSMutableDictionary *actions;
+/// The item for locations.
+@property (strong, nonatomic) NSMutableDictionary *items;
 
 /// Action buttons corresponding to locations.
-@property (strong, nonatomic) NSMutableDictionary *actionButtons;
+@property (strong, nonatomic) NSMutableDictionary *itemButtons;
 
 /// The radial menu.
 @property (strong, nonatomic) UIView *radialMenu;
@@ -187,7 +187,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	self.clipsToBounds = NO;
 	
 	// Data
-	self.actions = [[NSMutableDictionary alloc] initWithCapacity:3];
+	self.items = [[NSMutableDictionary alloc] initWithCapacity:3];
 	self.activeStateTransitionCount = 0;
 	
 	// Main button
@@ -206,13 +206,13 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	radialMenuBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[self.radialMenu addSubview:radialMenuBackground];
 	
-	// Action buttons
-	self.actionButtons = [[NSMutableDictionary alloc] initWithCapacity:5];
+	// Item buttons
+	self.itemButtons = [[NSMutableDictionary alloc] initWithCapacity:5];
 	
 	// Center button
 	UIButton *centerButton = [MTZRadialMenu newActionButton];
 	[self.radialMenu addSubview:centerButton];
-	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationCenter)] = centerButton;
+	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationCenter)] = centerButton;
 	{
 		CGRect frame = centerButton.frame;
 		frame.origin.x = (self.radialMenu.bounds.size.width - frame.size.width)/2;
@@ -224,7 +224,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	// Top button
 	UIButton *topButton = [MTZRadialMenu newActionButton];
 	[self.radialMenu addSubview:topButton];
-	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationTop)] = topButton;
+	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationTop)] = topButton;
 	{
 		CGRect frame = topButton.frame;
 		frame.origin.y = RADIALMENU_BUTTON_PADDING;
@@ -235,7 +235,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	// Left button
 	UIButton *leftButton = [MTZRadialMenu newActionButton];
 	[self.radialMenu addSubview:leftButton];
-	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationLeft)] = leftButton;
+	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationLeft)] = leftButton;
 	{
 		CGRect frame = leftButton.frame;
 		frame.origin.x = RADIALMENU_BUTTON_PADDING;
@@ -246,7 +246,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	// Right button
 	UIButton *rightButton = [MTZRadialMenu newActionButton];
 	[self.radialMenu addSubview:rightButton];
-	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationRight)] = rightButton;
+	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationRight)] = rightButton;
 	{
 		CGRect frame = rightButton.frame;
 		frame.origin.x = self.radialMenu.bounds.size.width - RADIALMENU_BUTTON_PADDING - frame.size.width;
@@ -257,7 +257,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	// Bottom button
 	UIButton *bottomButton = [MTZRadialMenu newActionButton];
 	[self.radialMenu addSubview:bottomButton];
-	self.actionButtons[descriptionStringForLocation(MTZRadialMenuLocationBottom)] = bottomButton;
+	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationBottom)] = bottomButton;
 	{
 		CGRect frame = bottomButton.frame;
 		frame.origin.y = self.radialMenu.bounds.size.height - RADIALMENU_BUTTON_PADDING - frame.size.height;
@@ -266,10 +266,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	bottomButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 	
 	// Default center action
-	MTZAction *defaultCenter = [MTZAction actionWithStyle:MTZActionStyleCancel handler:^(MTZRadialMenu *radialMenu, MTZAction *action) {
+	MTZRadialMenuItem *defaultCenter = [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:MTZRadialMenuStandardItemCancel handler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
 		[radialMenu dismissMenuAnimated:YES];
 	}];
-	[self setAction:defaultCenter forLocation:MTZRadialMenuLocationCenter];
+	[self setItem:defaultCenter forLocation:MTZRadialMenuLocationCenter];
 	
 	// Gestures
 	self.pressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(didTouch:)];
@@ -302,7 +302,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		}
 		case UIGestureRecognizerStateChanged: {
 			MTZRadialMenuLocation location = [self locationForPoint:point];
-			MTZAction *action = [self actionForLocation:location];
+			MTZRadialMenuItem *item = [self menuItemForLocation:location];
 			if ( location == MTZRadialMenuLocationCenter ) {
 				// Highlighting center action.
 				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
@@ -311,7 +311,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 			} else {
 				// Possibly highlighting outer actions.
-				if ( action ) {
+				if (item) {
 					// Highlighting an action on the outer ring.
 					[self setMenuState:MTZRadialMenuStateExpanded animated:YES];;
 				} else {
@@ -349,8 +349,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 - (void)highlightLocation:(MTZRadialMenuLocation)location
 {
 	NSString *locationKey = descriptionStringForLocation(location);
-	for ( NSString *key in self.actionButtons.allKeys ) {
-		UIButton *button = self.actionButtons[key];
+	for ( NSString *key in self.itemButtons.allKeys ) {
+		UIButton *button = self.itemButtons[key];
 		BOOL highlighted = [key isEqualToString:locationKey];
 		if ( button.highlighted != highlighted ) {
 			// Set the highlighted state on the button.
@@ -358,9 +358,9 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 			
 			// Call highlighted handler.
 			MTZRadialMenuLocation currentLocation = locationFromLocationString(key);
-			MTZAction *action = [self actionForLocation:currentLocation];
-			if (action && action.highlightedHandler) {
-				action.highlightedHandler(self, action, highlighted);
+			MTZRadialMenuItem *item = [self menuItemForLocation:currentLocation];
+			if (item && item.highlightedHandler) {
+				item.highlightedHandler(self, item, highlighted);
 			}
 		}
 	}
@@ -368,11 +368,11 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 - (void)selectLocation:(MTZRadialMenuLocation)location
 {
-	MTZAction *action = [self actionForLocation:location];
-	action = action ? action : [self actionForLocation:MTZRadialMenuLocationCenter];
-	if ( action ) {
+	MTZRadialMenuItem *item = [self menuItemForLocation:location];
+	item = item ? item : [self menuItemForLocation:MTZRadialMenuLocationCenter];
+	if (item) {
 		// Act on it!
-		action.selectedHandler(self, action);
+		item.selectedHandler(self, item);
 	} else {
 		// Something weird happened, dismiss the menu.
 		[self dismissMenuAnimated:YES];
@@ -381,7 +381,9 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
 {
-	if ( self.exclusiveTouch ) { return YES; }
+	if (self.exclusiveTouch) {
+		return YES;
+	}
 	
 	CGPoint convertedPoint = [self.radialMenu convertPoint:point fromView:self];
 	return [self.radialMenu pointInside:convertedPoint withEvent:event];
@@ -666,60 +668,56 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 #pragma mark Configuring the User Actions
 
-/// Sets the action for a particular location on the receiving radial menu.
-/// @param action The action to add to the radial menu.
-/// @param location The location on the radial menu to position this action.
-- (void)setAction:(MTZAction *)action forLocation:(MTZRadialMenuLocation)location
+- (void)setItem:(MTZRadialMenuItem *)item forLocation:(MTZRadialMenuLocation)location;
 {
 	NSString *locationKey = descriptionStringForLocation(location);
-	UIButton *actionButton = self.actionButtons[locationKey];
+	UIButton *itemButton = self.itemButtons[locationKey];
 	
-	if (action) {
-		action.delegate = self;
-		self.actions[locationKey] = action;
-		actionButton.hidden = NO;
+	if (item) {
+		item.delegate = self;
+		self.items[locationKey] = item;
+		itemButton.hidden = NO;
 	} else {
-		[self.actions removeObjectForKey:locationKey];
-		actionButton.hidden = YES;
+		[self.items removeObjectForKey:locationKey];
+		itemButton.hidden = YES;
 	}
 	
-	switch (action.actionType) {
-		case MTZActionTypeStandardStyle: {
-			NSString *styleName = NSStringFromMTZActionStyle(action.style);
+	switch (item.type) {
+		case MTZRadialMenuItemTypeStandardItem: {
+			NSString *styleName = NSStringFromMTZRadialMenuStandardItem(item.standardItem);
 			UIImage *icon = [MTZRadialMenu resourceNamed:styleName];
-			[actionButton setImage:icon forState:UIControlStateNormal];
-			[actionButton setImage:nil forState:UIControlStateHighlighted];
+			[itemButton setImage:icon forState:UIControlStateNormal];
+			[itemButton setImage:nil forState:UIControlStateHighlighted];
 		} break;
-		case MTZActionTypeIcon: {
-			[actionButton setImage:action.icon forState:UIControlStateNormal];
-			[actionButton setImage:nil forState:UIControlStateHighlighted];
+		case MTZRadialMenuItemTypeIcon: {
+			[itemButton setImage:item.icon forState:UIControlStateNormal];
+			[itemButton setImage:nil forState:UIControlStateHighlighted];
 		} break;
-		case MTZActionTypeImages: {
-			[actionButton setImage:action.image forState:UIControlStateNormal];
-			[actionButton setImage:action.highlightedImage forState:UIControlStateHighlighted];
+		case MTZRadialMenuItemTypeImages: {
+			[itemButton setImage:item.image forState:UIControlStateNormal];
+			[itemButton setImage:item.highlightedImage forState:UIControlStateHighlighted];
 		} break;
 	}
 }
 
-/// Returns the actino for a particular location on the receiving radial menu.
-- (MTZAction *)actionForLocation:(MTZRadialMenuLocation)location
+- (MTZRadialMenuItem *)menuItemForLocation:(MTZRadialMenuLocation)location;
 {
-	return self.actions[descriptionStringForLocation(location)];
+	return self.items[descriptionStringForLocation(location)];
 }
 
 
-#pragma mark MTZActionDelegate
+#pragma mark MTZRadialMenuItemDelegate
 
-- (void)actionImagesChanged:(MTZAction *)action
+- (void)radialMenuItemAppearanceChanged:(MTZRadialMenuItem *)menuItem
 {
 	// Look up the location for the action.
-	NSString *locationKey = [self locationStringForAction:action];
+	NSString *locationKey = [self locationStringForItem:menuItem];
 	// Get the button for the location.
-	UIButton *actionButton = self.actionButtons[locationKey];
+	UIButton *actionButton = self.itemButtons[locationKey];
 	
 	// Update button resources.
-	[actionButton setImage:action.image forState:UIControlStateNormal];
-	[actionButton setImage:action.highlightedImage forState:UIControlStateHighlighted];
+	[actionButton setImage:menuItem.image forState:UIControlStateNormal];
+	[actionButton setImage:menuItem.highlightedImage forState:UIControlStateHighlighted];
 }
 
 
@@ -756,10 +754,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 #pragma mark Misc.
 
-- (NSString *)locationStringForAction:(MTZAction *)action
+- (NSString *)locationStringForItem:(MTZRadialMenuItem *)item
 {
-	for (NSString *key in self.actions.allKeys) {
-		if (self.actions[key] == action) {
+	for (NSString *key in self.items.allKeys) {
+		if (self.items[key] == item) {
 			return key;
 		}
 	}
