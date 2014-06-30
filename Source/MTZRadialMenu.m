@@ -80,23 +80,23 @@ NSString *descriptionStringForLocation(MTZRadialMenuLocation location)
 
 MTZRadialMenuLocation locationFromLocationString(NSString *locationString)
 {
-	if ( [locationString isEqualToString:@"MTZRadialMenuLocationCenter"] ) {
+	if ([locationString isEqualToString:@"MTZRadialMenuLocationCenter"]) {
 		return MTZRadialMenuLocationCenter;
 	}
 	
-	if ( [locationString isEqualToString:@"MTZRadialMenuLocationTop"] ) {
+	if ([locationString isEqualToString:@"MTZRadialMenuLocationTop"]) {
 		return MTZRadialMenuLocationTop;
 	}
 	
-	if ( [locationString isEqualToString:@"MTZRadialMenuLocationLeft"] ) {
+	if ([locationString isEqualToString:@"MTZRadialMenuLocationLeft"]) {
 		return MTZRadialMenuLocationLeft;
 	}
 	
-	if ( [locationString isEqualToString:@"MTZRadialMenuLocationRight"] ) {
+	if ([locationString isEqualToString:@"MTZRadialMenuLocationRight"]) {
 		return MTZRadialMenuLocationRight;
 	}
 	
-	if ( [locationString isEqualToString:@"MTZRadialMenuLocationBottom"] ) {
+	if ([locationString isEqualToString:@"MTZRadialMenuLocationBottom"]) {
 		return MTZRadialMenuLocationBottom;
 	}
 	
@@ -217,8 +217,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationCenter)] = centerButton;
 	{
 		CGRect frame = centerButton.frame;
-		frame.origin.x = (self.radialMenu.bounds.size.width - frame.size.width)/2;
-		frame.origin.y = (self.radialMenu.bounds.size.height - frame.size.height)/2;
+		frame.origin.x = CGRectGetMidX(self.radialMenu.bounds);
+		frame.origin.y = CGRectGetMidY(self.radialMenu.bounds);
 		centerButton.frame = frame;
 	}
 	centerButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
@@ -292,12 +292,12 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	switch (sender.state) {
 		case UIGestureRecognizerStateBegan: {
 			// Open menu, if not already. Note: This only happens when `minimumPressDuration` is normal.
-			if ( ![self isMenuVisible] ) {
+			if (![self isMenuVisible]) {
 				[self highlightLocation:-1];
 				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 			}
 			// Dismiss menu, if way outside. Note: This only happens when `exclusiveTouch` is YES.
-			if ( distance >= RADIALMENU_RADIUS_EXPANDED * 1.5 ) {
+			if (distance >= RADIALMENU_RADIUS_EXPANDED * 1.5) {
 				[self dismissMenuAnimated:YES];
 				break;
 			}
@@ -305,10 +305,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		case UIGestureRecognizerStateChanged: {
 			MTZRadialMenuLocation location = [self locationForPoint:point];
 			MTZRadialMenuItem *item = [self menuItemForLocation:location];
-			if ( location == MTZRadialMenuLocationCenter ) {
+			if (location == MTZRadialMenuLocationCenter) {
 				// Highlighting center action.
 				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
-			} else if ( location < 0 ) {
+			} else if (location < 0) {
 				// Outside the radial menu.
 				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
 			} else {
@@ -329,7 +329,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 			// Released touch, see if it is on an action.
 			MTZRadialMenuLocation location = [self locationForPoint:point];
 			// Outside the menu, close it.
-			if ( location < 0 ) {
+			if (location < 0) {
 				[self setMenuState:MTZRadialMenuStateContracted animated:YES];
 			} else {
 				[self setMenuState:MTZRadialMenuStateNormal animated:YES];
@@ -357,10 +357,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		if (button.highlighted != shouldBeHighlighted) {
 			// Set the highlighted state on the button.
 			button.highlighted = shouldBeHighlighted;
-			
 			// Apply the radial menu's tintColor to the button, if highlighted.
 			button.tintColor = shouldBeHighlighted ? self.tintColor : [UIColor whiteColor];
-			
 			// Call highlighted handler.
 			MTZRadialMenuLocation currentLocation = locationFromLocationString(key);
 			MTZRadialMenuItem *item = [self menuItemForLocation:currentLocation];
@@ -419,10 +417,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 {
 	CGFloat distance = [self distanceOfPointFromCenter:point];
 	
-	if ( distance >= RADIALMENU_RADIUS_EXPANDED * 1.5 ) {
+	if (distance >= RADIALMENU_RADIUS_EXPANDED * 1.5) {
 		// It's outside the radial menu.
 		return -1;
-	} else if ( distance < RADIALMENU_CENTER_TARGET_RADIUS ) {
+	} else if (distance < RADIALMENU_CENTER_TARGET_RADIUS) {
 		// It's the center of the radial menu.
 		return MTZRadialMenuLocationCenter;
 	} else {
@@ -436,7 +434,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		// Where can it be? Let's narrow it down.
 		BOOL topOrRight = y < x;
 		BOOL bottomOrRight = (1-y) < x;
-		if ( topOrRight ) {
+		if (topOrRight) {
 			return bottomOrRight ? MTZRadialMenuLocationRight : MTZRadialMenuLocationTop;
 		} else {
 			return bottomOrRight ? MTZRadialMenuLocationBottom : MTZRadialMenuLocationLeft;
@@ -449,7 +447,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 - (void)setMenuState:(MTZRadialMenuState)menuState animated:(BOOL)animated
 {
 	// Only apply if menu state has changed.
-	if ( _menuState == menuState ) {
+	if (_menuState == menuState) {
 		return;
 	}
 	
@@ -459,7 +457,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	};
 	
 	// If not animated, don't bother animating.
-	if ( !animated ) {
+	if (!animated) {
 		changeMenuState();
 		return;
 	}
@@ -483,7 +481,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 - (void)setMenuState:(MTZRadialMenuState)menuState
 {
 	// Only apply if menu state has changed.
-	if ( _menuState == menuState ) {
+	if (_menuState == menuState) {
 		return;
 	}
 	
@@ -495,23 +493,23 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	CGFloat alpha;
 	CGFloat radius;
 	
-	if ( _menuState == MTZRadialMenuStateContracted ) {
+	if (_menuState == MTZRadialMenuStateContracted) {
 		menuOpen = NO;
 		alpha = 0.0f;
 		radius = RADIALMENU_RADIUS_CONTRACTED;
 	} else {
 		menuOpen = YES;
 		alpha = 1.0f;
-		if ( _menuState == MTZRadialMenuStateNormal ) {
+		if (_menuState == MTZRadialMenuStateNormal) {
 			radius = RADIALMENU_RADIUS_NORMAL;
-		} else if ( _menuState == MTZRadialMenuStateExpanded ) {
+		} else if (_menuState == MTZRadialMenuStateExpanded) {
 			radius = RADIALMENU_RADIUS_EXPANDED;
 		}
 	}
 	
-	if ( menuOpen && !menuWasOpen ) {
+	if (menuOpen && !menuWasOpen) {
 		[self tellDelegateRadialMenuWillDisplay];
-	} else if ( !menuOpen && menuWasOpen ) {
+	} else if (!menuOpen && menuWasOpen) {
 		[self tellDelegateRadialMenuWillDismiss];
 	}
 	
@@ -526,15 +524,15 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	// Update gesture recognizers and touch behaviours.
 	void (^completion)(BOOL) = ^void(BOOL finished) {
 		
-		if ( menuOpen && !menuWasOpen ) {
+		if (menuOpen && !menuWasOpen) {
 			[self tellDelegateRadialMenuDidDisplay];
-		} else if ( !menuOpen && menuWasOpen ) {
+		} else if (!menuOpen && menuWasOpen) {
 			[self tellDelegateRadialMenuDidDismiss];
 		}
 		
 		self.exclusiveTouch = menuOpen;
 		CFTimeInterval minimumPressDuration = menuOpen ? 0.0 : 0.5;
-		if ( self.pressGestureRecognizer.minimumPressDuration != minimumPressDuration ) {
+		if (self.pressGestureRecognizer.minimumPressDuration != minimumPressDuration) {
 			self.pressGestureRecognizer.minimumPressDuration = minimumPressDuration;
 		}
 	};
@@ -543,7 +541,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	// Put in an animation block with 0 duration to inherit parent's animation context.
 	[UIView animateWithDuration:0 animations:animations completion:^(BOOL finished) {
 		self.activeStateTransitionCount--;
-		if ( self.activeStateTransitionCount == 0 ) {
+		if (self.activeStateTransitionCount == 0) {
 			completion(finished);
 		}
 	}];
@@ -561,24 +559,24 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	switch (fromMenuState) {
 		case MTZRadialMenuStateExpanded: {
-			if ( toMenuState == MTZRadialMenuStateContracted ) {
+			if (toMenuState == MTZRadialMenuStateContracted) {
 				params = [MTZRadialMenu menuStateAnimationParametersFromExpandedToContracted];
-			} else if ( toMenuState == MTZRadialMenuStateNormal ) {
+			} else if (toMenuState == MTZRadialMenuStateNormal) {
 				params = [MTZRadialMenu menuStateAnimationParametersFromExpandedToNormal];
 			}
 		} break;
 		case MTZRadialMenuStateNormal: {
-			if ( toMenuState == MTZRadialMenuStateExpanded ) {
+			if (toMenuState == MTZRadialMenuStateExpanded) {
 				params = [MTZRadialMenu menuStateAnimationParametersFromNormalToExpanded];
-			} else if ( toMenuState == MTZRadialMenuStateContracted ) {
+			} else if (toMenuState == MTZRadialMenuStateContracted) {
 				params = [MTZRadialMenu menuStateAnimationParametersFromNormalToContracted];
 			}
 		} break;
 		case MTZRadialMenuStateContracted:
 		default: {
-			if ( toMenuState == MTZRadialMenuStateNormal ) {
+			if (toMenuState == MTZRadialMenuStateNormal) {
 				params = [MTZRadialMenu menuStateAnimationParametersFromContractedToNormal];
-			} else if ( toMenuState == MTZRadialMenuStateExpanded ) {
+			} else if (toMenuState == MTZRadialMenuStateExpanded) {
 				params = [MTZRadialMenu menuStateAnimationParametersFromContractedToExpanded];
 			}
 		} break;
@@ -636,7 +634,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 - (void)displayMenu
 {
-	if ( [self isMenuVisible] ) {
+	if ([self isMenuVisible]) {
 		return;
 	}
 	
@@ -647,7 +645,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 - (void)dismissMenuAnimated:(BOOL)animated
 {
-	if ( ![self isMenuVisible] ) {
+	if (![self isMenuVisible]) {
 		return;
 	}
 
@@ -740,28 +738,28 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 - (void)tellDelegateRadialMenuWillDisplay
 {
-	if ( [self.delegate respondsToSelector:@selector(radialMenuWillDisplay:)] ) {
+	if ([self.delegate respondsToSelector:@selector(radialMenuWillDisplay:)]) {
 		[self.delegate radialMenuWillDisplay:self];
 	}
 }
 
 - (void)tellDelegateRadialMenuDidDisplay
 {
-	if ( [self.delegate respondsToSelector:@selector(radialMenuDidDisplay:)] ) {
+	if ([self.delegate respondsToSelector:@selector(radialMenuDidDisplay:)]) {
 		[self.delegate radialMenuDidDisplay:self];
 	}
 }
 
 - (void)tellDelegateRadialMenuWillDismiss
 {
-	if ( [self.delegate respondsToSelector:@selector(radialMenuWillDismiss:)] ) {
+	if ([self.delegate respondsToSelector:@selector(radialMenuWillDismiss:)]) {
 		[self.delegate radialMenuWillDismiss:self];
 	}
 }
 
 - (void)tellDelegateRadialMenuDidDismiss
 {
-	if ( [self.delegate respondsToSelector:@selector(radialMenuDidDismiss:)] ) {
+	if ([self.delegate respondsToSelector:@selector(radialMenuDidDismiss:)]) {
 		[self.delegate radialMenuDidDismiss:self];
 	}
 }
