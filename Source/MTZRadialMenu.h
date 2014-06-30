@@ -50,7 +50,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 
 
 /// An instance of the @c MTZRadialMenu class implements a radial menu that appears when long-pressing on a button. This class provides methods for setting the main button image, the presentation of menu items, and other appearance properties of a radial menu.
-/// @discussion If using commonly used action items, but sure to use them consistently. Send (@c MTZActionStyleSend) actions should be located at the top of the radial menu. Cancel (@c MTZActionStyleCancel) actions should be located on either the left or right side, depending on which side is closest to the center of the display. This ensures that the action is visible and consistently activated for users of both handedness and for use of radial menus on any side of the display.
+/// @discussion If using commonly used menu items, but sure to use them consistently. Confirm (@c MTZRadialMenuStandardItemConfirm) actions should be located at the top of the radial menu. Cancel (@c MTZRadialMenuStandardItemCancel) actions should be located on either the left or right side, depending on which side is closest to the center of the display. This ensures that the action is visible and consistently activated for users of both handedness and for use of radial menus on any side of the display.
 @interface MTZRadialMenu : UIControl
 
 /// The object that acts as the delegate of the receiving radial menu.
