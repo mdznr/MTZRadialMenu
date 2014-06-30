@@ -178,6 +178,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
 	button.frame = frame;
 	button.hidden = YES; // Hidden by default.
+	button.tintColor = [UIColor whiteColor];
 	return button;
 }
 
@@ -349,18 +350,21 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 - (void)highlightLocation:(MTZRadialMenuLocation)location
 {
 	NSString *locationKey = descriptionStringForLocation(location);
-	for ( NSString *key in self.itemButtons.allKeys ) {
+	for (NSString *key in self.itemButtons.allKeys) {
 		UIButton *button = self.itemButtons[key];
-		BOOL highlighted = [key isEqualToString:locationKey];
-		if ( button.highlighted != highlighted ) {
+		BOOL shouldBeHighlighted = [key isEqualToString:locationKey];
+		if (button.highlighted != shouldBeHighlighted) {
 			// Set the highlighted state on the button.
-			button.highlighted = highlighted;
+			button.highlighted = shouldBeHighlighted;
+			
+			// Apply the radial menu's tintColor to the button, if highlighted.
+			button.tintColor = shouldBeHighlighted ? self.tintColor : [UIColor whiteColor];
 			
 			// Call highlighted handler.
 			MTZRadialMenuLocation currentLocation = locationFromLocationString(key);
 			MTZRadialMenuItem *item = [self menuItemForLocation:currentLocation];
 			if (item && item.highlightedHandler) {
-				item.highlightedHandler(self, item, highlighted);
+				item.highlightedHandler(self, item, shouldBeHighlighted);
 			}
 		}
 	}
