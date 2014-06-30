@@ -59,6 +59,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 
 #pragma mark Configuring the Main Button Presentation
 
+@property (nonatomic, copy) UIColor *mainButtonTintColor;
+
 /// Sets the image for the main button to use for the specified state.
 /// In general, if a property is not specified for a state, the default is to use the @c UIControlStateNormal value. If the @c UIControlStateNormal value is not set, then the property defaults to a system value. Therefore, at a minimum, you should set the value for the normal state.
 - (void)setImage:(UIImage *)image forState:(UIControlState)state;

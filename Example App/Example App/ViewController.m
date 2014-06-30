@@ -41,6 +41,8 @@
 	
 	// Camera Radial Menu
 	self.cameraRadialMenu = [[MTZRadialMenu alloc] initWithFrame:left];
+	self.cameraRadialMenu.mainButtonTintColor = self.view.tintColor;
+	self.cameraRadialMenu.tintColor = [UIColor colorWithHue:1.0f/6.0f saturation:1.0f brightness:1.0f alpha:1.0f];
 	[self.cameraRadialMenu setImage:[UIImage imageNamed:@"Camera"] forState:UIControlStateNormal];
 	[self.cameraRadialMenu setImage:[UIImage imageNamed:@"CameraHighlighted"] forState:UIControlStateSelected];
 	[self.view addSubview:self.cameraRadialMenu];
