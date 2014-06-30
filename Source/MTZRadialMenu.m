@@ -178,6 +178,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
 	button.frame = frame;
 	button.hidden = YES; // Hidden by default.
+	button.adjustsImageWhenHighlighted = NO;
 	button.tintColor = [UIColor whiteColor];
 	return button;
 }
