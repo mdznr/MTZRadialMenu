@@ -659,16 +659,6 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 #pragma mark Configuring the Main Button Presentation
 
-- (void)setMainButtonTintColor:(UIColor *)color
-{
-	self.mainButton.tintColor = color;
-}
-
-- (UIColor *)mainButtonTintColor
-{
-	return self.mainButton.tintColor;
-}
-
 - (void)setImage:(UIImage *)image forState:(UIControlState)state
 {
 	[self.mainButton setImage:image forState:state];
