@@ -21,6 +21,13 @@
 @property (strong, nonatomic) MTZRadialMenuItem *cameraRecordingPlaybackPauseAction;
 @property (strong, nonatomic) MTZRadialMenuItem *cameraRecordingSendAction;
 
+@property (nonatomic, getter=isMicrophoneRecording) BOOL microphoneRecording;
+@property (strong, nonatomic) MTZRadialMenu *microphoneRadialMenu;
+@property (strong, nonatomic) MTZRadialMenuItem *microphoneRecordingStopAction;
+@property (strong, nonatomic) MTZRadialMenuItem *microphoneRecordingPlaybackPlayAction;
+@property (strong, nonatomic) MTZRadialMenuItem *microphoneRecordingPlaybackPauseAction;
+@property (strong, nonatomic) MTZRadialMenuItem *microphoneRecordingSendAction;
+
 @end
 
 @implementation ViewController
@@ -91,34 +98,36 @@
 	
 	
 	// Microphone Radial Menu
-	MTZRadialMenu *microphoneRadialMenu = [[MTZRadialMenu alloc] initWithFrame:right];
-	microphoneRadialMenu.delegate = self;
-	[microphoneRadialMenu setImage:[UIImage imageNamed:@"Microphone"] forState:UIControlStateNormal];
-	[microphoneRadialMenu setImage:[UIImage imageNamed:@"Microphone"] forState:UIControlStateSelected];
-	[self.view addSubview:microphoneRadialMenu];
-	
-	MTZRadialMenuItem *microphoneSend = [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:MTZRadialMenuStandardItemConfirm handler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
-		NSLog(@"Microphone: Send");
-		[radialMenu dismissMenuAnimated:YES];
-	}];
-	[microphoneRadialMenu setItem:microphoneSend forLocation:MTZRadialMenuLocationTop];
+	self.microphoneRadialMenu = [[MTZRadialMenu alloc] initWithFrame:right];
+	self.microphoneRadialMenu.delegate = self;
+	[self.microphoneRadialMenu setImage:[UIImage imageNamed:@"Microphone"] forState:UIControlStateNormal];
+	[self.microphoneRadialMenu setImage:[UIImage imageNamed:@"Microphone"] forState:UIControlStateSelected];
+	[self.view addSubview:self.microphoneRadialMenu];
 	
 	MTZRadialMenuItem *microphoneCancel = [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:MTZRadialMenuStandardItemCancel handler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
-		NSLog(@"Micrphone: Cancel");
-		[radialMenu dismissMenuAnimated:YES];
+		[self microphoneCancel];
+	}];
+	[self.microphoneRadialMenu setItem:microphoneCancel forLocation:MTZRadialMenuLocationLeft];
+	
+	self.microphoneRecordingSendAction = [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:MTZRadialMenuStandardItemConfirm handler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
+		[self microphoneRecordingSend];
+	}];
+	[self.microphoneRadialMenu setItem:self.microphoneRecordingSendAction forLocation:MTZRadialMenuLocationTop];
+	
+	self.microphoneRecordingStopAction = [MTZRadialMenuItem menuItemWithImage:[UIImage imageNamed:@"ActionCameraStop"] highlightedImage:[UIImage imageNamed:@"ActionCameraStopHighlighted"] handler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
+		[self microphoneStop];
+	}];
+	[self.microphoneRadialMenu setItem:self.microphoneRecordingStopAction forLocation:MTZRadialMenuLocationCenter];
+	
+	// Microphone Recording Playback Play
+	self.microphoneRecordingPlaybackPlayAction = [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:MTZRadialMenuStandardItemPlay handler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
+		[self microphoneRecordingPlaybackPlay];
 	}];
 	
-	[microphoneRadialMenu setItem:microphoneCancel forLocation:MTZRadialMenuLocationLeft];
-	
-	MTZRadialMenuItem *play = [MTZRadialMenuItem menuItemWithImage:[UIImage imageNamed:@"ActionPlay"]
-								highlightedImage:[UIImage imageNamed:@"ActionPlayHighlighted"]
-							  highlightedHandler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem, BOOL highlighted) {
-								  NSLog(@"Play Highlighted: %d", highlighted);
-							  }
-								 selectedHandler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
-									 NSLog(@"Play");
-								 }];
-	[microphoneRadialMenu setItem:play forLocation:MTZRadialMenuLocationCenter];
+	// Microphone Recording Playback Pause
+	self.microphoneRecordingPlaybackPauseAction = [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:MTZRadialMenuStandardItemPause handler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
+		[self microphoneRecordingPlaybackPause];
+	}];
 }
 
 
@@ -185,6 +194,57 @@
 	NSLog(@"Camera: Pause");
 	
 	[self.cameraRadialMenu setItem:self.cameraRecordingPlaybackPlayAction forLocation:MTZRadialMenuLocationRight];
+}
+
+
+#pragma mark Microphone
+
+- (void)resetMicrophoneRadialMenu
+{
+	[self.microphoneRadialMenu setItem:self.microphoneRecordingStopAction forLocation:MTZRadialMenuLocationCenter];
+}
+
+- (void)microphoneCancel
+{
+	NSLog(@"Microphone: Cancel");
+	
+	// TODO: Stop Recording.
+	
+	[self.microphoneRadialMenu dismissMenuAnimated:YES];
+}
+
+- (void)microphoneStop
+{
+	NSLog(@"Microphone: Stop");
+	
+	// The camera is no longer recording.
+	self.microphoneRecording = NO;
+	
+	[self.microphoneRadialMenu setItem:self.microphoneRecordingPlaybackPlayAction forLocation:MTZRadialMenuLocationCenter];
+}
+
+- (void)microphoneRecordingSend
+{
+	NSLog(@"Microphone: Sending Recording");
+	
+	// TODO: Stop Recording and send.
+	self.microphoneRecording = NO;
+	
+	[self.microphoneRadialMenu dismissMenuAnimated:YES];
+}
+
+- (void)microphoneRecordingPlaybackPlay
+{
+	NSLog(@"Microphone: Play");
+	
+	[self.microphoneRadialMenu setItem:self.microphoneRecordingPlaybackPauseAction forLocation:MTZRadialMenuLocationCenter];
+}
+
+- (void)microphoneRecordingPlaybackPause
+{
+	NSLog(@"Microphone: Pause");
+	
+	[self.microphoneRadialMenu setItem:self.microphoneRecordingPlaybackPlayAction forLocation:MTZRadialMenuLocationCenter];
 }
 
 
