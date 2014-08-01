@@ -279,6 +279,8 @@
 	
 	if (radialMenu == self.cameraRadialMenu) {
 		[self resetCameraRadialMenu];
+	} else if (radialMenu == self.microphoneRadialMenu) {
+		[self resetMicrophoneRadialMenu];
 	}
 }
 
