@@ -39,6 +39,7 @@
 	
 	
 	self.cameraRecording = NO;
+	self.microphoneRecording = NO;
 	
 	
 	CGRect middle = CGRectMake(138, 269, 44, 44);
