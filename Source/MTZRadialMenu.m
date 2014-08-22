@@ -128,7 +128,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 @property (strong, nonatomic) NSMutableDictionary *itemButtons;
 
 /// The radial menu.
-@property (strong, nonatomic) UIView *radialMenu;
+@property (strong, nonatomic) UIVisualEffectView *radialMenu;
 
 /// The main button to activate the radial menu.
 @property (strong, nonatomic) MTZButton *mainButton;
@@ -199,21 +199,16 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	self.mainButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
 	// Radial menu
-	self.radialMenu = [[UIView alloc] init];
+	self.radialMenu = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
 	self.radialMenu.clipsToBounds = YES;
 	[self addSubview:self.radialMenu];
-	
-	UIImageView *radialMenuBackground = [[UIImageView alloc] initWithFrame:self.radialMenu.bounds];
-	radialMenuBackground.image = [MTZRadialMenu resourceNamed:@"MTZRadialMenuBackground"];
-	radialMenuBackground.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	[self.radialMenu addSubview:radialMenuBackground];
 	
 	// Item buttons
 	self.itemButtons = [[NSMutableDictionary alloc] initWithCapacity:5];
 	
 	// Center button
 	UIButton *centerButton = [MTZRadialMenu newActionButton];
-	[self.radialMenu addSubview:centerButton];
+	[self.radialMenu.contentView addSubview:centerButton];
 	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationCenter)] = centerButton;
 	{
 		CGRect frame = centerButton.frame;
@@ -225,7 +220,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	// Top button
 	UIButton *topButton = [MTZRadialMenu newActionButton];
-	[self.radialMenu addSubview:topButton];
+	[self.radialMenu.contentView addSubview:topButton];
 	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationTop)] = topButton;
 	{
 		CGRect frame = topButton.frame;
@@ -236,7 +231,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	// Left button
 	UIButton *leftButton = [MTZRadialMenu newActionButton];
-	[self.radialMenu addSubview:leftButton];
+	[self.radialMenu.contentView addSubview:leftButton];
 	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationLeft)] = leftButton;
 	{
 		CGRect frame = leftButton.frame;
@@ -247,7 +242,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	// Right button
 	UIButton *rightButton = [MTZRadialMenu newActionButton];
-	[self.radialMenu addSubview:rightButton];
+	[self.radialMenu.contentView addSubview:rightButton];
 	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationRight)] = rightButton;
 	{
 		CGRect frame = rightButton.frame;
@@ -258,7 +253,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	// Bottom button
 	UIButton *bottomButton = [MTZRadialMenu newActionButton];
-	[self.radialMenu addSubview:bottomButton];
+	[self.radialMenu.contentView addSubview:bottomButton];
 	self.itemButtons[descriptionStringForLocation(MTZRadialMenuLocationBottom)] = bottomButton;
 	{
 		CGRect frame = bottomButton.frame;
@@ -628,6 +623,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 									   (self.bounds.size.height/2) - _menuRadius,
 									   2 * _menuRadius,
 									   2 * _menuRadius);
+#warning cornerRadius does not animate :(
+	self.radialMenu.layer.cornerRadius = self.radialMenu.frame.size.width/2;
 }
 
 #pragma mark Display & Dismissal

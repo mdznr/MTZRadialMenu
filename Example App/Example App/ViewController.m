@@ -131,6 +131,11 @@
 	}];
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+	return YES;
+}
+
 
 #pragma mark Camera
 
