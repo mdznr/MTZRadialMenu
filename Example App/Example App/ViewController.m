@@ -37,7 +37,6 @@
 	[super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 	
-	
 	self.cameraRecording = NO;
 	self.microphoneRecording = NO;
 	
@@ -45,11 +44,9 @@
 	CGFloat height = 44;
 	CGFloat yOffset = 308;
 	
-	
 	CGRect middle = CGRectMake(138, yOffset, width, height);
 	CGRect right = CGRectMake(271, yOffset, width, height);
 	CGRect left = CGRectMake(5, yOffset, width, height);
-	
 	
 	// Camera Radial Menu
 	self.cameraRadialMenu = [[MTZRadialMenu alloc] initWithBackgroundVisualEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
