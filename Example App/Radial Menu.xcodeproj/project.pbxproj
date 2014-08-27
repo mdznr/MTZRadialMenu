@@ -104,7 +104,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		C909C7C419480AFC00080438 /* Example App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C909C7C419480AFC00080438 /* Radial Menu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Radial Menu.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C909C7C819480AFC00080438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C909C7C919480AFC00080438 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		C909C7CB19480AFC00080438 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 		C909C7CF19480AFC00080438 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		C909C7D219480AFC00080438 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C909C7D419480AFC00080438 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		C909C7DA19480AFC00080438 /* Example AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Example AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C909C7DA19480AFC00080438 /* Radial MenuTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Radial MenuTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C909C7DF19480AFC00080438 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C909C7E019480AFC00080438 /* Example_AppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Example_AppTests.m; sourceTree = "<group>"; };
 		C95055E71956879F00515AA6 /* MTZButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTZButton.h; path = ../Source/MTZButton.h; sourceTree = "<group>"; };
@@ -182,8 +182,8 @@
 		C909C7C519480AFC00080438 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C909C7C419480AFC00080438 /* Example App.app */,
-				C909C7DA19480AFC00080438 /* Example AppTests.xctest */,
+				C909C7C419480AFC00080438 /* Radial Menu.app */,
+				C909C7DA19480AFC00080438 /* Radial MenuTests.xctest */,
 				C9B08A3419561B71003EE674 /* RadialMenu.framework */,
 				C9B08A3E19561B71003EE674 /* RadialMenuTests.xctest */,
 			);
@@ -303,9 +303,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		C909C7C319480AFC00080438 /* Example App */ = {
+		C909C7C319480AFC00080438 /* Radial Menu */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C909C7E419480AFC00080438 /* Build configuration list for PBXNativeTarget "Example App" */;
+			buildConfigurationList = C909C7E419480AFC00080438 /* Build configuration list for PBXNativeTarget "Radial Menu" */;
 			buildPhases = (
 				C909C7C019480AFC00080438 /* Sources */,
 				C909C7C119480AFC00080438 /* Frameworks */,
@@ -318,14 +318,14 @@
 				C9B08A4819561B71003EE674 /* PBXTargetDependency */,
 				C9B08A4C19561B71003EE674 /* PBXTargetDependency */,
 			);
-			name = "Example App";
+			name = "Radial Menu";
 			productName = "Example App";
-			productReference = C909C7C419480AFC00080438 /* Example App.app */;
+			productReference = C909C7C419480AFC00080438 /* Radial Menu.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C909C7D919480AFC00080438 /* Example AppTests */ = {
+		C909C7D919480AFC00080438 /* Radial MenuTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C909C7E719480AFC00080438 /* Build configuration list for PBXNativeTarget "Example AppTests" */;
+			buildConfigurationList = C909C7E719480AFC00080438 /* Build configuration list for PBXNativeTarget "Radial MenuTests" */;
 			buildPhases = (
 				C909C7D619480AFC00080438 /* Sources */,
 				C909C7D719480AFC00080438 /* Frameworks */,
@@ -337,9 +337,9 @@
 				C909C7DC19480AFC00080438 /* PBXTargetDependency */,
 				C9B08A141956179F003EE674 /* PBXTargetDependency */,
 			);
-			name = "Example AppTests";
+			name = "Radial MenuTests";
 			productName = "Example AppTests";
-			productReference = C909C7DA19480AFC00080438 /* Example AppTests.xctest */;
+			productReference = C909C7DA19480AFC00080438 /* Radial MenuTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		C9B08A3319561B71003EE674 /* RadialMenu */ = {
@@ -407,7 +407,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C909C7BF19480AFC00080438 /* Build configuration list for PBXProject "Example App" */;
+			buildConfigurationList = C909C7BF19480AFC00080438 /* Build configuration list for PBXProject "Radial Menu" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -420,8 +420,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C909C7C319480AFC00080438 /* Example App */,
-				C909C7D919480AFC00080438 /* Example AppTests */,
+				C909C7C319480AFC00080438 /* Radial Menu */,
+				C909C7D919480AFC00080438 /* Radial MenuTests */,
 				C9B08A3319561B71003EE674 /* RadialMenu */,
 				C9B08A3D19561B71003EE674 /* RadialMenuTests */,
 			);
@@ -505,7 +505,7 @@
 /* Begin PBXTargetDependency section */
 		C909C7DC19480AFC00080438 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C909C7C319480AFC00080438 /* Example App */;
+			target = C909C7C319480AFC00080438 /* Radial Menu */;
 			targetProxy = C909C7DB19480AFC00080438 /* PBXContainerItemProxy */;
 		};
 		C95055F6195687E400515AA6 /* PBXTargetDependency */ = {
@@ -520,7 +520,7 @@
 		};
 		C9B08A141956179F003EE674 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C909C7C319480AFC00080438 /* Example App */;
+			target = C909C7C319480AFC00080438 /* Radial Menu */;
 			targetProxy = C9B08A131956179F003EE674 /* PBXContainerItemProxy */;
 		};
 		C9B08A4119561B71003EE674 /* PBXTargetDependency */ = {
@@ -642,7 +642,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = "Example App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Radial Menu";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -654,7 +654,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = "Example App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Radial Menu";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -674,7 +674,7 @@
 				INFOPLIST_FILE = "Example AppTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				METAL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Radial MenuTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Debug;
@@ -690,7 +690,7 @@
 				INFOPLIST_FILE = "Example AppTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				METAL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Radial MenuTests";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 			};
 			name = Release;
@@ -772,7 +772,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C909C7BF19480AFC00080438 /* Build configuration list for PBXProject "Example App" */ = {
+		C909C7BF19480AFC00080438 /* Build configuration list for PBXProject "Radial Menu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C909C7E219480AFC00080438 /* Debug */,
@@ -781,7 +781,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C909C7E419480AFC00080438 /* Build configuration list for PBXNativeTarget "Example App" */ = {
+		C909C7E419480AFC00080438 /* Build configuration list for PBXNativeTarget "Radial Menu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C909C7E519480AFC00080438 /* Debug */,
@@ -790,7 +790,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C909C7E719480AFC00080438 /* Build configuration list for PBXNativeTarget "Example AppTests" */ = {
+		C909C7E719480AFC00080438 /* Build configuration list for PBXNativeTarget "Radial MenuTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C909C7E819480AFC00080438 /* Debug */,
