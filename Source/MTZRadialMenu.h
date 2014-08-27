@@ -53,9 +53,17 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 /// @discussion If using commonly used menu items, but sure to use them consistently. Confirm (@c MTZRadialMenuStandardItemConfirm) actions should be located at the top of the radial menu. Cancel (@c MTZRadialMenuStandardItemCancel) actions should be located on either the left or right side, depending on which side is closest to the center of the display. This ensures that the action is visible and consistently activated for users of both handedness and for use of radial menus on any side of the display.
 @interface MTZRadialMenu : UIControl
 
+/// Creates a new radial menu with the designated background visual effect.
+- (instancetype)initWithBackgroundVisualEffect:(UIVisualEffect *)effect;
+
 /// The object that acts as the delegate of the receiving radial menu.
 /// @discussion The delegate must adopt the @c MTZRadialMenuDelegate protocol.
 @property (nonatomic, weak) id<MTZRadialMenuDelegate> delegate;
+
+#pragma mark Appearance
+
+/// The visual effect being used for the background. (read-only)
+@property (nonatomic, copy, readonly) UIVisualEffect *backgroundVisualEffect;
 
 #pragma mark Configuring the Main Button Presentation
 

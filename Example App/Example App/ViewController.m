@@ -48,7 +48,8 @@
 	
 	
 	// Camera Radial Menu
-	self.cameraRadialMenu = [[MTZRadialMenu alloc] initWithFrame:left];
+	self.cameraRadialMenu = [[MTZRadialMenu alloc] initWithBackgroundVisualEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
+	self.cameraRadialMenu.frame = left;
 	self.cameraRadialMenu.delegate = self;
 	[self.cameraRadialMenu setImage:[UIImage imageNamed:@"Camera"] forState:UIControlStateNormal];
 	[self.cameraRadialMenu setImage:[UIImage imageNamed:@"CameraHighlighted"] forState:UIControlStateSelected];
@@ -99,7 +100,8 @@
 	
 	
 	// Microphone Radial Menu
-	self.microphoneRadialMenu = [[MTZRadialMenu alloc] initWithFrame:right];
+	self.microphoneRadialMenu = [[MTZRadialMenu alloc] initWithBackgroundVisualEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
+	self.microphoneRadialMenu.frame = right;
 	self.microphoneRadialMenu.delegate = self;
 	[self.microphoneRadialMenu setImage:[UIImage imageNamed:@"Microphone"] forState:UIControlStateNormal];
 	[self.microphoneRadialMenu setImage:[UIImage imageNamed:@"Microphone"] forState:UIControlStateSelected];

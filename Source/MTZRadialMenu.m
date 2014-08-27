@@ -135,6 +135,9 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 /// The background for the radial menu.
 @property (strong, nonatomic) UIVisualEffectView *radialMenuBackground;
 
+/// A readwrite version of `backgroundVisualEffect`.
+@property (nonatomic, copy, readwrite) UIVisualEffect *backgroundVisualEffect;
+
 /// The main button to activate the radial menu.
 @property (strong, nonatomic) MTZButton *mainButton;
 
@@ -156,6 +159,16 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 @implementation MTZRadialMenu
 
 #pragma mark Initialization & Setup
+
+- (instancetype)initWithBackgroundVisualEffect:(UIVisualEffect *)effect
+{
+	self.backgroundVisualEffect = effect;
+	self = [self init];
+	if (self) {
+		// Initialization code.
+	}
+	return self;
+}
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -199,28 +212,25 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	
 	// Main button
 	self.mainButton = [MTZButton buttonWithType:UIButtonTypeSystem];
-	self.mainButton.frame = self.bounds;
+	self.mainButton.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
 	[self addSubview:self.mainButton];
 	self.mainButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
 	// Radial menu
-	self.radialMenu = [[UIView alloc] init];
+	self.radialMenu = [[UIView alloc] initWithFrame:CGRectMake(0, 0, RADIALMENU_RADIUS_CONTRACTED, RADIALMENU_RADIUS_CONTRACTED)];
 	self.radialMenu.clipsToBounds = YES;
 	[self addSubview:self.radialMenu];
+	self.radialMenu.center = self.mainButton.center;
+	self.radialMenu.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
 	
 	// Radial menu
-	self.radialMenuBackground = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
+	self.radialMenuBackground = [[UIVisualEffectView alloc] initWithEffect:self.backgroundVisualEffect];
 	self.radialMenuBackground.clipsToBounds = YES;
 	[self.radialMenu addSubview:self.radialMenuBackground];
 	// Make it big, then scale it down using transforms in `setMenuRadius:`
-	self.radialMenuBackground.frame = CGRectMake(0, 0, 2*BIG_CIRCLE_RADIUS, 2*BIG_CIRCLE_RADIUS);
+	self.radialMenuBackground.frame = CGRectMake(0, 0, 2 * BIG_CIRCLE_RADIUS, 2 * BIG_CIRCLE_RADIUS);
 	self.radialMenuBackground.layer.cornerRadius = BIG_CIRCLE_RADIUS;
-	{
-		CGRect frame = self.radialMenuBackground.frame;
-		frame.origin.x = CGRectGetMidX(self.radialMenu.bounds);
-		frame.origin.y = CGRectGetMidY(self.radialMenu.bounds);
-		self.radialMenuBackground.frame = frame;
-	}
+	self.radialMenuBackground.center = self.radialMenu.center;
 	self.radialMenuBackground.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
 	
 	// Item buttons
@@ -638,6 +648,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 - (void)setMenuRadius:(CGFloat)radius
 {
+	NSLog(@"%f", radius);
 	_menuRadius = radius;
 	
 	self.radialMenu.frame = CGRectMake((self.bounds.size.width/2) - _menuRadius,
