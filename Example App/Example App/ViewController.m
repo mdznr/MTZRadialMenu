@@ -101,7 +101,7 @@
 	
 	
 	// Microphone Radial Menu
-	self.microphoneRadialMenu = [[MTZRadialMenu alloc] initWithBackgroundVisualEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleExtraLight]];
+	self.microphoneRadialMenu = [[MTZRadialMenu alloc] initWithBackgroundVisualEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
 	self.microphoneRadialMenu.frame = right;
 	self.microphoneRadialMenu.delegate = self;
 	[self.microphoneRadialMenu setImage:[UIImage imageNamed:@"Microphone"] forState:UIControlStateNormal];
