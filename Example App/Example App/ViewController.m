@@ -41,10 +41,14 @@
 	self.cameraRecording = NO;
 	self.microphoneRecording = NO;
 	
+	CGFloat width = 44;
+	CGFloat height = 44;
+	CGFloat yOffset = 308;
 	
-	CGRect middle = CGRectMake(138, 269, 44, 44);
-	CGRect right = CGRectMake(271, 269, 44, 44);
-	CGRect left = CGRectMake(5, 269, 44, 44);
+	
+	CGRect middle = CGRectMake(138, yOffset, width, height);
+	CGRect right = CGRectMake(271, yOffset, width, height);
+	CGRect left = CGRectMake(5, yOffset, width, height);
 	
 	
 	// Camera Radial Menu
@@ -131,11 +135,6 @@
 	self.microphoneRecordingPlaybackPauseAction = [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:MTZRadialMenuStandardItemPause handler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
 		[self microphoneRecordingPlaybackPause];
 	}];
-}
-
-- (BOOL)prefersStatusBarHidden
-{
-	return YES;
 }
 
 
