@@ -75,24 +75,4 @@ typedef void (^MTZRadialMenuItemSelectedHandler)(MTZRadialMenu *radialMenu, MTZR
 /// @return A new radial menu item object.
 + (instancetype)menuItemWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage highlightedHandler:(MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(MTZRadialMenuItemSelectedHandler)selectedHandler;
 
-
-#pragma mark Properties
-
-/// The standard item, if any.
-/// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithRadialMenuStandardItem:handler: or @c menuItemWithRadialMenuStandardItem:highlightedHandler:selectedHandler:
-@property (nonatomic, readonly) MTZRadialMenuStandardItem standardItem;
-
-/// The image with @c UIImageRenderingModeAlwaysTemplate to use as an icon.
-/// @discussion The icon is used for all states, and color is applied automatically.
-/// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithIcon:handler: or @c menuItemWithIcon:highlightedHandler:selectedHandler
-@property (nonatomic, copy) UIImage *icon;
-
-/// The image to use for the normal state.
-/// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithImage:highlightedImage:handler: or @c menuItemWithImage:highlightedImage:highlightedHandler:selectedHandler:
-@property (nonatomic, copy) UIImage *image;
-
-/// The image to use for the highlighted state.
-/// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithImage:highlightedImage:handler: or @c menuItemnWithImage:highlightedImage:highlightedHandler:selectedHandler:
-@property (nonatomic, copy) UIImage *highlightedImage;
-
 @end

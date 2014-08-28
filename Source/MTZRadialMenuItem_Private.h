@@ -32,9 +32,6 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuItemType) {
 /// The type of radial menu item this is. This is dependent on which method was used to create the item.
 @property (nonatomic, readwrite) MTZRadialMenuItemType type;
 
-/// A readwrite property of style.
-@property (nonatomic, readwrite) MTZRadialMenuStandardItem standardItem;
-
 /// The handler for when the item is highlighted.
 @property (nonatomic, copy) MTZRadialMenuItemHighlightedHandler highlightedHandler;
 
@@ -43,5 +40,24 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuItemType) {
 
 /// A delegate to handle changes to the item. This is designed for use by @c MTZRadialMenu.
 @property (nonatomic, weak) id<MTZRadialMenuItemDelegate> delegate;
+
+#pragma mark Graphics Properties
+
+/// The standard item, if any.
+/// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithRadialMenuStandardItem:handler: or @c menuItemWithRadialMenuStandardItem:highlightedHandler:selectedHandler:
+@property (nonatomic) MTZRadialMenuStandardItem standardItem;
+
+/// The image with @c UIImageRenderingModeAlwaysTemplate to use as an icon.
+/// @discussion The icon is used for all states, and color is applied automatically.
+/// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithIcon:handler: or @c menuItemWithIcon:highlightedHandler:selectedHandler
+@property (nonatomic, copy) UIImage *icon;
+
+/// The image to use for the normal state.
+/// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithImage:highlightedImage:handler: or @c menuItemWithImage:highlightedImage:highlightedHandler:selectedHandler:
+@property (nonatomic, copy) UIImage *image;
+
+/// The image to use for the highlighted state.
+/// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithImage:highlightedImage:handler: or @c menuItemnWithImage:highlightedImage:highlightedHandler:selectedHandler:
+@property (nonatomic, copy) UIImage *highlightedImage;
 
 @end
