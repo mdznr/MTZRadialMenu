@@ -13,12 +13,12 @@ This control is activated by long-pressing a button. A circle expands outwards f
 To create a radial menu, initalize one with a particular background visual effect (`UIVisualEffect`), configure the frame, delegate, and main button images, then add it to the view hierarchy.
 
 ```objc
-	self.cameraRadialMenu = [[MTZRadialMenu alloc] initWithBackgroundVisualEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
-	self.cameraRadialMenu.frame = left;
-	self.cameraRadialMenu.delegate = self;
-	[self.cameraRadialMenu setImage:[UIImage imageNamed:@"Camera"] forState:UIControlStateNormal];
-	[self.cameraRadialMenu setImage:[UIImage imageNamed:@"CameraHighlighted"] forState:UIControlStateSelected];
-	[self.view addSubview:self.cameraRadialMenu];
+self.cameraRadialMenu = [[MTZRadialMenu alloc] initWithBackgroundVisualEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark]];
+self.cameraRadialMenu.frame = left;
+self.cameraRadialMenu.delegate = self;
+[self.cameraRadialMenu setImage:[UIImage imageNamed:@"Camera"] forState:UIControlStateNormal];
+[self.cameraRadialMenu setImage:[UIImage imageNamed:@"CameraHighlighted"] forState:UIControlStateSelected];
+[self.view addSubview:self.cameraRadialMenu];
 ```
 
 Menu items (`MTZRadialMenuItem`) are objects with information on the item's visual representation (some graphic) and the corresponding handler(s) associated with the different events. Create a menu item in one of three ways:
