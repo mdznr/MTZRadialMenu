@@ -45,4 +45,4 @@ With `MTZRadialMenu`, you can create contextual radial menus presenting a few di
 
 ### License
 
-MIT blah blah blah. Use this and have fun. I'd love to hear about how you're using this in your application. [Email me](matt@mdznr.com).
+MIT blah blah blah. Use this and have fun. I'd love to hear about how you're using this in your application. [Email me](mailto:matt@mdznr.com).
