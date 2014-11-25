@@ -52,8 +52,7 @@
 #pragma mark Misc. Helpers
 
 /// The distance between two points.
-CGFloat CGPointDistance(CGPoint a, CGPoint b)
-{
+CGFloat CGPointDistance(CGPoint a, CGPoint b) {
 	return sqrt(pow((a.x - b.x), 2) + pow((a.y - b.y), 2));
 }
 
@@ -124,22 +123,22 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 @interface MTZRadialMenu () <MTZRadialMenuItemDelegate>
 
 /// The item for locations.
-@property (strong, nonatomic) NSMutableDictionary *items;
+@property (nonatomic, strong) NSMutableDictionary *items;
 
 /// Action buttons corresponding to locations.
-@property (strong, nonatomic) NSMutableDictionary *itemButtons;
+@property (nonatomic, strong) NSMutableDictionary *itemButtons;
 
 /// The radial menu.
-@property (strong, nonatomic) UIView *radialMenu;
+@property (nonatomic, strong) UIView *radialMenu;
 
 /// The background for the radial menu.
-@property (strong, nonatomic) UIVisualEffectView *radialMenuBackground;
+@property (nonatomic, strong) UIVisualEffectView *radialMenuBackground;
 
 /// A readwrite version of `backgroundVisualEffect`.
 @property (nonatomic, copy, readwrite) UIVisualEffect *backgroundVisualEffect;
 
 /// The main button to activate the radial menu.
-@property (strong, nonatomic) MTZButton *mainButton;
+@property (nonatomic, strong) MTZButton *mainButton;
 
 /// The radius of the radial menu.
 @property (nonatomic) CGFloat menuRadius;
@@ -147,7 +146,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 /// The state of the menu.
 @property (nonatomic) MTZRadialMenuState menuState;
 
-@property (strong, nonatomic) UILongPressGestureRecognizer *pressGestureRecognizer;
+@property (nonatomic, strong) UILongPressGestureRecognizer *pressGestureRecognizer;
 
 /// The number of active state transitions.
 /// @discussion This is used to know when all of the additive transitions have succesfully ended.
@@ -162,27 +161,28 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 - (instancetype)initWithBackgroundVisualEffect:(UIVisualEffect *)effect
 {
-	self.backgroundVisualEffect = effect;
-	self = [self init];
+	self = [super initWithFrame:CGRectMake(0, 0, 2 * RADIALMENU_BUTTON_RADIUS, 2 * RADIALMENU_BUTTON_RADIUS)];
 	if (self) {
 		// Initialization code.
+		self.backgroundVisualEffect = effect;
+		[self __MTZRadialMenuSetup];
+	}
+	return self;
+}
+
+- (instancetype)init
+{
+	self = [super initWithFrame:CGRectMake(0, 0, 2 * RADIALMENU_BUTTON_RADIUS, 2 * RADIALMENU_BUTTON_RADIUS)];
+	if (self) {
+		// Initialization code
+		[self __MTZRadialMenuSetup];
 	}
 	return self;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-		[self __MTZRadialMenuSetup];
-    }
-    return self;
-}
-
-- (instancetype)init
-{
-	self = [super initWithFrame:CGRectMake(0, 0, 2 * RADIALMENU_BUTTON_RADIUS, 2 * RADIALMENU_BUTTON_RADIUS)];
+	self = [super initWithFrame:frame];
 	if (self) {
 		// Initialization code
 		[self __MTZRadialMenuSetup];
@@ -306,6 +306,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	_menuState = -1; // Forces next call to setMenuState: to go through.
 	self.menuState = MTZRadialMenuStateContracted;
 }
+
 
 #pragma mark Responding to Gestures & Touches
 
@@ -467,6 +468,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	}
 }
 
+
 #pragma mark Menu State
 
 - (void)setMenuState:(MTZRadialMenuState)menuState animated:(BOOL)animated
@@ -506,11 +508,11 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 - (void)setMenuState:(MTZRadialMenuState)menuState
 {
 	// Only apply if menu state has changed.
-	if (_menuState == menuState) {
+	if (self.menuState == menuState) {
 		return;
 	}
 	
-	BOOL menuWasOpen = _menuState != MTZRadialMenuStateContracted;
+	BOOL menuWasOpen = self.menuState != MTZRadialMenuStateContracted;
 	
 	_menuState = menuState;
 	
@@ -518,16 +520,16 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	CGFloat alpha;
 	CGFloat radius;
 	
-	if (_menuState == MTZRadialMenuStateContracted) {
+	if (self.menuState == MTZRadialMenuStateContracted) {
 		menuOpen = NO;
 		alpha = 0.0f;
 		radius = RADIALMENU_RADIUS_CONTRACTED;
 	} else {
 		menuOpen = YES;
 		alpha = 1.0f;
-		if (_menuState == MTZRadialMenuStateNormal) {
+		if (self.menuState == MTZRadialMenuStateNormal) {
 			radius = RADIALMENU_RADIUS_NORMAL;
-		} else if (_menuState == MTZRadialMenuStateExpanded) {
+		} else if (self.menuState == MTZRadialMenuStateExpanded) {
 			radius = RADIALMENU_RADIUS_EXPANDED;
 		}
 	}
@@ -538,35 +540,36 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		[self tellDelegateRadialMenuWillDismiss];
 	}
 	
+	self.exclusiveTouch = menuOpen;
+	CFTimeInterval minimumPressDuration = menuOpen ? 0.0 : 0.5;
+	if (self.pressGestureRecognizer.minimumPressDuration != minimumPressDuration) {
+		self.pressGestureRecognizer.minimumPressDuration = minimumPressDuration;
+	}
+	
+	__weak MTZRadialMenu *weakSelf = self;
+	
 	// Update visual appearance.
 	void (^animations)() = ^void() {
-		self.menuRadius = radius;
-		self.radialMenu.alpha = alpha;
-		self.mainButton.alpha = 1 - alpha;
+		weakSelf.menuRadius = radius;
+		weakSelf.radialMenu.alpha = alpha;
+		weakSelf.mainButton.alpha = 1 - alpha;
 	};
 	
 	// The completion after all animations are complete.
 	// Update gesture recognizers and touch behaviours.
 	void (^completion)(BOOL) = ^void(BOOL finished) {
-		
 		if (menuOpen && !menuWasOpen) {
-			[self tellDelegateRadialMenuDidDisplay];
+			[weakSelf tellDelegateRadialMenuDidDisplay];
 		} else if (!menuOpen && menuWasOpen) {
-			[self tellDelegateRadialMenuDidDismiss];
-		}
-		
-		self.exclusiveTouch = menuOpen;
-		CFTimeInterval minimumPressDuration = menuOpen ? 0.0 : 0.5;
-		if (self.pressGestureRecognizer.minimumPressDuration != minimumPressDuration) {
-			self.pressGestureRecognizer.minimumPressDuration = minimumPressDuration;
+			[weakSelf tellDelegateRadialMenuDidDismiss];
 		}
 	};
 	
 	
 	// Put in an animation block with 0 duration to inherit parent's animation context.
 	[UIView animateWithDuration:0 animations:animations completion:^(BOOL finished) {
-		self.activeStateTransitionCount--;
-		if (self.activeStateTransitionCount == 0) {
+		weakSelf.activeStateTransitionCount--;
+		if (weakSelf.activeStateTransitionCount == 0) {
 			completion(finished);
 		}
 	}];
@@ -648,18 +651,18 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 - (void)setMenuRadius:(CGFloat)radius
 {
-	NSLog(@"%f", radius);
 	_menuRadius = radius;
 	
-	self.radialMenu.frame = CGRectMake((self.bounds.size.width/2) - _menuRadius,
-									   (self.bounds.size.height/2) - _menuRadius,
-									   2 * _menuRadius,
-									   2 * _menuRadius);
+	self.radialMenu.frame = CGRectMake((self.bounds.size.width/2) - self.menuRadius,
+									   (self.bounds.size.height/2) - self.menuRadius,
+									   2 * self.menuRadius,
+									   2 * self.menuRadius);
 	
 	// Scale the background down.
 	CGFloat scale = radius / BIG_CIRCLE_RADIUS;
 	self.radialMenuBackground.transform = CGAffineTransformMakeScale(scale, scale);
 }
+
 
 #pragma mark Display & Dismissal
 
@@ -688,6 +691,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	return self.menuState != MTZRadialMenuStateContracted;
 }
 
+
 #pragma mark Configuring the Main Button Presentation
 
 - (void)setImage:(UIImage *)image forState:(UIControlState)state
@@ -699,6 +703,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 {
 	return [self.mainButton imageForState:state];
 }
+
 
 #pragma mark Configuring the User Actions
 
