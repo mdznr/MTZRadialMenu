@@ -512,7 +512,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		return;
 	}
 	
-	BOOL menuWasOpen = self.menuState != MTZRadialMenuStateContracted;
+	BOOL menuWasOpen = self.menuState == MTZRadialMenuStateContracted || self.menuState == MTZRadialMenuStateExpanded;
 	
 	_menuState = menuState;
 	
