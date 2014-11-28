@@ -234,6 +234,9 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	self.radialMenu.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
 	
 	// Radial menu
+	if (!self.backgroundVisualEffect) {
+		self.backgroundVisualEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+	}
 	self.radialMenuBackground = [[UIVisualEffectView alloc] initWithEffect:self.backgroundVisualEffect];
 	self.radialMenuBackground.clipsToBounds = YES;
 	[self.radialMenu addSubview:self.radialMenuBackground];
