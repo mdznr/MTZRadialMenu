@@ -190,6 +190,16 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+	self = [super initWithCoder:aDecoder];
+	if (self) {
+		// Initialization code
+		[self __MTZRadialMenuSetup];
+	}
+	return self;
+}
+
 + (UIButton *)newActionButton
 {
 	CGRect frame = CGRectMake(0, 0, 2 * RADIALMENU_BUTTON_RADIUS, 2 * RADIALMENU_BUTTON_RADIUS);
