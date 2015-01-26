@@ -818,7 +818,14 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 
 + (UIImage *)resourceNamed:(NSString *)name
 {
-	return [UIImage imageNamed:name inBundle:[NSBundle bundleForClass:[MTZRadialMenu class]] compatibleWithTraitCollection:nil];
+	NSBundle *MTZRadialMenuBundle = [NSBundle bundleForClass:[MTZRadialMenu class]];
+	
+	if ([[UIImage class] respondsToSelector:@selector(imageNamed:inBundle:compatibleWithTraitCollection:)]) {
+		return [UIImage imageNamed:name inBundle:MTZRadialMenuBundle compatibleWithTraitCollection:nil];
+	}
+	
+	NSString *filePath = [MTZRadialMenuBundle pathForResource:name ofType:@"png"];
+	return [UIImage imageWithContentsOfFile:filePath];
 }
 
 @end
