@@ -393,7 +393,8 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 	for (NSString *key in self.itemButtons.allKeys) {
 		UIButton *button = self.itemButtons[key];
 		BOOL shouldBeHighlighted = [key isEqualToString:locationKey];
-		if (button.highlighted != shouldBeHighlighted) {
+		// Commented out as button.highlighted is set to YES the first loop even though it does not appear so. I think this is because `UIButton` automatically sets its highlighted appearance based on touch events. This might have to be overriden for `MTZButton` for this check to work.
+//		if (button.highlighted != shouldBeHighlighted) {
 			// Set the highlighted state on the button.
 			button.highlighted = shouldBeHighlighted;
 			// Apply the radial menu's tintColor to the button, if highlighted.
@@ -404,7 +405,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 			if (item && item.highlightedHandler) {
 				item.highlightedHandler(self, item, shouldBeHighlighted);
 			}
-		}
+//		}
 	}
 }
 
