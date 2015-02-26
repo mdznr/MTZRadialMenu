@@ -9,6 +9,11 @@
 
 @implementation MTZButton
 
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+{
+	return CGRectContainsPoint(self.bounds, point);
+}
+
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {
 	return CGRectContainsPoint(self.bounds, point) ? self : nil;

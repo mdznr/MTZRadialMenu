@@ -427,6 +427,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 		return YES;
 	}
 	
+	if (CGRectContainsPoint(self.bounds, point)) {
+		return YES;
+	}
+	
 	CGPoint convertedPoint = [self.radialMenu convertPoint:point fromView:self];
 	return [self.radialMenu pointInside:convertedPoint withEvent:event];
 }
