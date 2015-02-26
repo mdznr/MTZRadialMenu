@@ -13,6 +13,7 @@
 @interface ViewController () <MTZRadialMenuDelegate>
 
 @property (nonatomic, getter=isCameraRecording) BOOL cameraRecording;
+@property (nonatomic) NSUInteger numberOfTimesCameraCancelButtonHasBeenHighlighted;
 @property (strong, nonatomic) MTZRadialMenu *cameraRadialMenu;
 @property (strong, nonatomic) MTZRadialMenuItem *cameraPhotoTakeAndSendAction;
 @property (strong, nonatomic) MTZRadialMenuItem *cameraRecordingStartAction;
@@ -57,9 +58,14 @@
 	[self.view addSubview:self.cameraRadialMenu];
 	
 	// Camera Cancel
-	MTZRadialMenuItem *cameraCancel = [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:MTZRadialMenuStandardItemCancel handler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
-		// TODO: Only dismiss radial menu after touch has at least left the original location (must wait for it to highlight again, or touch changed).
-		[self cameraCancel];
+	MTZRadialMenuItem *cameraCancel = [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:MTZRadialMenuStandardItemCancel highlightedHandler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem, BOOL highlighted) {
+		if (highlighted) {
+			self.numberOfTimesCameraCancelButtonHasBeenHighlighted++;
+		}
+	} selectedHandler:^(MTZRadialMenu *radialMenu, MTZRadialMenuItem *menuItem) {
+		if (self.numberOfTimesCameraCancelButtonHasBeenHighlighted > 1) {
+			[self cameraCancel];
+		}
 	}];
 	
 	// Camera Photo Take and Send
@@ -141,6 +147,7 @@
 {
 	[self.cameraRadialMenu setItem:self.cameraPhotoTakeAndSendAction forLocation:MTZRadialMenuLocationTop];
 	[self.cameraRadialMenu setItem:self.cameraRecordingStartAction forLocation:MTZRadialMenuLocationRight];
+	self.numberOfTimesCameraCancelButtonHasBeenHighlighted = 0;
 }
 
 - (void)cameraCancel
