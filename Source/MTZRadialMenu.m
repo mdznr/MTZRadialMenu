@@ -549,6 +549,11 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuState) {
 			radius = RADIALMENU_RADIUS_NORMAL;
 		} else if (self.menuState == MTZRadialMenuStateExpanded) {
 			radius = RADIALMENU_RADIUS_EXPANDED;
+		} else {
+#if DEBUG
+			[NSException raise:NSInternalInconsistencyException format:@"Unhandle case of `menuState`"];
+#endif
+			radius = 0.0;
 		}
 	}
 	
