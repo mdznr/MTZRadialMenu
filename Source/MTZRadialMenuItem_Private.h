@@ -5,6 +5,8 @@
 //  Copyright (c) 2014 Matt Zanchelli. All rights reserved.
 //
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// Get a string representation of an standard radial menu item.
 NSString *NSStringFromMTZRadialMenuStandardItem(MTZRadialMenuStandardItem menuItem);
 
@@ -33,13 +35,13 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuItemType) {
 @property (nonatomic, readwrite) MTZRadialMenuItemType type;
 
 /// The handler for when the item is highlighted.
-@property (nonatomic, copy) MTZRadialMenuItemHighlightedHandler highlightedHandler;
+@property (nonatomic, copy, nullable) MTZRadialMenuItemHighlightedHandler highlightedHandler;
 
 /// The handler for when the item is selected.
-@property (nonatomic, copy) MTZRadialMenuItemSelectedHandler selectedHandler;
+@property (nonatomic, copy, nullable) MTZRadialMenuItemSelectedHandler selectedHandler;
 
 /// A delegate to handle changes to the item. This is designed for use by @c MTZRadialMenu.
-@property (nonatomic, weak) id<MTZRadialMenuItemDelegate> delegate;
+@property (nonatomic, weak, nullable) id<MTZRadialMenuItemDelegate> delegate;
 
 #pragma mark Graphics Properties
 
@@ -50,14 +52,16 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuItemType) {
 /// The image with @c UIImageRenderingModeAlwaysTemplate to use as an icon.
 /// @discussion The icon is used for all states, and color is applied automatically.
 /// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithIcon:handler: or @c menuItemWithIcon:highlightedHandler:selectedHandler
-@property (nonatomic, copy) UIImage *icon;
+@property (nonatomic, copy, nullable) UIImage *icon;
 
 /// The image to use for the normal state.
 /// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithImage:highlightedImage:handler: or @c menuItemWithImage:highlightedImage:highlightedHandler:selectedHandler:
-@property (nonatomic, copy) UIImage *image;
+@property (nonatomic, copy, nullable) UIImage *image;
 
 /// The image to use for the highlighted state.
 /// @discussion This property is only set when creating an instance of @c MTZRadialMenuItem with @c menuItemWithImage:highlightedImage:handler: or @c menuItemnWithImage:highlightedImage:highlightedHandler:selectedHandler:
-@property (nonatomic, copy) UIImage *highlightedImage;
+@property (nonatomic, copy, nullable) UIImage *highlightedImage;
 
 @end
+
+NS_ASSUME_NONNULL_END

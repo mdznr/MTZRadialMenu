@@ -7,16 +7,20 @@
 
 #import "MTZButton.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation MTZButton
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
+- (BOOL)pointInside:(CGPoint)point withEvent:(nullable UIEvent *)event
 {
 	return CGRectContainsPoint(self.bounds, point);
 }
 
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+- (nullable UIView *)hitTest:(CGPoint)point withEvent:(nullable UIEvent *)event
 {
 	return CGRectContainsPoint(self.bounds, point) ? self : nil;
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -5,9 +5,11 @@
 //  Copyright (c) 2014 Matt Zanchelli. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 #import "MTZRadialMenuItem.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /// The delegate of a @c MTZRadialMenu object must adopt the @c MTZRadialMenuDelegate protocol. Optional methods of the protocol allow the delegate to handle dependant UI and state when a radial menu is displayed and dismissed.
 @protocol MTZRadialMenuDelegate <NSObject>
@@ -58,7 +60,7 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 
 /// The object that acts as the delegate of the receiving radial menu.
 /// @discussion The delegate must adopt the @c MTZRadialMenuDelegate protocol.
-@property (nonatomic, weak) id<MTZRadialMenuDelegate> delegate;
+@property (nonatomic, weak, nullable) id<MTZRadialMenuDelegate> delegate;
 
 #pragma mark Appearance
 
@@ -69,10 +71,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 
 /// Sets the image for the main button to use for the specified state.
 /// In general, if a property is not specified for a state, the default is to use the @c UIControlStateNormal value. If the @c UIControlStateNormal value is not set, then the property defaults to a system value. Therefore, at a minimum, you should set the value for the normal state.
-- (void)setImage:(UIImage *)image forState:(UIControlState)state;
+- (void)setImage:(nullable UIImage *)image forState:(UIControlState)state;
 
 /// Returns the image for the main button for a particular control state.
-- (UIImage *)imageForState:(UIControlState)state;
+- (nullable UIImage *)imageForState:(UIControlState)state;
 
 /*
 /// The inset or outset margins for the rectangle around the activate button's image.
@@ -86,10 +88,10 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 /// Sets the item for a particular location on the receiving radial menu.
 /// @param item The action to add to the radial menu.
 /// @param location The location on the radial menu to position this action.
-- (void)setItem:(MTZRadialMenuItem *)item forLocation:(MTZRadialMenuLocation)location;
+- (void)setItem:(nullable MTZRadialMenuItem *)item forLocation:(MTZRadialMenuLocation)location;
 
 /// Returns the menu item for a particular location on the receiving radial menu.
-- (MTZRadialMenuItem *)menuItemForLocation:(MTZRadialMenuLocation)location;
+- (nullable MTZRadialMenuItem *)menuItemForLocation:(MTZRadialMenuLocation)location;
 
 #pragma mark Getting the Current State
 
@@ -105,3 +107,5 @@ typedef NS_ENUM(NSInteger, MTZRadialMenuLocation) {
 - (void)dismissMenuAnimated:(BOOL)animated;
 
 @end
+
+NS_ASSUME_NONNULL_END

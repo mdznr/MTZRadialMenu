@@ -10,8 +10,9 @@
 
 #import "MTZRadialMenuItem_Private.h"
 
-NSString *NSStringFromMTZRadialMenuStandardItem(MTZRadialMenuStandardItem menuItem)
-{
+NS_ASSUME_NONNULL_BEGIN
+
+NSString *NSStringFromMTZRadialMenuStandardItem(MTZRadialMenuStandardItem menuItem) {
 	switch (menuItem) {
 		case MTZRadialMenuStandardItemCancel:  return @"MTZRadialMenuStandardItemCancel";
 		case MTZRadialMenuStandardItemConfirm: return @"MTZRadialMenuStandardItemConfirm";
@@ -26,12 +27,12 @@ NSString *NSStringFromMTZRadialMenuStandardItem(MTZRadialMenuStandardItem menuIt
 
 #pragma mark Creating an Action
 
-+ (instancetype)menuItemWithRadialMenuStandardItem:(MTZRadialMenuStandardItem)standardItem handler:(MTZRadialMenuItemSelectedHandler)handler
++ (instancetype)menuItemWithRadialMenuStandardItem:(MTZRadialMenuStandardItem)standardItem handler:(nullable MTZRadialMenuItemSelectedHandler)handler
 {
 	return [MTZRadialMenuItem menuItemWithRadialMenuStandardItem:standardItem highlightedHandler:nil selectedHandler:handler];
 }
 
-+ (instancetype)menuItemWithRadialMenuStandardItem:(MTZRadialMenuStandardItem)standardItem highlightedHandler:(MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(MTZRadialMenuItemSelectedHandler)selectedHandler;
++ (instancetype)menuItemWithRadialMenuStandardItem:(MTZRadialMenuStandardItem)standardItem highlightedHandler:(nullable MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(nullable MTZRadialMenuItemSelectedHandler)selectedHandler;
 {
 	MTZRadialMenuItem *menuItem = [[MTZRadialMenuItem alloc] init];
 	menuItem.standardItem = standardItem;
@@ -41,12 +42,12 @@ NSString *NSStringFromMTZRadialMenuStandardItem(MTZRadialMenuStandardItem menuIt
 	return menuItem;
 }
 
-+ (instancetype)menuItemWithIcon:(UIImage *)icon handler:(MTZRadialMenuItemSelectedHandler)handler;
++ (instancetype)menuItemWithIcon:(UIImage *)icon handler:(nullable MTZRadialMenuItemSelectedHandler)handler;
 {
 	return [MTZRadialMenuItem menuItemWithIcon:icon highlightedHandler:nil selectedHandler:handler];
 }
 
-+ (instancetype)menuItemWithIcon:(UIImage *)icon highlightedHandler:(MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(MTZRadialMenuItemSelectedHandler)selectedHandler;
++ (instancetype)menuItemWithIcon:(UIImage *)icon highlightedHandler:(nullable MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(nullable MTZRadialMenuItemSelectedHandler)selectedHandler;
 {
 	MTZRadialMenuItem *menuItem = [[MTZRadialMenuItem alloc] init];
 	menuItem.type = MTZRadialMenuItemTypeIcon;
@@ -56,12 +57,12 @@ NSString *NSStringFromMTZRadialMenuStandardItem(MTZRadialMenuStandardItem menuIt
 	return menuItem;
 }
 
-+ (instancetype)menuItemWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(MTZRadialMenuItemSelectedHandler)handler;
++ (instancetype)menuItemWithImage:(UIImage *)image highlightedImage:(nullable UIImage *)highlightedImage handler:(nullable MTZRadialMenuItemSelectedHandler)handler;
 {
 	return [MTZRadialMenuItem menuItemWithImage:image highlightedImage:highlightedImage highlightedHandler:nil selectedHandler:handler];
 }
 
-+ (instancetype)menuItemWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage highlightedHandler:(MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(MTZRadialMenuItemSelectedHandler)selectedHandler;
++ (instancetype)menuItemWithImage:(UIImage *)image highlightedImage:(nullable UIImage *)highlightedImage highlightedHandler:(nullable MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(nullable MTZRadialMenuItemSelectedHandler)selectedHandler;
 {
 	MTZRadialMenuItem *menuItem = [[MTZRadialMenuItem alloc] init];
 	menuItem.type = MTZRadialMenuItemTypeImages;
@@ -74,16 +75,18 @@ NSString *NSStringFromMTZRadialMenuStandardItem(MTZRadialMenuStandardItem menuIt
 
 #pragma mark Changing Images
 
-- (void)setImage:(UIImage *)image
+- (void)setImage:(nullable UIImage *)image
 {
 	_image = image;
 	[self.delegate radialMenuItemAppearanceChanged:self];
 }
 
-- (void)setHighlightedImage:(UIImage *)highlightedImage
+- (void)setHighlightedImage:(nullable UIImage *)highlightedImage
 {
 	_highlightedImage = highlightedImage;
 	[self.delegate radialMenuItemAppearanceChanged:self];
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

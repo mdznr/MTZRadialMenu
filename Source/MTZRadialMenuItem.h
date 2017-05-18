@@ -8,6 +8,8 @@
 
 @import UIKit;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class MTZRadialMenuItem;
 @class MTZRadialMenu;
 
@@ -38,27 +40,27 @@ typedef void (^MTZRadialMenuItemSelectedHandler)(MTZRadialMenu *radialMenu, MTZR
 /// @param standardItem The standard radial menu item. Use the appropriate item if the corresponding action is standard. For a list of possible values, see the constants in @c MTZRadialMenuStandardItem.
 /// @param handler A block to execute when the user selects the item. This block has no return value and takes the radial menu and selected item object. The handler is responsible for dismissing the menu, if appropriate.
 /// @return A new radial menu item object.
-+ (instancetype)menuItemWithRadialMenuStandardItem:(MTZRadialMenuStandardItem)standardItem handler:(MTZRadialMenuItemSelectedHandler)handler;
++ (instancetype)menuItemWithRadialMenuStandardItem:(MTZRadialMenuStandardItem)standardItem handler:(nullable MTZRadialMenuItemSelectedHandler)handler;
 
 /// Create and return a radial menu item of the specified standard item and behavior.
 /// @param standardItem The standard radial menu item. Use the appropriate item if the corresponding action is standard. For a list of possible values, see the
 /// @param highlightedHandler A block to execute when the user highlights the item (a touch enters the item's location). This block has no return value and takes the radial menu and highlighted item object. Usage of this includes——but is not limited to——starting or stopping an action while the radial menu remains open. Most of the time nothing is required here, see @c menuItemWithRadialMenuStandardItem:handler: instead.
 /// @param selectedHandler A block to execute when the user selects the item. This block has no return value and takes the radial menu and selected item object. The handler is responsible for dismissing the menu, if appropriate.
 /// @return A new radial menu item object.
-+ (instancetype)menuItemWithRadialMenuStandardItem:(MTZRadialMenuStandardItem)standardItem highlightedHandler:(MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(MTZRadialMenuItemSelectedHandler)selectedHandler;
++ (instancetype)menuItemWithRadialMenuStandardItem:(MTZRadialMenuStandardItem)standardItem highlightedHandler:(nullable MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(nullable MTZRadialMenuItemSelectedHandler)selectedHandler;
 
 /// Create and return a radial menu item with the specified icon and behavior.
 /// @param icon An image (with @c UIImageRenderingModeAlwaysTemplate @c renderingMode) that appears white by default and the @c tintColor of the radial menu when highlighted.
 /// @param handler A block to execute when the user selects the item. This block has no return value and takes the radial menu and selected item object. The handler is responsible for dismissing the menu, if appropriate.
 /// @return A new radial menu item object.
-+ (instancetype)menuItemWithIcon:(UIImage *)icon handler:(MTZRadialMenuItemSelectedHandler)handler;
++ (instancetype)menuItemWithIcon:(UIImage *)icon handler:(nullable MTZRadialMenuItemSelectedHandler)handler;
 
 /// Create and return a radial menu item with the specified icon and behavior.
 /// @param icon An image (with @c UIImageRenderingModeAlwaysTemplate @c renderingMode) that appears white by default and the @c tintColor of the radial menu when highlighted.
 /// @param highlightedHandler A block to execute when the user highlights the item (a touch enters the item's location). This block has no return value and takes the radial menu and highlighted item object. Usage of this includes——but is not limited to——starting or stopping an action while the radial menu remains open. Most of the time nothing is required here, see @c menuItemWithRadialMenuStandardItem:handler: instead.
 /// @param selectedHandler A block to execute when the user selects the item. This block has no return value and takes the radial menu and selected item object. The handler is responsible for dismissing the menu, if appropriate.
 /// @return A new radial menu item object.
-+ (instancetype)menuItemWithIcon:(UIImage *)icon highlightedHandler:(MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(MTZRadialMenuItemSelectedHandler)selectedHandler;
++ (instancetype)menuItemWithIcon:(UIImage *)icon highlightedHandler:(nullable MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(nullable MTZRadialMenuItemSelectedHandler)selectedHandler;
 
 /// Create and return a radial menu item with the specified images and behavior.
 /// @param image The image to use for the radial menu item.
@@ -66,13 +68,15 @@ typedef void (^MTZRadialMenuItemSelectedHandler)(MTZRadialMenu *radialMenu, MTZR
 /// @param highlightedHandler A block to execute when the user highlights the item (a touch enters the item's location). This block has no return value and takes the radial menu and highlighted item object. Usage of this includes——but is not limited to——starting or stopping an action while the radial menu remains open. Most of the time nothing is required here, see @c menuItemWithRadialMenuStandardItem:handler: instead.
 /// @param selectedHandler A block to execute when the user selects the item. This block has no return value and takes the radial menu and selected item object. The handler is responsible for dismissing the menu, if appropriate.
 /// @return A new radial menu item object.
-+ (instancetype)menuItemWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage handler:(MTZRadialMenuItemSelectedHandler)handler;
++ (instancetype)menuItemWithImage:(UIImage *)image highlightedImage:(nullable UIImage *)highlightedImage handler:(nullable MTZRadialMenuItemSelectedHandler)handler;
 
 /// Create and return a radial menu item with the specified images and behavior.
 /// @param image The image to use for the radial menu item.
 /// @param highlightedImage The image to use when the menu item is highlighted.
 /// @param handler A block to execute when the user selects the item. This block has no return value and takes the radial menu and selected item object. The handler is responsible for dismissing the menu, if appropriate.
 /// @return A new radial menu item object.
-+ (instancetype)menuItemWithImage:(UIImage *)image highlightedImage:(UIImage *)highlightedImage highlightedHandler:(MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(MTZRadialMenuItemSelectedHandler)selectedHandler;
++ (instancetype)menuItemWithImage:(UIImage *)image highlightedImage:(nullable UIImage *)highlightedImage highlightedHandler:(nullable MTZRadialMenuItemHighlightedHandler)highlightedHandler selectedHandler:(nullable MTZRadialMenuItemSelectedHandler)selectedHandler;
 
 @end
+
+NS_ASSUME_NONNULL_END
